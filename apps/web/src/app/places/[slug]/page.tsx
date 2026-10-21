@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, FreshnessBadge } from "@utah-
 import { getVenueBySlug } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { ReportButton } from "@/src/components/report-button";
+import { FollowButton } from "@/src/components/follow-button";
 
 export const metadata: Metadata = { title: "Place to play" };
 export const dynamic = "force-dynamic";
@@ -60,6 +61,7 @@ export default async function VenueDetailPage({
                   {venue.phone}
                 </a>
               ) : null}
+              <FollowButton kind="venue" targetId={venue.id} />
               <ReportButton targetType="venue" targetId={venue.id} />
             </CardContent>
           </Card>

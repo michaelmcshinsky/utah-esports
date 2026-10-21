@@ -6,6 +6,7 @@ import { getMembershipsForUser, getOrganizationBySlug, listOrgEvents } from "@ut
 import { roleHasPermission } from "@utah-esports/core";
 import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
+import { ConfirmEventButton } from "@/src/components/confirm-event-button";
 
 export const metadata: Metadata = { title: "Org events" };
 export const revalidate = 0;
@@ -62,6 +63,9 @@ export default async function OrgEventsPage({
               <Badge variant={event.status === "published" ? "success" : "neutral"}>
                 {event.status}
               </Badge>
+              {event.status === "needs_verification" ? (
+                <ConfirmEventButton eventId={event.id} />
+              ) : null}
               <Link
                 href={`/dashboard/org/${slug}/events/${event.id}`}
                 className="text-redrock-600 hover:underline"

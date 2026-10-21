@@ -5,6 +5,7 @@ import { Badge, Card, CardContent, CardHeader, CardTitle, FreshnessBadge } from 
 import { getCommunityBySlug, getCommunityGames } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { ReportButton } from "@/src/components/report-button";
+import { FollowButton } from "@/src/components/follow-button";
 
 export const metadata: Metadata = { title: "Community" };
 export const dynamic = "force-dynamic";
@@ -91,6 +92,7 @@ export default async function CommunityDetailPage({
               {!community.discordUrl && !community.facebookUrl && !community.websiteUrl ? (
                 <p className="text-charcoal-600">No public join link listed.</p>
               ) : null}
+              <FollowButton kind="community" targetId={community.id} />
               <ReportButton targetType="community" targetId={community.id} />
             </CardContent>
           </Card>

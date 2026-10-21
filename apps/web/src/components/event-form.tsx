@@ -71,6 +71,8 @@ export function EventForm({
       contactName: data.get("contactName"),
       contactEmail: data.get("contactEmail"),
       status: data.get("status"),
+      recurrenceHint: data.get("repeatWeekly") === "on" ? String(data.get("recurrenceHint") || "Weekly") : null,
+      seriesEndsOn: data.get("repeatWeekly") === "on" ? String(data.get("seriesEndsOn") || "") || null : null,
     };
     const res = await fetch(
       values?.id ? `/api/events/${values.id}` : "/api/events",
@@ -208,6 +210,24 @@ export function EventForm({
         <Input label="Contact name" name="contactName" required defaultValue={values?.contactName} />
         <Input label="Contact email" name="contactEmail" type="email" required defaultValue={values?.contactEmail} />
       </div>
+      {values?.id ? null : (
+        <fieldset className="rounded-lg border border-charcoal-200 p-4">
+          <Checkbox
+            label="Repeat weekly (series)"
+            name="repeatWeekly"
+            hint="Generates dated occurrences automatically; individual nights can be cancelled safely."
+          />
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <Input
+              label="Recurrence description"
+              name="recurrenceHint"
+              placeholder="Every Thursday 7pm"
+              hint="Shown on the listing"
+            />
+            <Input label="Series ends (optional)" name="seriesEndsOn" type="date" />
+          </div>
+        </fieldset>
+      )}
       {values?.id ? (
         <Select
           label="Status"

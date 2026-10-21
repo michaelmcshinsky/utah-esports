@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { eventEditSchema, roleHasPermission, slugify } from "@utah-esports/core";
 import {
+  changeRecords,
   eventOccurrences,
   eventGames,
+  eventSeries,
   games,
   getMembershipsForUser,
   getOrganizationBySlug,
@@ -11,6 +13,28 @@ import {
 } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
+
+/** Field-level audit trail — every organizer edit becomes a change record. */
+const AUDITED_FIELDS = [
+  "title",
+  "description",
+  "eventType",
+  "format",
+  "startsAt",
+  "endsAt",
+  "city",
+  "registrationUrl",
+  "registrationState",
+  "registrationDeadline",
+  "agePolicy",
+  "skillLevel",
+  "beginnerFriendly",
+  "youthProgram",
+  "priceCents",
+  "contactName",
+  "contactEmail",
+  "status",
+] as const;
 
 async function requireOrgEditor(organizationSlug: string, userId: string) {
   const database = db();
@@ -20,6 +44,10 @@ async function requireOrgEditor(organizationSlug: string, userId: string) {
   const membership = memberships.find((m) => m.orgId === org.id);
   if (!membership || !roleHasPermission(membership.role, "events:create")) return null;
   return { database, org };
+}
+
+export async function linkEventGames(database: Database, eventId: string, names: string[]) {
+  await linkGames(database, eventId, names);
 }
 
 async function linkGames(database: Database, eventId: string, names: string[]) {
@@ -57,9 +85,31 @@ export async function createEventFromRequest(request: Request, userId: string) {
   if (!resolved) return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   const { database, org } = resolved;
   const data = parsed.data;
+
+  // Recurring series: create the series row once; occurrences follow via workers.
+  let seriesId: string | undefined;
+  if (data.recurrenceHint) {
+    const [series] = await database
+      .insert(eventSeries)
+      .values({
+        title: data.title,
+        organizationId: org.id,
+        eventType: data.eventType,
+        format: data.format,
+        description: data.description ?? null,
+        recurrenceHint: data.recurrenceHint,
+        seriesEndsOn: data.seriesEndsOn ?? null,
+        createdById: userId,
+        status: data.status === "published" ? "published" : "draft",
+      })
+      .returning();
+    seriesId = series?.id;
+  }
+
   const [event] = await database
     .insert(eventOccurrences)
     .values({
+      seriesId,
       title: data.title,
       description: data.description ?? null,
       eventType: data.eventType,
@@ -86,7 +136,7 @@ export async function createEventFromRequest(request: Request, userId: string) {
     })
     .returning();
   if (event) await linkGames(database, event.id, data.gameNames);
-  return NextResponse.json({ id: event?.id, slug: event?.slug }, { status: 201 });
+  return NextResponse.json({ id: event?.id, slug: event?.slug, seriesId }, { status: 201 });
 }
 
 export async function patchEventFromRequest(
@@ -105,6 +155,14 @@ export async function patchEventFromRequest(
   if (!resolved) return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   const { database } = resolved;
   const data = parsed.data;
+
+  const [before] = await database
+    .select()
+    .from(eventOccurrences)
+    .where(eq(eventOccurrences.id, eventId))
+    .limit(1);
+  if (!before) return NextResponse.json({ error: "Event not found" }, { status: 404 });
+
   const patch: Partial<typeof eventOccurrences.$inferInsert> = { updatedAt: new Date() };
   if (data.title) patch.title = data.title;
   if (data.description !== undefined) patch.description = data.description;
@@ -130,12 +188,36 @@ export async function patchEventFromRequest(
   if (data.gameNames?.length) {
     await linkGames(database, eventId, data.gameNames);
   }
+
+  const after = { ...before, ...patch };
+  const changeRows: Array<typeof changeRecords.$inferInsert> = [];
+  const asComparable = (value: unknown): string =>
+    value instanceof Date ? value.toISOString() : String(value ?? "");
+  for (const field of AUDITED_FIELDS) {
+    const oldValue = asComparable(before[field]);
+    const newValue = asComparable(after[field]);
+    if (oldValue === newValue) continue;
+    changeRows.push({
+      entityKind: "event",
+      entityId: eventId,
+      field,
+      oldValue,
+      newValue,
+      actor: `user:${userId}`,
+      reason: "organizer_edit",
+    });
+  }
+  if (changeRows.length > 0) {
+    patch.lastConfirmedAt = new Date();
+    await database.insert(changeRecords).values(changeRows);
+  }
+
   const [updated] = await database
     .update(eventOccurrences)
     .set(patch)
     .where(eq(eventOccurrences.id, eventId))
     .returning();
-  return NextResponse.json({ id: updated?.id });
+  return NextResponse.json({ id: updated?.id, changes: changeRows.length });
 }
 
 export async function handleEventCreate(request: Request) {

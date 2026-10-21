@@ -129,6 +129,20 @@ export async function runStartggSync(options: { token?: string } = {}): Promise<
           continue;
         }
 
+        // Respect prior moderation decisions for this source record.
+        const priorDecision = record?.id
+          ? await db
+              .select()
+              .from(duplicateCandidates)
+              .where(eq(duplicateCandidates.candidateSourceRecordId, record.id))
+              .limit(1)
+          : [];
+        const decision = priorDecision[0]?.status;
+        if (decision === "merged") {
+          result.unchanged++;
+          continue;
+        }
+
         // Duplicate check against upcoming published events (same window).
         const upcoming = await db
           .select({
@@ -140,21 +154,26 @@ export async function runStartggSync(options: { token?: string } = {}): Promise<
           .from(eventOccurrences)
           .where(inArray(eventOccurrences.status, ["published", "needs_verification"] as const))
           .limit(500);
-        const dup = findLikelyDuplicate(
-          { title: normalized.title, startsAt: normalized.startsAt, city: normalized.city },
-          upcoming,
-        );
+        const dup =
+          decision === "rejected"
+            ? null
+            : findLikelyDuplicate(
+                { title: normalized.title, startsAt: normalized.startsAt, city: normalized.city },
+                upcoming,
+              );
         if (dup) {
-          await db
-            .insert(duplicateCandidates)
-            .values({
-              entityKind: "event",
-              keptEntityId: dup.match.id,
-              candidateSourceRecordId: record?.id,
-              score: dup.score,
-              status: "pending",
-            })
-            .returning();
+          if (!priorDecision[0]) {
+            await db
+              .insert(duplicateCandidates)
+              .values({
+                entityKind: "event",
+                keptEntityId: dup.match.id,
+                candidateSourceRecordId: record?.id,
+                score: dup.score,
+                status: "pending",
+              })
+              .returning();
+          }
           result.duplicates++;
           continue;
         }

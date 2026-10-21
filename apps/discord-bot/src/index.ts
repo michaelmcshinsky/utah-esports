@@ -6,6 +6,7 @@ import {
 } from "discord.js";
 import { handleInteraction } from "./commands.js";
 import { startAnnouncementLoop } from "./announce.js";
+import { startRosterRoleSync } from "./roster-sync.js";
 
 /**
  * Utah Esports Discord bot.
@@ -44,6 +45,7 @@ client.once(Events.ClientReady, (ready) => {
     }),
   );
   startAnnouncementLoop(client);
+  startRosterRoleSync(client);
 });
 
 client.on(Events.InteractionCreate, (interaction) => {

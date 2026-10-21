@@ -10,7 +10,7 @@ This repository is a Turborepo monorepo that replaces the archived 2018 Jekyll s
 |---|---|---|
 | `apps/web` | `@utah-esports/web` | Next.js 15 App Router — public discovery, member area, organizer dashboard, moderation console, APIs |
 | `apps/workers` | `@utah-esports/workers` | Background automations: start.gg sync, freshness checks, link checks, reminders, digests, recurring generation |
-| `apps/discord-bot` | `@utah-esports/discord-bot` | discord.js bot: authorized event announcements, `/events`, `/roster`, `/link` |
+| `apps/discord-bot` | `@utah-esports/discord-bot` | discord.js bot: authorized event announcements, `/events`, `/roster`, `/link`, `/roster-admin` (add/remove members, set team role) + automatic role sync loop |
 | `packages/db` | `@utah-esports/db` | Drizzle schema + migrations + seeds (incl. legacy Jekyll import) |
 | `packages/core` | `@utah-esports/core` | Domain enums, the single event-filter system, ICS generation, permissions, Zod schemas |
 | `packages/ui` | `@utah-esports/ui` | Accessible component library + "Utah outdoors" design tokens (Tailwind v4) |
@@ -22,9 +22,9 @@ This repository is a Turborepo monorepo that replaces the archived 2018 Jekyll s
 - **Explore** (`/explore`) — one filter system (game, date, city, radius, type, format, skill, age, price, registration) across list, calendar, and map views; filter state lives in the URL.
 - **Event pages** (`/events/[slug]`) — answer in order: what / can I participate / when+where / cost / bring / register / who to ask — plus freshness badges, cancellation notices, ICS download, save, and report.
 - **Communities, Places, Schools & Teams** — connected directories, not link dumps. School pathways (collegiate / high school / youth / independent) stay separate on purpose.
-- **Organizer dashboard** (`/dashboard`) — org creation, membership roles (owner/editor/viewer), event CRUD, recurring series, org claims with proof links.
-- **Moderation** (`/moderation`) — submissions, claims, and reports queues (platform moderators only).
-- **Member area** (`/account`) — preferences, saved events, saved searches, follows, Discord account linking. Browsing never requires an account.
+- **Organizer dashboard** (`/dashboard`) — org creation, membership roles (owner/editor/viewer), event CRUD, recurring series (weekly cadence, safe per-night cancellation), org claims with proof links, per-org calendar feed, outbound-click analytics (labeled participation proxies), one-click listing confirmation.
+- **Moderation** (`/moderation`) — submissions, claims, reports, and duplicate-candidate queues with approve/reject actions; every decision writes `moderation_actions` + `audit_logs` (platform moderators only).
+- **Member area** (`/account`) — preferences, saved events, saved searches (with new-match alerts), follows for events/communities/venues/games/orgs (change notifications), Discord account linking. Browsing never requires an account.
 
 ## Architecture
 
@@ -104,12 +104,15 @@ CI runs all four on every PR (`.github/workflows/ci.yml`).
 
 | Job | Cadence | What it does |
 |---|---|---|
-| `startgg-sync` | every 6h | imports Utah-window tournaments with source IDs; dedupe → review queue |
-| `freshness-check` | daily | >45-day unconfirmed listings → `needs_verification` + owner email |
+| `startgg-sync` | every 6h | imports Utah-window tournaments with source IDs; dedupe → review queue (moderator decisions respected on later runs) |
+| `freshness-check` | daily | >45-day unconfirmed listings → `needs_verification` + owner email; one-click confirm in the dashboard |
 | `link-check` | daily | HEAD/GET checks; 3 consecutive failures = broken (never auto-deletes) |
 | `recurring-generation` | hourly | materializes series occurrences (capped, draft by default) |
 | `deadline-reminders` | hourly | 48h-out registration deadlines, quiet hours respected, deduplicated |
 | `weekly-digest` | Mondays | grounded digest from real listings, excluded cancelled, deduped per week |
+| `change-notifications` | hourly | followers of the event, its org, or its games hear about material edits (48h window, quiet hours queue, per-user dedupe) |
+| `saved-search-alerts` | hourly | emails when *new* events match a saved search — same filter system as the site |
+| `post-event-followup` | every 2h | ends → `completed` transition + one organizer request to correct details or share a recap |
 
 Local dev: `pnpm --filter @utah-esports/workers start` (intervals) or `-- --once`. Production: `apps/workers/src/trigger.ts` defines the same jobs as Trigger.dev scheduled tasks — the job logic itself is plain TS and runner-agnostic.
 

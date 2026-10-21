@@ -15,6 +15,13 @@
       "when": 1792615617808,
       "tag": "0001_slimy_king_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792618333165,
+      "tag": "0002_worthless_malcolm_colcord",
+      "breakpoints": true
     }
   ]
 }

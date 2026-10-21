@@ -60,6 +60,12 @@ export const eventEditSchema = eventSubmissionSchema.extend({
     .default("draft"),
   organizationId: z.string().uuid().nullish(),
   seriesId: z.string().uuid().nullish(),
+  /** Create the event as a weekly series; occurrences materialize via workers. */
+  recurrenceHint: z.string().trim().max(200).nullish(),
+  seriesEndsOn: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD")
+    .nullish(),
 });
 
 export type EventEditInput = z.infer<typeof eventEditSchema>;

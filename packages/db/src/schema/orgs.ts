@@ -126,6 +126,8 @@ export const teams = pgTable(
     websiteUrl: text("website_url"),
     institution: text("institution"),
     city: text("city"),
+    /** Guild role id assigned to linked members of this team by the bot. */
+    discordRoleId: text("discord_role_id"),
     status: text("status").notNull().default("active"),
     sourceId: uuid("source_id"),
     lastConfirmedAt: timestamp("last_confirmed_at", { withTimezone: true }),

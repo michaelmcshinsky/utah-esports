@@ -6,8 +6,11 @@ import {
   getOrganizationBySlug,
   getMembershipsForUser,
   listOrgEvents,
+  eventOccurrences,
+  outboundClicks,
 } from "@utah-esports/db";
 import { roleHasPermission } from "@utah-esports/core";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
 
@@ -45,6 +48,29 @@ export default async function OrgDashboardPage({
   }
 
   const upcoming = await listOrgEvents(database, org.id, 50);
+
+  // Outbound click totals (participation proxies) for this org's events, last 30 days.
+  const [clickRow] = await database
+    .select({ count: sql<number>`count(*)::int` })
+    .from(outboundClicks)
+    .where(
+      sql`${outboundClicks.organizationId} = ${org.id} AND ${outboundClicks.createdAt} >= now() - interval '30 days'`,
+    );
+  const clickTotal = clickRow?.count ?? 0;
+  const perEventClicks = await database
+    .select({
+      eventId: outboundClicks.eventId,
+      title: eventOccurrences.title,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(outboundClicks)
+    .leftJoin(eventOccurrences, eq(outboundClicks.eventId, eventOccurrences.id))
+    .where(
+      sql`${outboundClicks.organizationId} = ${org.id} AND ${outboundClicks.createdAt} >= now() - interval '30 days'`,
+    )
+    .groupBy(outboundClicks.eventId, eventOccurrences.title)
+    .orderBy(sql`count(*) desc`)
+    .limit(10);
 
   return (
     <div className="page-container py-8">
@@ -91,7 +117,40 @@ export default async function OrgDashboardPage({
         >
           Public page
         </Link>
+        <a
+          href={`/api/calendar/org/${org.slug}.ics`}
+          className="rounded-lg border border-charcoal-300 px-4 py-2 text-sm font-semibold"
+          download
+        >
+          Calendar feed (.ics)
+        </a>
       </div>
+
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Discovery interest (last 30 days)</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-charcoal-700">
+          <p>
+            <strong>{clickTotal}</strong> outbound registration/join clicks — a proxy for
+            participation, not attendance.
+          </p>
+          {perEventClicks.length > 0 ? (
+            <ul className="mt-3 space-y-1">
+              {perEventClicks
+                .filter((row) => row.title)
+                .map((row) => (
+                  <li key={row.eventId ?? row.title} className="flex justify-between gap-4">
+                    <span className="truncate">{row.title}</span>
+                    <span className="font-medium">{row.count}</span>
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p className="mt-2 text-charcoal-500">No outbound clicks yet.</p>
+          )}
+        </CardContent>
+      </Card>
 
       <Card className="mt-8">
         <CardHeader>

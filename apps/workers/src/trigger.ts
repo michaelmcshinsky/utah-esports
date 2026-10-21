@@ -5,6 +5,9 @@ import { runLinkChecks } from "./jobs/link-check.js";
 import { runDeadlineReminders } from "./jobs/deadline-reminders.js";
 import { runWeeklyDigest } from "./jobs/weekly-digest.js";
 import { runRecurringGeneration } from "./jobs/recurring.js";
+import { runChangeNotifications } from "./jobs/notify-changes.js";
+import { runSavedSearchAlerts } from "./jobs/saved-search-alerts.js";
+import { runPostEventFollowup } from "./jobs/post-event.js";
 
 /**
  * Trigger.dev task definitions (hosted scheduling + retries).
@@ -51,4 +54,25 @@ export const recurringGenerationTask = schedules.task({
   cron: "30 * * * *",
   maxDuration: 300,
   run: async () => runRecurringGeneration(),
+});
+
+export const changeNotificationsTask = schedules.task({
+  id: "change-notifications",
+  cron: "15 * * * *",
+  maxDuration: 300,
+  run: async () => runChangeNotifications(),
+});
+
+export const savedSearchAlertsTask = schedules.task({
+  id: "saved-search-alerts",
+  cron: "45 * * * *",
+  maxDuration: 300,
+  run: async () => runSavedSearchAlerts(),
+});
+
+export const postEventTask = schedules.task({
+  id: "post-event-followup",
+  cron: "20 */2 * * *",
+  maxDuration: 300,
+  run: async () => runPostEventFollowup(),
 });

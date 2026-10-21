@@ -146,6 +146,62 @@ export function renderFreshnessRequest(input: {
   };
 }
 
+export function renderSavedSearchAlert(input: {
+  name: string | null;
+  searchName: string;
+  events: DigestEvent[];
+  siteUrl: string;
+}): EmailMessage {
+  const name = input.name ?? "there";
+  const listHtml = input.events
+    .map(
+      (e) =>
+        `<li><a href="${e.url}">${escapeHtml(e.title)}</a> — ${escapeHtml(e.whenLabel)}${e.city ? ` · ${escapeHtml(e.city)}` : ""}</li>`,
+    )
+    .join("");
+  const text = [
+    `Hi ${name},`,
+    "",
+    `New events match your saved search "${input.searchName}":`,
+    ...input.events.map((e) => `- ${e.title} — ${e.whenLabel} ${e.url}`),
+    "",
+    `Open the search: ${input.siteUrl}/explore`,
+  ].join("\n");
+  return {
+    to: "",
+    subject: `New matches: ${input.searchName}`,
+    html: `
+      <div style="font-family:system-ui,sans-serif">
+        <p>Hi ${escapeHtml(name)} — new events match your saved search
+        <strong>${escapeHtml(input.searchName)}</strong>:</p>
+        <ul>${listHtml}</ul>
+        <p><a href="${input.siteUrl}/explore">Open the search →</a></p>
+        <p style="color:#8b91a3;font-size:12px">Pause or edit saved searches in your account.</p>
+      </div>`,
+    text,
+  };
+}
+
+export function renderPostEventFollowup(input: {
+  organizerName: string;
+  eventTitle: string;
+  eventUrl: string;
+}): EmailMessage {
+  const text = `Thanks for running "${input.eventTitle}". Reply with any corrections or a recap link if details changed after the event: ${input.eventUrl}`;
+  return {
+    to: "",
+    subject: `How did "${input.eventTitle}" go?`,
+    html: `
+      <div style="font-family:system-ui,sans-serif">
+        <p>Hi ${escapeHtml(input.organizerName)} — <strong>${escapeHtml(input.eventTitle)}</strong> has ended.</p>
+        <p>If anything changed (time, venue, outcome), update the listing so players see accurate info:
+        <a href="${input.eventUrl}">${escapeHtml(input.eventTitle)}</a></p>
+        <p style="color:#8b91a3;font-size:12px">You can also correct details from your dashboard.</p>
+      </div>`,
+    text,
+  };
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")

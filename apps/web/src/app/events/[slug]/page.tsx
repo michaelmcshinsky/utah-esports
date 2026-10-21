@@ -17,6 +17,7 @@ import { db } from "@/src/lib/db";
 import { absoluteUrl } from "@/src/lib/site";
 import { ReportButton } from "@/src/components/report-button";
 import { SaveEventButton } from "@/src/components/save-event-button";
+import { FollowButton } from "@/src/components/follow-button";
 
 export const dynamic = "force-dynamic";
 
@@ -316,6 +317,7 @@ export default async function EventDetailPage({
                 Add to calendar
               </a>
               <SaveEventButton eventId={event.id} />
+              <FollowButton kind="event" targetId={event.id} />
               <ReportButton targetType="event" targetId={event.id} />
             </CardContent>
           </Card>

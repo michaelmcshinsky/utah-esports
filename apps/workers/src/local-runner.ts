@@ -5,6 +5,9 @@ import { runLinkChecks } from "./jobs/link-check.js";
 import { runRecurringGeneration } from "./jobs/recurring.js";
 import { runDeadlineReminders } from "./jobs/deadline-reminders.js";
 import { runWeeklyDigest } from "./jobs/weekly-digest.js";
+import { runChangeNotifications } from "./jobs/notify-changes.js";
+import { runSavedSearchAlerts } from "./jobs/saved-search-alerts.js";
+import { runPostEventFollowup } from "./jobs/post-event.js";
 import { log } from "./lib/logger.js";
 
 /**
@@ -22,6 +25,9 @@ const JOBS: Array<{ name: string; everyMs: number; run: () => Promise<unknown> }
   { name: "recurring", everyMs: 60 * 60 * 1000, run: () => runRecurringGeneration() },
   { name: "deadline-reminders", everyMs: 60 * 60 * 1000, run: () => runDeadlineReminders() },
   { name: "weekly-digest", everyMs: 24 * 60 * 60 * 1000, run: () => runWeeklyDigest() },
+  { name: "change-notifications", everyMs: 60 * 60 * 1000, run: () => runChangeNotifications() },
+  { name: "saved-search-alerts", everyMs: 60 * 60 * 1000, run: () => runSavedSearchAlerts() },
+  { name: "post-event", everyMs: 2 * 60 * 60 * 1000, run: () => runPostEventFollowup() },
 ];
 
 async function runOnce() {
