@@ -1,0 +1,30 @@
+{
+  "name": "utah-esports",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Utah Esports — find Utah tournaments, gaming communities, teams, and places to play. Home of utahesports.net",
+  "license": "MIT",
+  "repository": "https://github.com/michaelmcshinsky/utah-esports",
+  "homepage": "https://utahesports.net",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@12.4.2",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "check": "turbo lint typecheck test build",
+    "db:generate": "pnpm --filter @utah-esports/db generate",
+    "db:migrate": "pnpm --filter @utah-esports/db migrate",
+    "db:seed": "pnpm --filter @utah-esports/db seed",
+    "db:seed:legacy": "pnpm --filter @utah-esports/db seed:legacy",
+    "db:studio": "pnpm --filter @utah-esports/db studio"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.6",
+    "typescript": "^5.9.3"
+  }
+}

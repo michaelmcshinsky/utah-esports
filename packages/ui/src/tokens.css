@@ -1,0 +1,88 @@
+/**
+ * Utah Esports design tokens — "Utah outdoors meets competitive gaming."
+ *
+ * Charcoal/navy brand surfaces, warm sandstone content, one energetic
+ * red-rock accent. Event utility first, gaming personality second.
+ * Consumed by apps/web via: @import "tailwindcss"; @import "@utah-esports/ui/tokens.css";
+ */
+
+@theme {
+  --color-charcoal-950: #12141a;
+  --color-charcoal-900: #1a1d26;
+  --color-charcoal-800: #242833;
+  --color-charcoal-700: #323745;
+  --color-charcoal-600: #454b5c;
+  --color-charcoal-400: #8b91a3;
+  --color-charcoal-300: #b4b9c7;
+  --color-charcoal-200: #d6dae3;
+  --color-charcoal-100: #eceef3;
+
+  --color-sandstone-50: #faf8f4;
+  --color-sandstone-100: #f5f0e6;
+  --color-sandstone-200: #ebe3d3;
+  --color-sandstone-300: #ddd1b8;
+  --color-sandstone-400: #c9b892;
+
+  --color-redrock-50: #fdf3ef;
+  --color-redrock-100: #fbe4db;
+  --color-redrock-200: #f5c4b2;
+  --color-redrock-400: #e07a52;
+  --color-redrock-500: #c45a3d;
+  --color-redrock-600: #a44730;
+  --color-redrock-700: #833828;
+
+  --color-pine-500: #3e6b4f;
+  --color-pine-600: #31553e;
+
+  --color-warning-100: #fdf3c4;
+  --color-warning-500: #b45309;
+  --color-danger-100: #fde8e8;
+  --color-danger-600: #b91c1c;
+  --color-success-100: #dcfce7;
+  --color-success-700: #15803d;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --radius-card: 0.75rem;
+
+  --shadow-card: 0 1px 2px rgb(18 20 26 / 0.06), 0 4px 12px rgb(18 20 26 / 0.06);
+  --shadow-card-hover: 0 2px 4px rgb(18 20 26 / 0.08), 0 8px 24px rgb(18 20 26 / 0.1);
+
+  --animate-fade-in: fade-in 160ms ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Subtle topographic motif for brand surfaces. */
+.topo-background {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.05'%3E%3Cpath d='M0 40c40 0 40 20 80 20s40-20 80-20 40 20 80 20'/%3E%3Cpath d='M0 80c40 0 40 20 80 20s40-20 80-20 40 20 80 20'/%3E%3Cpath d='M0 120c40 0 40 20 80 20s40-20 80-20 40 20 80 20'/%3E%3Cpath d='M0 160c40 0 40 20 80 20s40-20 80-20 40 20 80 20'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Visible focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-redrock-500);
+  outline-offset: 2px;
+}

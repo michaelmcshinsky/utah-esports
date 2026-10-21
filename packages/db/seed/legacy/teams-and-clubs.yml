@@ -1,0 +1,105 @@
+- name: Utah Valley University
+  image: utah-valley-university
+  team_name: Crimson Gaming
+  level: University
+  url: http://uvuesports.wixsite.com/home
+  facebook: https://www.facebook.com/UVUEsportsOrg/
+  university: https://www.uvu.edu/recsports/esports/
+  twitch: https://www.twitch.tv/uvuesports
+  twitter: https://twitter.com/UVUeSports
+  discord: https://discordapp.com/invite/cQfDkpT
+  instagram: https://www.instagram.com/uvuesports/
+
+- name: University of Utah
+  image: university-of-utah
+  level: University
+  url: https://eae.utah.edu/esports/ 
+  facebook: https://www.facebook.com/EAEUofU/
+  twitter: https://twitter.com/uutah_esports?lang=en
+  twitch: https://www.twitch.tv/eae_mgs
+  steam: https://steamcommunity.com/groups/EAE_Students_Alumni
+  
+- name: Brigham Young University
+  image: brigham-young-university
+  level: University
+  url: https://clubs.byu.edu/clubs#/esports-vgame
+  facebook: https://www.facebook.com/groups/byuesports
+  discord: https://discordapp.com/invite/sxPBBTK
+  twitter: https://twitter.com/byu_esports?lang=en
+
+- name: Utah State University
+  image: utah-state-university
+  level: University
+  url: http://usuesports.weebly.com/
+  twitch: https://www.twitch.tv/usuleagueofgamers
+  facebook: https://www.facebook.com/groups/USUeSports/about/
+  youtube: https://www.youtube.com/channel/UCsJ84baHiwkdL6Gebvw2Ktw
+
+- name: Weber State University
+  image: weber-state-university
+  level: University
+  team_name: Claw Gaming
+  url: https://orgsync.com/134510/chapter
+  facebook: https://www.facebook.com/WeberStateEsports/
+  twitter: https://twitter.com/clawgaming_wsu?lang=en
+
+- name: PACG
+  image: pacg
+  level: University
+  team_name: Pacific Alliance of Collegiate Gamers
+  url: https://pac.gg/
+  facebook: https://www.facebook.com/PacificACG/
+  twitter: https://twitter.com/PacificACG
+  instagram: https://www.instagram.com/pacific_acg/
+  linkedin: https://www.linkedin.com/company/pacg/
+
+- name: Copper Hills Video Game Club
+  image: copper-hills-high-school
+  level: High School
+  url: http://copperhillshigh.org/video-gaming/
+
+- name: Jazz Gaming
+  image: jazz-gaming
+  level: Local
+  url: https://jazzgaming.nba.com/
+  twitter: https://twitter.com/utahjazzgaming?lang=en
+  facebook: https://www.facebook.com/UtahJazzGaming/
+  instagram: https://www.instagram.com/utahjazzgaming/
+
+- name: Spacestation Gaming
+  image: spacestation-gaming
+  level: Local
+  url: http://www.spacestationgaming.com/
+  youtube: https://www.youtube.com/channel/UC5k6TTtnvE-huqDaYmjGe3A/videos
+  twitch: https://www.twitch.tv/spacestationgg
+  twitter: https://twitter.com/spacestationgg?lang=en
+  instagram: https://www.instagram.com/spacestationgaming/
+
+- name: Armada GG
+  image: armada-gg
+  level: Local
+  url: https://armada.gg/
+  facebook: https://www.facebook.com/ArmadaGG
+  youtube: https://www.youtube.com/channel/UCeGZQnsT0JLdYAkN-EBVVGA
+  twitch: https://www.twitch.tv/team/armada
+  twitter: https://twitter.com/armadagg?lang=en
+  instagram: https://www.instagram.com/armada_Esports/
+  discord: https://discord.me/armadagg
+
+- name: EDF Esports
+  image: edf-esports
+  level: Local
+  url: https://www.edfesports.com/
+  facebook: https://www.facebook.com/EDFeSports/?ref=br_rs
+  twitter: https://twitter.com/edf_esports?lang=en
+  instagram: https://www.instagram.com/edfesports/
+
+- name: Chaotic Convergence Gaming
+  image: chaotic-convergence-gaming
+  level: Local
+  url: https://chaoticconvergence.wixsite.com/ccgaming
+  facebook: https://www.facebook.com/GamingCCG/
+  twitter: https://twitter.com/GamingCCG
+  instagram: https://www.instagram.com/chaotic_convergence_gaming/
+  discord: https://discordlist.me/servers/272764622447181824
+  youtube: "https://www.youtube.com/channel/UCwVigJR3GZKKMis4AyiE0Gg"

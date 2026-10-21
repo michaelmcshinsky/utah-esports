@@ -1,0 +1,160 @@
+
+- name: sojourntv
+  streams: starcraft
+
+- name: htomario
+  streams: starcraft
+
+- name: ccall1212
+  streams: starcraft overwatch dead-by-daylight
+
+- name: coronesc2
+  streams: starcraft
+
+- name: breath20
+  streams: starcraft
+
+- name: stun_sc2
+  streams: starcraft
+
+- name: kalnoky
+  streams: starcraft
+
+- name: dragonknight424
+  streams: starcraft
+
+- name: utahesportsdivision
+  streams: starcraft
+
+- name: impspectre
+  streams: starcraft
+
+- name: thomas5k
+  streams: starcraft
+
+- name: icarusdota
+  streams: dota-2
+
+- name: hsstarleague
+  streams: dota-2
+
+- name: therealconkle
+  streams: dota-2
+
+- name: temporalmoose
+  streams: dota-2
+
+- name: dotamajor
+  streams: dota-2
+
+- name: crwdcontrol
+  streams: dota-2
+
+- name: dotacapitalist
+  streams: dota-2
+
+- name: alltheusernamesweretaken
+  streams: dota-2
+
+- name: flashh_back
+  streams: dota-2
+
+- name: uutespa
+  streams: league-of-legends
+
+- name: usecon
+  streams: league-of-legends
+
+- name: nero577
+  streams: league-of-legends
+
+- name: faizey
+  streams: league-of-legends
+
+- name: xtommycee
+  streams: league-of-legends
+
+- name: mewurby
+  streams: league-of-legends
+
+- name: jehrfeur
+  streams: league-of-legends
+
+- name: toltechgaming
+  streams: league-of-legends
+
+- name: sk8fern
+  streams: league-of-legends
+
+- name: aceofspadess69
+  streams: league-of-legends
+
+- name: bulbasaurusss
+  streams: league-of-legends
+
+- name: TwitchSLC
+  streams: warcraft
+
+- name: chucklebucket1
+  streams: halo
+
+- name: dejanintendo
+  streams: fortnite overwatch
+
+- name: nevets_gaming
+  streams: final-fantasy ni-no-kuni
+
+- name: mcoreocookie
+  streams: battleground warcraft
+
+- name: kekfila
+  streams: battleground league-of-legends
+
+- name: xen0cidezr0
+  streams: battleground warcraft
+
+- name: briguyshow
+  streams: battleground
+
+- name: xxrangerdangerxx
+  streams: counterstrike battleground rocket-league
+
+- name: wucreationz
+  streams: fortnite overwatch
+
+- name: TycaniT
+  streams: rivals-of-aether
+
+- name: UtahRivals
+  streams: rivals-of-aether
+
+- name: ProtGTV
+  streams: rocket-league
+
+- name: Joceltics34
+  streams: resident-evil
+
+- name: kalvinxtor
+  streams: league-of-legends
+
+- name: Detomno
+  streams: heroes-of-the-storm rocket-league destiny
+  youtube: https://www.youtube.com/user/detomno
+
+- name: solgronly
+  streams: call-of-duty destiny warframe
+
+- name: SevenKarat
+  streams: league-of-legends
+
+- name: saltygamingshow
+  streams: pokken
+
+- name: DreiManatee
+  streams: super-smash-brothers
+
+- name: 1yep
+  streams: super-smash-brothers
+
+- name: NCypher
+  streams: call-of-duty rocket-league world-of-warcraft warcraft league-of-legends

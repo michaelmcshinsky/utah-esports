@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: utah_esports
+    ports:
+      - "54322:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d utah_esports"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  supabase:
+    # Minimal local Supabase stand-in for auth during development.
+    # For full auth locally, use the Supabase CLI (supabase start) against
+    # a linked project; this compose file only guarantees Postgres+PostGIS.
+    profiles: ["full"]
+    image: supabase/gotrue:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GOTRUE_DB_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/utah_esports
+      GOTRUE_SITE_URL: http://localhost:3000
+      GOTRUE_URI_ALLOW_LIST: http://localhost:3000
+      GOTRUE_JWT_SECRET: local-dev-jwt-secret-change-me
+      PORT: 9999
+    ports:
+      - "9999:9999"
+
+volumes:
+  pgdata:

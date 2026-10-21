@@ -1,0 +1,27 @@
+{
+  "name": "@utah-esports/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas": "./src/schemas.ts"
+  },
+  "scripts": {
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "echo skip"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@utah-esports/eslint-config": "workspace:*",
+    "@utah-esports/tsconfig": "workspace:*",
+    "eslint": "^9.39.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import "@utah-esports/ui/tokens.css";
+
+/* Scan workspace UI package for utility classes. */
+@source "../../../../packages/ui/src";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-sandstone-50 text-charcoal-900 font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@utility page-container {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+}
+
+@utility section-heading {
+  @apply text-xl font-semibold text-charcoal-900 sm:text-2xl;
+}

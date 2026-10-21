@@ -1,0 +1,43 @@
+- name: Tournament Ready Esports
+  image: tournament-ready-esports
+  url: https://www.tournamentreadyesports.com/
+
+- name: Nokto Esports
+  image: nokto-esports
+  url: https://nokto.gg/
+
+- name: Lan King
+  image: lan-king
+  url: http://lanking.us/
+
+- name: Game Grid
+  image: game-grid
+  url: https://www.playatgamegrid.com/
+
+- name: Quarters Arcade Bar
+  image: quartersslc
+  url: https://www.quartersslc.com/
+
+- name: Bonus Stage Arena
+  image: bonus-stage-arena
+  url: https://www.bonusstagearena.com/
+
+- name: Gamer Planet
+  image: gamer-planet
+  url: https://gamerplanet.net/
+
+- name: Microsoft Store - City Creek
+  image: microsoft
+  url: https://www.shopcitycreekcenter.com/stores/microsoft
+
+- name: Viceroy Kicks
+  image: viceroy-kicks
+  url: http://viceroykicks.com/
+
+- name: GT Throne
+  image: gt-throne
+  url: https://gtthrone.com/
+
+- name: The Geekwave
+  image: the-geekwave
+  url: http://thegeekwave.com/

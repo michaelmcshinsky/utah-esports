@@ -1,0 +1,29 @@
+# main links
+main:
+  - title: "Home"
+    url: /
+  # - title: "Quick-Start Guide"
+  #   url: https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/
+  # - title: "About"
+  #   url: https://mmistakes.github.io/minimal-mistakes/about/
+  # - title: "Sample Posts"
+  #   url: /year-archive/
+  # - title: "Sample Collections"
+  #   url: /collection-archive/
+  # - title: "Sitemap"
+  #   url: /sitemap/
+  - title: "Community"
+    url: /community
+    children:
+      - title: "Streams"
+        url: /streams
+      - title: "Social Groups"
+        url: /social-groups
+      - title: "Teams & Clubs"
+        url: /teams-and-clubs
+      - title: "Venues & Vendors"
+        url: /venues
+  - title: "Calendar"
+    url: /calendar
+  - title: "Submit Event"
+    url: /submit-event

@@ -1,0 +1,36 @@
+{
+  "name": "@utah-esports/workers",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/local-runner.ts",
+    "start": "tsx src/local-runner.ts",
+    "trigger-dev": "trigger dev",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "build": "echo skip"
+  },
+  "dependencies": {
+    "@trigger.dev/sdk": "^4.1.1",
+    "@utah-esports/core": "workspace:*",
+    "@utah-esports/db": "workspace:*",
+    "@utah-esports/email": "workspace:*",
+    "@utah-esports/startgg": "workspace:*",
+    "date-fns": "^4.1.0",
+    "drizzle-orm": "^0.45.4",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
+    "@utah-esports/eslint-config": "workspace:*",
+    "@utah-esports/tsconfig": "workspace:*",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.39.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
