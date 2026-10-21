@@ -1,6 +1,7 @@
 import { and, eq, gt, lt } from "drizzle-orm";
 import { eventOccurrences, notificationDeliveries, userPreferences, getDb } from "@utah-esports/db";
 import { createTransport, renderDeadlineReminder } from "@utah-esports/email";
+import { isInQuietHours } from "@utah-esports/core";
 import { log } from "../lib/logger.js";
 
 /**
@@ -40,11 +41,7 @@ export async function runDeadlineReminders(now = new Date()): Promise<{ sent: nu
     if (!event.registrationDeadline) continue;
     for (const pref of prefs) {
       // Quiet hours: skip sends inside the user's window (handles wrap).
-      const inQuiet =
-        pref.quietHoursStart > pref.quietHoursEnd
-          ? hour >= pref.quietHoursStart || hour < pref.quietHoursEnd
-          : hour >= pref.quietHoursStart && hour < pref.quietHoursEnd;
-      if (inQuiet) continue;
+      if (isInQuietHours(hour, pref.quietHoursStart, pref.quietHoursEnd)) continue;
 
       const already = await db
         .select({ id: notificationDeliveries.id })

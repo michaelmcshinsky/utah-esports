@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, ne } from "drizzle-orm";
 import { Badge, Card, CardContent, CardHeader, CardTitle } from "@utah-esports/ui";
 import {
   duplicateCandidates,
   eventOccurrences,
   eventSubmissions,
+  linkChecks,
   organizationClaims,
   reports,
   userProfiles,
@@ -32,7 +33,7 @@ export default async function ModerationPage() {
     );
   }
   const database = db();
-  const [submissions, claimRows, reportRows, duplicateRows] = await Promise.all([
+  const [submissions, claimRows, reportRows, duplicateRows, badLinkRows] = await Promise.all([
     database
       .select()
       .from(eventSubmissions)
@@ -59,6 +60,12 @@ export default async function ModerationPage() {
       .where(eq(duplicateCandidates.status, "pending"))
       .orderBy(desc(duplicateCandidates.createdAt))
       .limit(50),
+    database
+      .select()
+      .from(linkChecks)
+      .where(ne(linkChecks.status, "ok"))
+      .orderBy(desc(linkChecks.consecutiveFailures))
+      .limit(20),
   ]);
 
   return (
@@ -192,6 +199,35 @@ export default async function ModerationPage() {
                 </div>
               ))
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Failing links ({badLinkRows.length})</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            {badLinkRows.length === 0 ? (
+              <p className="text-charcoal-600">All checked links healthy.</p>
+            ) : (
+              badLinkRows.map((check) => (
+                <div key={check.id} className="rounded-lg border border-charcoal-100 p-3">
+                  <p className="flex items-center gap-2">
+                    <Badge variant={check.status === "broken" ? "danger" : "warning"}>
+                      {check.status}
+                    </Badge>
+                    <span className="truncate text-charcoal-700">{check.url}</span>
+                  </p>
+                  <p className="mt-1 text-xs text-charcoal-500">
+                    {check.entityType ?? "listing"} · HTTP {check.httpStatus ?? "—"} ·{" "}
+                    {check.consecutiveFailures} failures · {check.checkedAt?.toLocaleDateString() ?? "never"}
+                  </p>
+                </div>
+              ))
+            )}
+            <p className="text-xs text-charcoal-500">
+              Three consecutive failures mark a link broken; listings are never auto-deleted.
+            </p>
           </CardContent>
         </Card>
       </div>

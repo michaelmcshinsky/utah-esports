@@ -11,7 +11,7 @@ import {
   changeRecords,
   getDb,
 } from "@utah-esports/db";
-import { StartggClient, collectUtahEvents, normalizeStartggEvent, matchGameSlug, UTAH_CENTER } from "@utah-esports/startgg";
+import { StartggClient, collectUtahEvents, normalizeStartggEvent, matchGameSlug, fetchVideogameBySlug, UTAH_CENTER } from "@utah-esports/startgg";
 import { findLikelyDuplicate } from "../lib/dedupe.js";
 import { log } from "../lib/logger.js";
 
@@ -60,6 +60,28 @@ export async function runStartggSync(options: { token?: string } = {}): Promise<
   const horizonEnd = Math.floor(Date.now() / 1000) + 60 * 24 * 60 * 60;
 
   try {
+    // Resolve start.gg videogame IDs for known slugs (best effort, cached in DB).
+    const unresolved = knownGames.filter(
+      (g) => g.startggVideogameSlug && g.startggVideogameId == null,
+    );
+    for (const game of unresolved.slice(0, 15)) {
+      try {
+        const vg = await fetchVideogameBySlug(client, game.startggVideogameSlug!);
+        if (vg) {
+          await db
+            .update(games)
+            .set({ startggVideogameId: Number(vg.id) })
+            .where(eq(games.id, game.id));
+          game.startggVideogameId = Number(vg.id);
+        }
+      } catch (err) {
+        log("warn", "startgg-sync", "videogame resolution failed", {
+          slug: game.startggVideogameSlug,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
     const events = await collectUtahEvents(client, {
       lat: UTAH_CENTER.lat,
       lng: UTAH_CENTER.lng,

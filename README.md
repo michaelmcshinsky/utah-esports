@@ -22,8 +22,9 @@ This repository is a Turborepo monorepo that replaces the archived 2018 Jekyll s
 - **Explore** (`/explore`) — one filter system (game, date, city, radius, type, format, skill, age, price, registration) across list, calendar, and map views; filter state lives in the URL.
 - **Event pages** (`/events/[slug]`) — answer in order: what / can I participate / when+where / cost / bring / register / who to ask — plus freshness badges, cancellation notices, ICS download, save, and report.
 - **Communities, Places, Schools & Teams** — connected directories, not link dumps. School pathways (collegiate / high school / youth / independent) stay separate on purpose.
-- **Organizer dashboard** (`/dashboard`) — org creation, membership roles (owner/editor/viewer), event CRUD, recurring series (weekly cadence, safe per-night cancellation), org claims with proof links, per-org calendar feed, outbound-click analytics (labeled participation proxies), one-click listing confirmation.
-- **Moderation** (`/moderation`) — submissions, claims, reports, and duplicate-candidate queues with approve/reject actions; every decision writes `moderation_actions` + `audit_logs` (platform moderators only).
+- **Connected directories** — communities and venues show their **upcoming events**; event pages show the **venue** (address, BYOD) and a **related community**; public **organization pages** (`/organizations/[slug]`) aggregate an org's events, teams, claim status, and calendar.
+- **Organizer dashboard** (`/dashboard`) — org creation, membership roles (owner/editor/viewer), event CRUD, recurring series (weekly cadence, safe per-night cancellation), org claims with proof links, per-org calendar feed, **embeddable calendar widget** (`/embed/calendar/[slug]`), outbound-click analytics (labeled participation proxies), one-click listing confirmation, **change history** per event, and a **link-health queue**.
+- **Moderation** (`/moderation`) — submissions, claims, reports, duplicate-candidate, and **failing-link** queues with approve/reject actions; every decision writes `moderation_actions` + `audit_logs` (platform moderators only).
 - **Member area** (`/account`) — preferences, saved events, saved searches (with new-match alerts), follows for events/communities/venues/games/orgs (change notifications), Discord account linking. Browsing never requires an account.
 
 ## Architecture
@@ -99,6 +100,16 @@ pnpm build       # Next production build (no DB required at build time)
 ```
 
 CI runs all four on every PR (`.github/workflows/ci.yml`).
+
+### Redirects
+
+Legacy Jekyll URLs are served from two layers: hardcoded paths in `next.config.ts`
+plus DB-managed rows from the `redirects` table. Regenerate the static snapshot after
+adding redirects:
+
+```bash
+pnpm --filter @utah-esports/web dump-redirects   # writes apps/web/redirects.generated.json
+```
 
 ## Automations
 

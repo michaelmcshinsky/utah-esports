@@ -34,6 +34,11 @@ export function SiteFooter() {
                 Schools & teams
               </Link>
             </li>
+            <li>
+              <Link href="/organizations" className="hover:text-white">
+                Organizations
+              </Link>
+            </li>
           </ul>
         </div>
         <div>

@@ -11,6 +11,7 @@ import {
   getDb,
 } from "@utah-esports/db";
 import { createTransport, renderChangeNotice } from "@utah-esports/email";
+import { isInQuietHours } from "@utah-esports/core";
 import { log } from "../lib/logger.js";
 
 /**
@@ -90,10 +91,8 @@ export async function runChangeNotifications(now = new Date()): Promise<{ sent: 
         .limit(1);
       if (pref && !pref.changeNotificationsEnabled) continue;
       const inQuiet = pref
-        ? pref.quietHoursStart > pref.quietHoursEnd
-          ? hour >= pref.quietHoursStart || hour < pref.quietHoursEnd
-          : hour >= pref.quietHoursStart && hour < pref.quietHoursEnd
-        : hour >= 22 || hour < 8;
+        ? isInQuietHours(hour, pref.quietHoursStart, pref.quietHoursEnd)
+        : isInQuietHours(hour, 22, 8);
       if (inQuiet) {
         queued++; // retried on a later run outside quiet hours
         continue;

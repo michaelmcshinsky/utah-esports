@@ -1,0 +1,282 @@
+[
+  {
+    "source": "/events/2018-08-07-Fortnite-2v2",
+    "destination": "/events/2018-08-07-fortnite-2v2-850-prize-money-tournament-ps4",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-13-August-Lan-Party",
+    "destination": "/events/2018-08-13-gt-melee-weekly",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-17-Fortnite-Friday",
+    "destination": "/events/2018-08-17-asus-rog-arena-fortnite-fridays-duos-tournament",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-18-League-of-Legends",
+    "destination": "/events/2018-08-18-asus-rog-arena-league-of-legends",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-19-Halo-5-Online-2v2-Tournament",
+    "destination": "/events/2018-08-19-gametyrant-melee-monthly",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-24-Fortnite-Friday",
+    "destination": "/events/2018-08-24-asus-rog-arena-fortnite-fridays-duos-tournament",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-24-Opening-Social",
+    "destination": "/events/2018-08-24-fall-2018-opening-social",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-25-Game-night-at-Quarters",
+    "destination": "/events/2018-08-25-game-night-at-quarters-aug-twitchslc-meetup",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-25-League-of-Legends",
+    "destination": "/events/2018-08-25-asus-rog-arena-league-of-legends",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-25-Pubstomp",
+    "destination": "/events/2018-08-25-the-international-8-pubstomp",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-25-Saturday-Night-Showdown",
+    "destination": "/events/2018-08-25-saturday-night-showdown-at-the-u-of-u",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-08-31-Fortnite-Friday",
+    "destination": "/events/2018-08-31-asus-rog-arena-fortnite-fridays-duos-tournament",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-09-06-FanX-Salt-Lake-Comic-Convention",
+    "destination": "/events/2018-09-06-fanx-salt-lake-comic-convention-2018",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-09-07-Fortnite-Friday",
+    "destination": "/events/2018-09-07-asus-rog-arena-fortnite-fridays-duos-tournament",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-09-07-Salty-Pokken",
+    "destination": "/events/2018-09-21-salty-pokken",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-09-15-GT-Melee-Monthly-September",
+    "destination": "/events/2018-09-15-gt-melee-monthly",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-09-18-Club-Rush 2018-09-18-Club-Rush",
+    "destination": "/events/2018-09-18-club-rush",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-09-21-Salty-Pokken",
+    "destination": "/events/2018-09-07-salty-pokken",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-09-22-Fortnite-PC-Dous-Event",
+    "destination": "/events/2018-09-22-fortnite-pc-duos-event",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-09-29-GameTyrant-FGC-Monthly",
+    "destination": "/events/2018-09-29-game-tyrant-fgc-monthly",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-02-No-Pause-Weekly",
+    "destination": "/events/2018-10-02-sks-games-smash-weekly",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-02-SKS-Games-Smash-Weekly",
+    "destination": "/events/2018-10-01-no-pause-weekly",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-03-Salt-Lake-Skirmish",
+    "destination": "/events/2018-11-03-salt-lake-skirmish",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-06-Rainbow-Six-Siege-Tournament",
+    "destination": "/events/2018-10-06-rainbow-six-seige-tournament",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-12-Esports-All-Night",
+    "destination": "/events/2018-10-12-esports-all-night-uvu-student-super-smash-tourney",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-13-BFA-USU-UNLV",
+    "destination": "/events/2018-10-13-usu-vs-unlv-league-of-legends-showmatch-and-game-day",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-19-Fall-Brawl-Bash",
+    "destination": "/events/2018-10-19-university-of-utah-fall-brawl-bash",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-19-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2018-10-19-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-24-Nintendo-Switch-Night",
+    "destination": "/events/2018-10-24-utah-ios-mac-nintendo-switch-night",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-26-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2018-10-26-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-10-26-Spooky-Smash",
+    "destination": "/events/2018-10-26-spooky-smash-100-pot-bonus",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-11-01-Rocket-League-2v2",
+    "destination": "/events/2018-12-01-rocket-league-2v2",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-11-02-GameTyrant-Expo",
+    "destination": "/events/2018-11-02-gametyrant-expo-2018",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-11-02-Western-Digital-Fortnite-Tournament",
+    "destination": "/events/2018-11-02-western-digitals-fortnite-tournament-gt-x",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-11-09-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2018-11-09-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-11-16-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2018-11-16-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-11-2-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2018-11-02-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-11-30-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2018-11-30-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-12-07-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2018-12-07-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-12-08-UNC-Holidy-Party",
+    "destination": "/events/2018-12-08-unc-holiday-party",
+    "permanent": true
+  },
+  {
+    "source": "/events/2018-12-14-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2018-12-14-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-01-04-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2019-01-14-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-01-11-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2019-01-11-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-01-18-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2019-01-18-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-01-19-GAM-Convention",
+    "destination": "/events/2019-01-18-gam-convention",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-01-25-ROG-Arena-Fortnite-Fridays",
+    "destination": "/events/2019-01-25-rog-arena-fortnite-fridays-at-city-creek",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-02-09-Super-Smash-Bros-Tournament-Spring-Opening-Social",
+    "destination": "/events/2019-02-09-upl-cs-go-lan",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-02-16-Ascension-II",
+    "destination": "/events/2019-02-16-february-801-barfights-at-quarters",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-02-21-BarFights-at-Quarters",
+    "destination": "/events/2019-02-21-february-801-barfights-at-quarters",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-02-23-UPL-CSGO-LAN",
+    "destination": "/events/2019-02-23-upl-cs-go-lan",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-03-09-Halo-2v2",
+    "destination": "/events/2019-03-09-halo-3-2v2-tournament",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-03-09-No-Pause-LOL-Tournament",
+    "destination": "/events/2019-03-09-no-pause-250-league-of-legends-tournament",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-03-11-Sandy-Smash",
+    "destination": "/events/2019-03-11-sandy-smash-at-gamer-planet",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-03-16-Smash-Royale-III",
+    "destination": "/events/2019-03-16-smash-royale-iii-200-pot-bonus-lan-king-smash-monthly",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-03-22-Pop-Con-Cosplay-Ball",
+    "destination": "/events/2019-03-22-pop-cons-cosplay-ball",
+    "permanent": true
+  },
+  {
+    "source": "/events/2019-03-30-Utah-Smash-Jumpstart",
+    "destination": "/events/2019-03-30-utah-smash-jump-start",
+    "permanent": true
+  }
+]

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Badge, Card, CardContent, CardHeader, CardTitle, FreshnessBadge } from "@utah-esports/ui";
-import { getCommunityBySlug, getCommunityGames } from "@utah-esports/db";
+import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, FreshnessBadge } from "@utah-esports/ui";
+import {
+  getCommunityBySlug,
+  getCommunityGames,
+  listUpcomingEventsForGames,
+} from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { ReportButton } from "@/src/components/report-button";
 import { FollowButton } from "@/src/components/follow-button";
@@ -20,6 +24,11 @@ export default async function CommunityDetailPage({
   const community = await getCommunityBySlug(database, slug);
   if (!community || community.status === "hidden") notFound();
   const games = await getCommunityGames(database, community.id);
+  const upcoming = await listUpcomingEventsForGames(
+    database,
+    games.map((g) => g.game.id),
+    { city: community.city, limit: 6 },
+  );
 
   return (
     <div className="page-container py-8">
@@ -56,6 +65,55 @@ export default async function CommunityDetailPage({
               </a>
             </p>
           ) : null}
+
+          <section aria-labelledby="community-events" className="mt-8">
+            <h2 id="community-events" className="text-lg font-semibold">
+              What&apos;s next for {games[0]?.game.name ?? "this scene"}
+            </h2>
+            {upcoming.length === 0 ? (
+              <EmptyState
+                className="mt-3"
+                title="No upcoming events yet"
+                description="Follow this community to hear when something lands, or browse all events."
+                actions={
+                  <Link
+                    href="/explore"
+                    className="rounded-lg bg-charcoal-900 px-4 py-2 text-sm font-medium text-white"
+                  >
+                    Browse events
+                  </Link>
+                }
+              />
+            ) : (
+              <ul className="mt-3 space-y-2">
+                {upcoming.map((event) => (
+                  <li key={event.id}>
+                    <Link
+                      href={`/events/${event.slug}`}
+                      className="flex items-baseline justify-between gap-3 rounded-lg border border-charcoal-200 bg-white px-4 py-3 hover:border-redrock-300"
+                    >
+                      <span className="font-medium text-charcoal-900">{event.title}</span>
+                      <span className="shrink-0 text-sm text-redrock-600">
+                        {event.startsAt.toLocaleDateString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                        {event.city ? ` · ${event.city}` : ""}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {upcoming.length > 0 ? (
+              <p className="mt-3 text-sm">
+                <Link href="/explore" className="text-redrock-600 hover:underline">
+                  See all events →
+                </Link>
+              </p>
+            ) : null}
+          </section>
         </article>
         <aside className="space-y-4">
           <Card>

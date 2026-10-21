@@ -12,7 +12,8 @@ import {
   formatPrice,
   formatEventDate,
 } from "@utah-esports/ui";
-import { getEventBySlug, getEventGames, getEventLinks } from "@utah-esports/db";
+import { getEventBySlug, getEventGames, getEventLinks, listCommunities, venues } from "@utah-esports/db";
+import { eq } from "drizzle-orm";
 import { db } from "@/src/lib/db";
 import { absoluteUrl } from "@/src/lib/site";
 import { ReportButton } from "@/src/components/report-button";
@@ -64,10 +65,34 @@ export default async function EventDetailPage({
   const event = await getEventBySlug(database, slug);
   if (!event || event.status === "draft" || event.status === "archived") notFound();
 
-  const [gameRows, linkRows] = await Promise.all([
+  const [gameRows, linkRows, venue] = await Promise.all([
     getEventGames(database, event.id),
     getEventLinks(database, event.id),
+    event.venueId
+      ? database
+          .select()
+          .from(venues)
+          .where(eq(venues.id, event.venueId))
+          .limit(1)
+          .then((rows) => rows[0] ?? null)
+      : Promise.resolve(null),
   ]);
+
+  const firstGameSlug = gameRows[0]?.game.slug ?? null;
+  const relatedCommunity = await (async () => {
+    if (!firstGameSlug && !event.city) return null;
+    const withCity = await listCommunities(database, {
+      gameSlug: firstGameSlug ?? undefined,
+      city: event.city ?? undefined,
+    });
+    if (withCity.length > 0) return withCity[0];
+    if (firstGameSlug) {
+      // Fall back to same-game anywhere in Utah rather than nothing.
+      const byGame = await listCommunities(database, { gameSlug: firstGameSlug });
+      if (byGame.length > 0) return byGame[0];
+    }
+    return null;
+  })();
 
   const registrationUrl =
     event.registrationUrl ?? linkRows.find((l) => l.kind === "registration")?.url ?? null;
@@ -207,6 +232,23 @@ export default async function EventDetailPage({
                 {[event.city, "UT"].filter(Boolean).join(", ")}
               </p>
             )}
+            {venue ? (
+              <div className="mt-3 rounded-lg border border-charcoal-200 bg-white p-3 text-sm">
+                <p className="font-medium text-charcoal-900">
+                  <Link href={`/places/${venue.slug}`} className="hover:text-redrock-600">
+                    {venue.name}
+                  </Link>
+                </p>
+                {[venue.address, venue.city, venue.state].filter(Boolean).join(", ") ? (
+                  <p className="mt-0.5 text-charcoal-600">
+                    {[venue.address, venue.city, venue.state].filter(Boolean).join(", ")}
+                  </p>
+                ) : null}
+                {venue.byodRequired ? (
+                  <p className="mt-1 text-xs text-warning-500">Bring your own device</p>
+                ) : null}
+              </div>
+            ) : null}
             {event.scheduleNotes ? (
               <p className="mt-2 text-sm text-charcoal-600">{event.scheduleNotes}</p>
             ) : null}
@@ -300,6 +342,17 @@ export default async function EventDetailPage({
                 "Organizer contact not listed."
               )}
             </p>
+            {relatedCommunity ? (
+              <p className="mt-4 text-sm text-charcoal-700">
+                Related community:{" "}
+                <Link
+                  href={`/communities/${relatedCommunity.slug}`}
+                  className="font-medium text-redrock-600 hover:underline"
+                >
+                  {relatedCommunity.name}
+                </Link>
+              </p>
+            ) : null}
           </section>
         </article>
 

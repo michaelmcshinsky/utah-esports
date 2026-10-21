@@ -7,10 +7,11 @@ import {
   getMembershipsForUser,
   listOrgEvents,
   eventOccurrences,
+  linkChecks,
   outboundClicks,
 } from "@utah-esports/db";
 import { roleHasPermission } from "@utah-esports/core";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
 
@@ -72,6 +73,23 @@ export default async function OrgDashboardPage({
     .orderBy(sql`count(*) desc`)
     .limit(10);
 
+  // Broken/failing registration links for this org's events.
+  const orgEventIds = (
+    await database
+      .select({ id: eventOccurrences.id })
+      .from(eventOccurrences)
+      .where(eq(eventOccurrences.organizationId, org.id))
+      .limit(300)
+  ).map((r) => r.id);
+  const brokenLinks =
+    orgEventIds.length > 0
+      ? await database
+          .select()
+          .from(linkChecks)
+          .where(and(inArray(linkChecks.entityId, orgEventIds), ne(linkChecks.status, "ok")))
+          .limit(20)
+      : [];
+
   return (
     <div className="page-container py-8">
       <nav className="text-sm text-charcoal-600">
@@ -112,7 +130,7 @@ export default async function OrgDashboardPage({
           </Link>
         ) : null}
         <Link
-          href={`/communities`}
+          href={`/organizations/${org.slug}`}
           className="rounded-lg border border-charcoal-300 px-4 py-2 text-sm font-semibold"
         >
           Public page
@@ -125,6 +143,16 @@ export default async function OrgDashboardPage({
           Calendar feed (.ics)
         </a>
       </div>
+
+      <details className="mt-4 max-w-2xl">
+        <summary className="cursor-pointer text-sm font-medium text-charcoal-700">
+          Embed this calendar on your site
+        </summary>
+        <pre className="mt-2 overflow-x-auto rounded-lg border border-charcoal-200 bg-charcoal-900 p-3 text-xs text-sandstone-100">{`<iframe src="${`https://utahesports.net/embed/calendar/${org.slug}`}" width="100%" height="420" style="border:0" title="${org.name} events"></iframe>`}</pre>
+        <p className="mt-1 text-xs text-charcoal-500">
+          Updates automatically (refreshed every 5 minutes).
+        </p>
+      </details>
 
       <Card className="mt-8">
         <CardHeader>
@@ -148,6 +176,43 @@ export default async function OrgDashboardPage({
             </ul>
           ) : (
             <p className="mt-2 text-charcoal-500">No outbound clicks yet.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Link health</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm">
+          {brokenLinks.length === 0 ? (
+            <p className="text-charcoal-600">
+              No failing links detected. Links are checked daily — three consecutive failures
+              mark a link broken (listings are never deleted automatically).
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {brokenLinks.map((check) => (
+                <li key={check.id} className="rounded-lg border border-charcoal-100 p-3">
+                  <p className="flex items-center gap-2">
+                    <span
+                      className={
+                        check.status === "broken"
+                          ? "rounded-full bg-danger-100 px-2 py-0.5 text-xs font-medium text-danger-600"
+                          : "rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-500"
+                      }
+                    >
+                      {check.status}
+                    </span>
+                    <span className="truncate text-charcoal-700">{check.url}</span>
+                  </p>
+                  <p className="mt-1 text-xs text-charcoal-500">
+                    HTTP {check.httpStatus ?? "—"} · {check.consecutiveFailures} consecutive
+                    failures · last check {check.checkedAt?.toLocaleDateString() ?? "never"}
+                  </p>
+                </li>
+              ))}
+            </ul>
           )}
         </CardContent>
       </Card>

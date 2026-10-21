@@ -100,6 +100,7 @@ export async function handleModerationAction(request: Request) {
             priceCents: payload.priceCents ?? null,
             priceNote: payload.priceNote ?? null,
             venueFeeCents: payload.venueFeeCents ?? null,
+            venueId: payload.venueId ?? null,
             registrationUrl: payload.registrationUrl ?? payload.url,
             registrationState: payload.registrationState,
             registrationDeadline: payload.registrationDeadline

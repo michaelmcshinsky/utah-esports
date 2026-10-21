@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import {
+  changeRecords,
   eventOccurrences,
   getMembershipsForUser,
   getOrganizationBySlug,
@@ -37,6 +38,13 @@ export default async function EditEventPage({
     .where(eq(eventOccurrences.id, eventId))
     .limit(1);
   if (!event) notFound();
+
+  const history = await database
+    .select()
+    .from(changeRecords)
+    .where(eq(changeRecords.entityId, eventId))
+    .orderBy(desc(changeRecords.createdAt))
+    .limit(20);
 
   return (
     <div className="page-container py-8">
@@ -78,6 +86,36 @@ export default async function EditEventPage({
           status: event.status,
         }}
       />
+
+      <section aria-labelledby="history-heading" className="mt-10 max-w-2xl">
+        <h2 id="history-heading" className="text-lg font-semibold">
+          Change history
+        </h2>
+        <p className="mt-1 text-sm text-charcoal-600">
+          Every edit is audited; followers are notified of material changes.
+        </p>
+        {history.length === 0 ? (
+          <p className="mt-3 text-sm text-charcoal-500">No recorded changes yet.</p>
+        ) : (
+          <ol className="mt-3 space-y-2">
+            {history.map((change) => (
+              <li key={change.id} className="rounded-lg border border-charcoal-100 bg-white p-3 text-sm">
+                <p className="font-medium text-charcoal-800">
+                  {change.field} changed
+                  <span className="ml-2 text-xs font-normal text-charcoal-500">
+                    {change.actor} · {change.createdAt.toLocaleString()}
+                  </span>
+                </p>
+                <p className="mt-1 break-words text-xs text-charcoal-600">
+                  <span className="line-through opacity-70">{change.oldValue || "—"}</span>
+                  {" → "}
+                  <span className="font-medium">{change.newValue || "—"}</span>
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
     </div>
   );
 }

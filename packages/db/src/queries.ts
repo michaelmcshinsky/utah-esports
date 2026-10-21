@@ -190,7 +190,7 @@ export async function listCommunities(db: Database, opts?: { gameSlug?: string; 
   const rows = await db
     .select({ community: communities })
     .from(communities)
-    .where(eq(communities.status, "published"))
+    .where(inArray(communities.status, ["published", "needs_verification"] as const))
     .orderBy(asc(communities.name));
   if (!opts?.gameSlug && !opts?.city) return rows.map((r) => r.community);
   let filtered = rows.map((r) => r.community);
@@ -235,7 +235,7 @@ export async function listVenues(db: Database) {
   return db
     .select()
     .from(venues)
-    .where(eq(venues.status, "published"))
+    .where(inArray(venues.status, ["published", "needs_verification"] as const))
     .orderBy(asc(venues.name));
 }
 
@@ -308,4 +308,58 @@ export async function getMembershipsForUser(db: Database, userId: string) {
 
 export async function listGames(db: Database) {
   return db.select().from(games).orderBy(asc(games.name));
+}
+
+/** Upcoming public events at a venue (for venue pages). */
+export async function listUpcomingEventsForVenue(db: Database, venueId: string, limit = 10) {
+  return db
+    .select()
+    .from(eventOccurrences)
+    .where(
+      and(
+        eq(eventOccurrences.venueId, venueId),
+        inArray(eventOccurrences.status, ["published", "needs_verification", "postponed"] as const),
+        gte(eventOccurrences.startsAt, new Date()),
+      ),
+    )
+    .orderBy(asc(eventOccurrences.startsAt))
+    .limit(limit);
+}
+
+/**
+ * Upcoming public events tied to any of the given games — the bridge that
+ * lets a community page show "what's next for this scene".
+ */
+export async function listUpcomingEventsForGames(
+  db: Database,
+  gameIds: string[],
+  opts?: { city?: string | null; limit?: number },
+) {
+  if (gameIds.length === 0) return [];
+  const rows = await db
+    .select({ event: eventOccurrences, gameId: eventGames.gameId })
+    .from(eventGames)
+    .innerJoin(eventOccurrences, eq(eventGames.eventId, eventOccurrences.id))
+    .where(
+      and(
+        inArray(eventGames.gameId, gameIds),
+        inArray(eventOccurrences.status, ["published", "needs_verification", "postponed"] as const),
+        gte(eventOccurrences.startsAt, new Date()),
+      ),
+    )
+    .orderBy(asc(eventOccurrences.startsAt))
+    .limit((opts?.limit ?? 10) * 4);
+
+  const seen = new Set<string>();
+  const out: Array<typeof eventOccurrences.$inferSelect> = [];
+  for (const row of rows) {
+    if (seen.has(row.event.id)) continue;
+    if (opts?.city && row.event.city) {
+      if (!row.event.city.toLowerCase().includes(opts.city.toLowerCase())) continue;
+    }
+    seen.add(row.event.id);
+    out.push(row.event);
+    if (out.length >= (opts?.limit ?? 10)) break;
+  }
+  return out;
 }

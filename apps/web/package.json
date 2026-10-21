@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "dump-redirects": "tsx scripts/dump-redirects.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
@@ -37,8 +38,10 @@
     "@utah-esports/eslint-config": "workspace:*",
     "@utah-esports/tsconfig": "workspace:*",
     "eslint": "^9.39.0",
+    "dotenv": "^17.2.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }
