@@ -64,13 +64,13 @@ pnpm db:migrate
 pnpm db:seed               # game taxonomy + school programs
 pnpm db:seed:legacy        # + import 2018–2019 Jekyll content (marked needs_verification)
 
-pnpm dev                   # turbo: web :3100, workers, bot (as configured)
+pnpm dev                   # turbo: web :3131, workers, bot (as configured)
 ```
 
 Individual apps:
 
 ```bash
-pnpm --filter @utah-esports/web dev        # http://localhost:3100
+pnpm --filter @utah-esports/web dev        # http://localhost:3131
 pnpm --filter @utah-esports/workers dev    # local interval scheduler
 pnpm --filter @utah-esports/workers start -- --once   # run all jobs once
 pnpm --filter @utah-esports/discord-bot dev

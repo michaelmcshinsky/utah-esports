@@ -12,7 +12,7 @@ import pg from "pg";
  *
  * CI builds fall back to an empty list when the file or DB is absent.
  */
-config({ path: join(import.meta.dirname, "..", "..", "..", ".env") });
+config({ path: join(import.meta.dirname, "..", "..", "..", ".env"), override: true });
 
 async function main() {
   const url = process.env.DATABASE_URL;

@@ -1,3 +1,4 @@
+import "./env.js";
 import {
   Client,
   Events,
@@ -18,14 +19,16 @@ import { startRosterRoleSync } from "./roster-sync.js";
 
 const token = process.env.DISCORD_TOKEN;
 if (!token) {
-  console.error(
+  console.warn(
     JSON.stringify({
-      level: "error",
+      level: "warn",
       job: "discord-bot",
-      message: "DISCORD_TOKEN is not set — bot cannot start",
+      message:
+        "DISCORD_TOKEN not set — bot is idle (set it in .env to enable announcements/commands)",
     }),
   );
-  process.exit(1);
+  // Exit cleanly so `pnpm dev` shows a notice instead of a failure.
+  process.exit(0);
 }
 
 const client = new Client({
@@ -61,4 +64,15 @@ client.on(Events.InteractionCreate, (interaction) => {
   });
 });
 
-client.login(token);
+client.login(token).catch((err: unknown) => {
+  console.warn(
+    JSON.stringify({
+      level: "warn",
+      job: "discord-bot",
+      message:
+        "login failed — bot idle (check DISCORD_TOKEN in .env; shell-env tokens do not apply)",
+      error: err instanceof Error ? err.message : String(err),
+    }),
+  );
+  process.exit(0);
+});

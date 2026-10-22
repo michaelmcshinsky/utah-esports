@@ -1,4 +1,6 @@
-import "dotenv/config";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { config as loadEnv } from "dotenv";
 import { runStartggSync } from "./jobs/startgg-sync.js";
 import { runFreshnessCheck } from "./jobs/freshness.js";
 import { runLinkChecks } from "./jobs/link-check.js";
@@ -9,6 +11,12 @@ import { runChangeNotifications } from "./jobs/notify-changes.js";
 import { runSavedSearchAlerts } from "./jobs/saved-search-alerts.js";
 import { runPostEventFollowup } from "./jobs/post-event.js";
 import { log } from "./lib/logger.js";
+
+// Repo-root .env — authoritative over inherited shell vars (override).
+const ROOT_ENV = join(import.meta.dirname, "..", "..", "..", ".env");
+if (existsSync(ROOT_ENV)) {
+  loadEnv({ path: ROOT_ENV, override: true });
+}
 
 /**
  * Local development scheduler — no Trigger.dev account required.

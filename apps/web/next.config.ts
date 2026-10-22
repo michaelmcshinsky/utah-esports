@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { config as loadEnv } from "dotenv";
+
+// Repo-root .env drives local dev (Next only auto-loads from this app dir).
+// CI/hosts set real env vars directly — a missing file is not an error.
+const ROOT_ENV = join(import.meta.dirname, "..", "..", ".env");
+if (existsSync(ROOT_ENV)) {
+  // Repo .env is authoritative over inherited shell variables in dev.
+  loadEnv({ path: ROOT_ENV, override: true });
+}
 
 type RedirectEntry = { source: string; destination: string; permanent: boolean };
 
