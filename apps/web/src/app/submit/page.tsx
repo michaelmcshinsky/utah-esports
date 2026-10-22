@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SubmitEventForm } from "@/src/components/submit-event-form";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/submit" },
   title: "Submit an event",
   description: "Add a Utah gaming event to Utah Esports. Reviewed before publishing.",
 };

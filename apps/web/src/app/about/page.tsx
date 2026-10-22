@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/about" },
   title: "About",
+  description:
+    "Why Utah Esports exists: a community-maintained, freshness-obsessed directory for finding Utah gaming events, communities, teams, and places to play — and what it deliberately isn't.",
+  openGraph: {
+    title: "About Utah Esports",
+    images: ["/images/home/utah-esports-banner-1.jpg"],
+    description:
+      "A community-maintained directory built so Utah gaming information stays current — sources, freshness rules, and boundaries explained.",
+  },
 };
 
 export default function AboutPage() {

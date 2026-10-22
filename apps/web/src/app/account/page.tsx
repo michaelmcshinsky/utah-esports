@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { eq, inArray } from "drizzle-orm";
@@ -21,7 +20,6 @@ import { SavedSearchesPanel } from "@/src/components/saved-searches-panel";
 import { DiscordLinkPanel } from "@/src/components/discord-link-panel";
 import { UnfollowButton } from "@/src/components/unfollow-button";
 
-export const metadata: Metadata = { title: "Account" };
 export const revalidate = 0;
 
 export default async function AccountPage() {

@@ -14,13 +14,21 @@ import {
   formatPrice,
   formatEventDate,
 } from "@utah-esports/ui";
-import { getEventBySlug, getEventGames, getEventLinks, listCommunities, venues } from "@utah-esports/db";
+import {
+  getEventBySlug,
+  getEventGames,
+  getEventLinks,
+  listCommunities,
+  organizations,
+  venues,
+} from "@utah-esports/db";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/lib/db";
 import { absoluteUrl } from "@/src/lib/site";
 import { ReportButton } from "@/src/components/report-button";
 import { SaveEventButton } from "@/src/components/save-event-button";
 import { FollowButton } from "@/src/components/follow-button";
+import { EventJsonLd } from "@/src/components/seo/event-json-ld";
 
 export const dynamic = "force-dynamic";
 
@@ -50,10 +58,22 @@ export async function generateMetadata({
   const { slug } = await params;
   const event = await getEventBySlug(db(), slug);
   if (!event) return { title: "Event not found" };
+  const description =
+    event.description?.slice(0, 160) ??
+    `${event.title} — ${event.startsAt.toLocaleDateString("en-US", { month: "long", day: "numeric" })}${event.city ? ` in ${event.city}` : ""}. Utah gaming event with registration details, age rules, and last-checked info.`;
   return {
     title: event.title,
-    description: event.description?.slice(0, 160) ?? `Gaming event in ${event.city ?? "Utah"}`,
-    openGraph: { type: "website" },
+    description,
+    alternates: { canonical: `/events/${event.slug}` },
+    openGraph: {
+      title: event.title,
+      description,
+      type: "website",
+      ...(event.imageUrl ? { images: [event.imageUrl] } : {}),
+    },
+    twitter: {
+      card: event.imageUrl ? "summary_large_image" : "summary",
+    },
   };
 }
 
@@ -67,7 +87,7 @@ export default async function EventDetailPage({
   const event = await getEventBySlug(database, slug);
   if (!event || event.status === "draft" || event.status === "archived") notFound();
 
-  const [gameRows, linkRows, venue] = await Promise.all([
+  const [gameRows, linkRows, venue, org] = await Promise.all([
     getEventGames(database, event.id),
     getEventLinks(database, event.id),
     event.venueId
@@ -75,6 +95,14 @@ export default async function EventDetailPage({
           .select()
           .from(venues)
           .where(eq(venues.id, event.venueId))
+          .limit(1)
+          .then((rows) => rows[0] ?? null)
+      : Promise.resolve(null),
+    event.organizationId
+      ? database
+          .select({ name: organizations.name, slug: organizations.slug })
+          .from(organizations)
+          .where(eq(organizations.id, event.organizationId))
           .limit(1)
           .then((rows) => rows[0] ?? null)
       : Promise.resolve(null),
@@ -105,12 +133,13 @@ export default async function EventDetailPage({
   const postponed = event.status === "postponed";
 
   return (
-    <div className="page-container py-8">
-      <nav aria-label="Breadcrumb" className="text-sm text-charcoal-600">
-        <Link href="/explore" className="hover:text-redrock-600">
-          Explore
-        </Link>{" "}
-        / <span>{event.title}</span>
+    <>
+      <div className="page-container py-8">
+        <nav aria-label="Breadcrumb" className="text-sm text-charcoal-600">
+          <Link href="/explore" className="hover:text-redrock-600">
+            Explore
+          </Link>{" "}
+          / <span>{event.title}</span>
       </nav>
 
       <div className="mt-4 grid gap-8 lg:grid-cols-[1fr_20rem]">
@@ -426,7 +455,24 @@ export default async function EventDetailPage({
             </CardContent>
           </Card>
         </aside>
+        </div>
       </div>
-    </div>
+      <EventJsonLd
+        title={event.title}
+        description={event.description}
+        startsAt={event.startsAt}
+        endsAt={event.endsAt}
+        format={event.format}
+        slug={event.slug}
+        imageUrl={event.imageUrl}
+        city={event.city}
+        venueName={venue?.name ?? null}
+        venueAddress={venue?.address ?? null}
+        priceCents={event.priceCents}
+        registrationUrl={event.registrationUrl}
+        organizerName={org?.name ?? event.contactName}
+        status={event.status}
+      />
+    </>
   );
 }

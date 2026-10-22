@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Terms" };
+export const metadata: Metadata = {
+  alternates: { canonical: "/terms" },
+  title: "Terms",
+  description:
+    "Terms for using Utah Esports: listings are organizer-maintained, registration stays on original platforms, and claimed badges mean ownership was checked.",
+};
 
 export default function TermsPage() {
   return (

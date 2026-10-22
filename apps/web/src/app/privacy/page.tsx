@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Privacy" };
+export const metadata: Metadata = {
+  alternates: { canonical: "/privacy" },
+  title: "Privacy",
+  description:
+    "How Utah Esports handles accounts, preferences, outbound-click counts, and data for minors — plain language, no tracking pixels.",
+};
 
 export default function PrivacyPage() {
   return (

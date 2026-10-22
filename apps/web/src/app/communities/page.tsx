@@ -5,6 +5,7 @@ import { getCommunityGames, listCommunities } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/communities" },
   title: "Communities",
   description: "Gaming communities across Utah — Discord servers, Facebook groups, and local scenes by game.",
 };

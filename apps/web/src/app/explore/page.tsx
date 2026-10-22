@@ -16,6 +16,7 @@ import { EventCalendarView } from "@/src/components/calendar-view";
 import { ExplorePagination } from "@/src/components/explore-pagination";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/explore" },
   title: "Explore events",
   description:
     "Find Utah gaming events by game, date, city, skill level, and more — tournaments, casual sessions, watch parties, and tryouts.",

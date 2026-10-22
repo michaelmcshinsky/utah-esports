@@ -12,9 +12,33 @@ import {
 import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
 import { FollowButton } from "@/src/components/follow-button";
+import { ReportButton } from "@/src/components/report-button";
+import { OrganizationJsonLd } from "@/src/components/seo/organization-json-ld";
 import { eq } from "drizzle-orm";
 
-export const metadata: Metadata = { title: "Organization" };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const org = await getOrganizationBySlug(db(), slug);
+  if (!org) return { title: "Organization not found" };
+  const description =
+    org.description?.slice(0, 160) ??
+    `${org.name} — Utah gaming organization${org.city ? ` (${org.city})` : ""}. Upcoming events, teams, and official contacts.`;
+  return {
+    title: org.name,
+    description,
+    alternates: { canonical: `/organizations/${org.slug}` },
+    openGraph: {
+      title: org.name,
+      description,
+      images: ["/images/home/utah-esports-banner-1.jpg"],
+    },
+  };
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function OrganizationPublicPage({
@@ -49,6 +73,7 @@ export default async function OrganizationPublicPage({
   const hasCalendar = upcoming.length > 0;
 
   return (
+    <>
     <div className="page-container py-8">
       <nav aria-label="Breadcrumb" className="text-sm text-charcoal-600">
         <Link href="/organizations" className="hover:text-redrock-600">
@@ -166,9 +191,14 @@ export default async function OrganizationPublicPage({
               ) : (
                 <ul className="space-y-1.5">
                   {orgTeams.map((t) => (
-                    <li key={t.id} className="flex items-center justify-between gap-2">
-                      <span>{t.name}</span>
-                      {t.pathway ? <Badge variant="neutral">{t.pathway}</Badge> : null}
+                    <li key={t.id}>
+                      <span className="flex items-center justify-between gap-2">
+                        <span>{t.name}</span>
+                        {t.pathway ? <Badge variant="neutral">{t.pathway}</Badge> : null}
+                      </span>
+                      {t.tryoutInfo ? (
+                        <span className="block text-xs text-charcoal-500">{t.tryoutInfo}</span>
+                      ) : null}
                     </li>
                   ))}
                 </ul>
@@ -201,10 +231,20 @@ export default async function OrganizationPublicPage({
                   </span>
                 </p>
               ) : null}
+              <ReportButton targetType="organization" targetId={org.id} />
             </CardContent>
           </Card>
         </aside>
       </div>
     </div>
+    <OrganizationJsonLd
+      name={org.name}
+      slug={org.slug}
+      description={org.description}
+      websiteUrl={org.websiteUrl}
+      contactEmail={org.contactEmail}
+      city={org.city}
+    />
+    </>
   );
 }

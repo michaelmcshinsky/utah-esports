@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/organizers" },
   title: "For organizers",
   description:
     "Publish your Utah gaming events once — keep players accurate info everywhere. Claims, recurring events, Discord announcements.",

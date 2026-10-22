@@ -11,7 +11,30 @@ import { db } from "@/src/lib/db";
 import { ReportButton } from "@/src/components/report-button";
 import { FollowButton } from "@/src/components/follow-button";
 
-export const metadata: Metadata = { title: "Community" };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const community = await getCommunityBySlug(db(), slug);
+  if (!community) return { title: "Community not found" };
+  const description =
+    community.welcomeText?.slice(0, 160) ??
+    community.description?.slice(0, 160) ??
+    `${community.name} — a Utah gaming community${community.city ? ` in ${community.city}` : ""}. See who plays, where they gather, and what's scheduled next.`;
+  return {
+    title: `${community.name} — Utah gaming community`,
+    description,
+    alternates: { canonical: `/communities/${community.slug}` },
+    openGraph: {
+      title: community.name,
+      description,
+      images: ["/images/home/utah-esports-banner-1.jpg"],
+    },
+  };
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function CommunityDetailPage({

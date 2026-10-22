@@ -12,8 +12,13 @@ import {
 } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { SearchHero } from "@/src/components/search-hero";
+import { WebsiteJsonLd } from "@/src/components/seo/website-json-ld";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = {
+  alternates: { canonical: "/" },
+};
 
 async function getHomeEvents(): Promise<EventCardModel[]> {
   const database = db();
@@ -123,6 +128,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <WebsiteJsonLd />
       <section
         className="relative text-sandstone-50"
         style={{

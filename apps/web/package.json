@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev -p 3131",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/start.js",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",

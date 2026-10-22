@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { desc, eq, ne } from "drizzle-orm";
@@ -16,7 +15,6 @@ import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
 import { ModerationActionButtons } from "@/src/components/moderation-actions";
 
-export const metadata: Metadata = { title: "Moderation" };
 export const revalidate = 0;
 
 export default async function ModerationPage() {

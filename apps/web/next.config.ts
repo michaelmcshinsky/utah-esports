@@ -55,6 +55,23 @@ const nextConfig: NextConfig = {
     const seen = new Set(LEGACY.map((r) => r.source));
     return [...LEGACY, ...generated.filter((r) => !seen.has(r.source))];
   },
+  async headers() {
+    // Baseline hardening. No global X-Frame-Options: the embeddable
+    // calendar (/embed/calendar/*) intentionally allows cross-origin framing.
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=()",
+          },
+        ],
+      },
+    ];
+  },
   webpack(config) {
     // Workspace packages use `.js` specifiers for `.ts` sources (NodeNext style).
     config.resolve.extensionAlias = {

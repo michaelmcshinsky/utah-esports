@@ -7,6 +7,7 @@ import { db } from "@/src/lib/db";
 export const metadata: Metadata = {
   title: "Places to play",
   description: "LAN centers, arcades, and venues across Utah where local gaming happens.",
+  alternates: { canonical: "/places" },
 };
 
 export const dynamic = "force-dynamic";

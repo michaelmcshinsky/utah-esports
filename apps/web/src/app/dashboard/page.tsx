@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
@@ -8,7 +7,6 @@ import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
 import { CreateOrganizationForm } from "@/src/components/create-organization-form";
 
-export const metadata: Metadata = { title: "Organizer dashboard" };
 export const revalidate = 0;
 
 export default async function DashboardPage() {

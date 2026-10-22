@@ -25,9 +25,17 @@ export const metadata: Metadata = {
   },
   description:
     "Find Utah tournaments, gaming communities, teams, and places to play. Utah's home base for local esports and gaming.",
+  icons: {
+    icon: [
+      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/favicon.png",
+  },
   openGraph: {
     siteName: SITE_NAME,
     type: "website",
+    locale: "en_US",
     images: [
       {
         url: "/images/home/utah-esports-banner-1.jpg",
@@ -36,6 +44,10 @@ export const metadata: Metadata = {
         alt: "Utah Esports",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/home/utah-esports-banner-1.jpg"],
   },
 };
 

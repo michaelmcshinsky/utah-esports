@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Schools & teams",
   description:
     "Scholastic, collegiate, youth, and independent competitive gaming programs across Utah.",
+  alternates: { canonical: "/schools" },
 };
 
 export const dynamic = "force-dynamic";
@@ -127,6 +128,11 @@ export default async function SchoolsPage() {
                   <CardContent className="text-sm">
                     {team.institution ? <p className="text-charcoal-600">{team.institution}</p> : null}
                     {team.city ? <Badge className="mt-1">{team.city}</Badge> : null}
+                    {team.tryoutInfo ? (
+                      <p className="mt-2 rounded-lg bg-sandstone-100 px-2 py-1.5 text-xs text-charcoal-700">
+                        <span className="font-semibold">Tryouts:</span> {team.tryoutInfo}
+                      </p>
+                    ) : null}
                     {team.websiteUrl ? (
                       <a
                         href={team.websiteUrl}

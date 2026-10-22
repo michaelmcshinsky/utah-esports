@@ -5,6 +5,7 @@ import { listOrganizations, listOrgEvents } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/organizations" },
   title: "Organizations",
   description: "Utah gaming organizations — communities, organizers, venues, and scholastic programs.",
 };

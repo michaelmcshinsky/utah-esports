@@ -7,7 +7,29 @@ import { db } from "@/src/lib/db";
 import { ReportButton } from "@/src/components/report-button";
 import { FollowButton } from "@/src/components/follow-button";
 
-export const metadata: Metadata = { title: "Place to play" };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const venue = await getVenueBySlug(db(), slug);
+  if (!venue) return { title: "Place to play not found" };
+  const description =
+    venue.description?.slice(0, 160) ??
+    `${venue.name}${venue.city ? ` in ${venue.city}, UT` : ""} — hours, gear, age rules, typical costs, and upcoming events for Utah players.`;
+  return {
+    title: `${venue.name}${venue.city ? `, ${venue.city}` : ""} — Utah place to play`,
+    description,
+    alternates: { canonical: `/places/${venue.slug}` },
+    openGraph: {
+      title: venue.name,
+      description,
+      images: [venue.imageUrl ?? "/images/home/utah-esports-banner-1.jpg"],
+    },
+  };
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function VenueDetailPage({
