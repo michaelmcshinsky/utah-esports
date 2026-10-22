@@ -148,6 +148,7 @@ export default async function ExplorePage({
               ? "No matching events"
               : `${result.total} event${result.total === 1 ? "" : "s"}`}
           </p>
+          <h2 className="sr-only">Search results</h2>
 
           {cards.length === 0 ? (
             <EmptyState

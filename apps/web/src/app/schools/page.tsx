@@ -126,7 +126,9 @@ export default async function SchoolsPage() {
                     <CardTitle>{team.name}</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm">
-                    {team.institution ? <p className="text-charcoal-600">{team.institution}</p> : null}
+                    {team.institution && team.name.toLowerCase() !== team.institution.toLowerCase() ? (
+                      <p className="text-charcoal-600">{team.institution}</p>
+                    ) : null}
                     {team.city ? <Badge className="mt-1">{team.city}</Badge> : null}
                     {team.tryoutInfo ? (
                       <p className="mt-2 rounded-lg bg-sandstone-100 px-2 py-1.5 text-xs text-charcoal-700">
@@ -136,7 +138,7 @@ export default async function SchoolsPage() {
                     {team.websiteUrl ? (
                       <a
                         href={team.websiteUrl}
-                        className="mt-2 inline-block text-redrock-600 hover:underline"
+                        className="mt-2 inline-flex min-h-6 items-center text-redrock-600 hover:underline"
                         rel="noopener noreferrer"
                       >
                         Official page →

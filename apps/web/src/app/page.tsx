@@ -210,7 +210,7 @@ export default async function HomePage() {
           </div>
           <Link
             href="/explore"
-            className="shrink-0 text-sm font-medium text-redrock-600 hover:text-redrock-700"
+            className="inline-flex min-h-6 shrink-0 items-center text-sm font-medium text-redrock-600 hover:text-redrock-700"
           >
             View all events →
           </Link>

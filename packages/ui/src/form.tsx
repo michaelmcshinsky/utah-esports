@@ -179,11 +179,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           ref={ref}
           id={id}
           type="checkbox"
-          className="mt-0.5 size-4 rounded border-charcoal-300 text-redrock-500 focus:ring-redrock-500"
+          className="mt-1 size-[18px] shrink-0 rounded border-charcoal-300 text-redrock-500 focus:ring-redrock-500"
           {...props}
         />
         <div className="grid gap-0.5">
-          <label htmlFor={id} className="text-sm font-medium text-charcoal-800">
+          {/* leading-6 keeps the label a ≥24px tap target (WCAG 2.5.8). */}
+          <label htmlFor={id} className="text-sm font-medium leading-6 text-charcoal-800">
             {label}
           </label>
           {hint ? <p className="text-xs text-charcoal-600">{hint}</p> : null}

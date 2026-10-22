@@ -28,6 +28,7 @@ export default async function PlacesPage() {
         re-confirmation — always check the venue&apos;s own site or call before making the drive.
         Run a venue? Claim it to keep details current.
       </p>
+      <h2 className="sr-only">All places to play</h2>
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {venues.map((venue) => (
           <Card key={venue.id} className="relative flex flex-col overflow-hidden">

@@ -103,6 +103,12 @@ export function MediaImage({
         className,
       )}
     >
+      {/* Placeholder art is ALWAYS the background layer: lazy images show
+          art while loading instead of an empty dark box, and failed images
+          degrade to the same themed graphic. */}
+      <div aria-hidden className="absolute inset-0">
+        <PlaceholderArt kind={kind} seed={seed} />
+      </div>
       {src ? (
         // Legacy migrated assets are statically sized; plain img keeps
         // zero-dependency local rendering with lazy loading.
@@ -112,20 +118,15 @@ export function MediaImage({
           loading="lazy"
           decoding="async"
           className={cn(
-            "h-full w-full",
+            "relative h-full w-full",
             fit === "cover" ? "object-cover" : "object-contain p-4",
           )}
         />
-      ) : (
-        <>
-          <PlaceholderArt kind={kind} seed={seed} />
-          {overlayText ? (
-            <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-charcoal-950/80 to-transparent px-3 pb-2 pt-6 text-xs font-semibold uppercase tracking-wide text-sandstone-100">
-              {overlayText}
-            </span>
-          ) : null}
-        </>
-      )}
+      ) : overlayText ? (
+        <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-charcoal-950/80 to-transparent px-3 pb-2 pt-6 text-xs font-semibold uppercase tracking-wide text-sandstone-100">
+          {overlayText}
+        </span>
+      ) : null}
     </div>
   );
 }

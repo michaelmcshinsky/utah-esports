@@ -10,7 +10,6 @@ export function SiteFooter() {
             src="/images/site/utah-esports-white-2.png"
             alt="Utah Esports"
             className="h-9 w-auto"
-            loading="lazy"
           />
           <p className="mt-2 text-sm">
             Find something to play, people to play with, and a path into the local competitive
@@ -95,9 +94,10 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-charcoal-800 py-4 text-center text-xs text-charcoal-400">
         © {new Date().getFullYear()} Utah Esports · Community-maintained ·{" "}
-        <Link href="/calendar/global.ics" className="underline hover:text-white">
+        {/* Plain anchor: <Link> would RSC-prefetch a binary route and 404. */}
+        <a href="/calendar/global.ics" download className="underline hover:text-white">
           Subscribe to the calendar
-        </Link>
+        </a>
       </div>
     </footer>
   );

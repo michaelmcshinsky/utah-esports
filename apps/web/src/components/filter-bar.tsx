@@ -157,7 +157,7 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
       </form>
 
       <details className="mt-4 border-t border-charcoal-100 pt-4" open={activeCount > 0}>
-        <summary className="cursor-pointer text-sm font-medium text-charcoal-700">
+        <summary className="inline-flex min-h-6 cursor-pointer items-center py-1 text-sm font-medium text-charcoal-700">
           More filters {activeCount > 0 ? `(${activeCount} active)` : ""}
         </summary>
         <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

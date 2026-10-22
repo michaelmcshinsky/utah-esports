@@ -40,6 +40,7 @@ export default async function OrganizationsIndexPage() {
         Communities, organizers, venues, and programs that maintain listings here. Claimed
         ownership means a moderator verified affiliation — not a safety endorsement.
       </p>
+      <h2 className="sr-only">All organizations</h2>
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {withCounts.map(({ org, upcoming }) => (
           <Card key={org.id} className="relative">

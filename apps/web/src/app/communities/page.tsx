@@ -58,7 +58,9 @@ export default async function CommunitiesPage({
           }
         />
       ) : (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <>
+          <h2 className="sr-only">All communities</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {communities.map(({ community, games }) => (
             <Card key={community.id} className="relative flex flex-col">
               <CardHeader>
@@ -93,6 +95,7 @@ export default async function CommunitiesPage({
             </Card>
           ))}
         </div>
+        </>
       )}
     </div>
   );
