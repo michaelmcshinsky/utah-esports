@@ -2,6 +2,14 @@ packages:
   - "apps/*"
   - "packages/*"
 
+# Netlify's Next.js adapter (OpenNext) requires public hoisting with pnpm;
+# without it the deployed function omits `next` and every request crashes.
+# https://opennext.js.org/netlify#pnpm-support
+# (.npmrc duplicates this for tools that still read it; PNPM_FLAGS in
+# netlify.toml covers Netlify's own install step.)
+publicHoistPattern:
+  - "*"
+
 allowBuilds:
   esbuild: true
   sharp: true
