@@ -1,0 +1,43 @@
+name: Netlify build repro
+
+# Reproduces Netlify's cloud pipeline (install already done by setup; runs
+# the exact `netlify build` steps with the Next adapter) on Linux so any
+# packaging failure shows up in OUR logs instead of being gated behind
+# Netlify's auth-only build logs.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  netlify-build:
+    runs-on: ubuntu-latest
+    env:
+      CI: "1"
+      SITE_ID: 42a26fb2-ff24-4d73-a0b5-58e24045c42e
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install (Netlify-style flags)
+        run: pnpm install --shamefully-hoist --force
+
+      - name: netlify build (offline, filter web)
+        run: npx --yes netlify-cli@latest build --offline --filter "@utah-esports/web"
+
+      - name: Report function bundle
+        run: |
+          echo "=== functions-internal ==="
+          find apps/web/.netlify/functions-internal -type f | wc -l
+          du -sh apps/web/.netlify/functions-internal || true
+          echo "=== node_modules present? ==="
+          find apps/web/.netlify -name "node_modules" -maxdepth 4 -type d || true
+          echo "=== handler package.json deps ==="
+          cat apps/web/.netlify/functions-internal/___netlify-server-handler/package.json 2>/dev/null | head -40 || true
