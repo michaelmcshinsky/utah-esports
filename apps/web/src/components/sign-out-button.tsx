@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Button } from "@utah-esports/ui";
 import { createSupabaseBrowserClient } from "@/src/lib/supabase/browser";
 
 export function SignOutButton() {
+  const router = useRouter();
   return (
     <Button
       variant="outline"
@@ -11,7 +13,8 @@ export function SignOutButton() {
       onClick={async () => {
         const supabase = createSupabaseBrowserClient();
         await supabase.auth.signOut();
-        window.location.href = "/";
+        router.push("/");
+        router.refresh();
       }}
     >
       Sign out

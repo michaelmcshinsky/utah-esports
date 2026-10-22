@@ -177,6 +177,7 @@ export const venues = pgTable(
     agePolicy: agePolicyEnum("age_policy").notNull().default("unknown"),
     accessibilityNotes: text("accessibility_notes"),
     typicalCostNotes: text("typical_cost_notes"),
+    imageUrl: text("image_url"),
     status: listingStatusEnum("status").notNull().default("published"),
     sourceId: uuid("source_id"),
     lastConfirmedAt: timestamp("last_confirmed_at", { withTimezone: true }),

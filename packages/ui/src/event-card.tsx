@@ -4,6 +4,7 @@ import { cn } from "./lib.js";
 import { Badge } from "./badge.js";
 import { Card, CardContent, CardFooter } from "./card.js";
 import { FreshnessBadge } from "./freshness.js";
+import { MediaImage } from "./media-image.js";
 
 /**
  * The event card answers real questions before anyone clicks:
@@ -17,6 +18,7 @@ export type EventCardModel = {
   slug: string;
   title: string;
   gameNames: string[];
+  imageUrl?: string | null;
   startsAt: Date;
   endsAt?: Date | null;
   format: "in_person" | "online" | "hybrid";
@@ -113,11 +115,24 @@ export function EventCard({
   return (
     <Card
       className={cn(
-        "flex h-full flex-col transition-shadow hover:shadow-card-hover",
+        "flex h-full flex-col overflow-hidden transition-shadow hover:shadow-card-hover",
         cancelled && "opacity-70",
         className,
       )}
     >
+      <MediaImage
+        src={event.imageUrl}
+        alt={`${event.title} poster`}
+        kind="event"
+        ratio="video"
+        label={event.gameNames[0] ?? event.title}
+        overlayText={
+          event.imageUrl
+            ? undefined
+            : (event.gameNames[0] ?? (event.eventType ? EVENT_TYPE_LABELS[event.eventType] : undefined))
+        }
+        className="rounded-t-card"
+      />
       <CardContent className="flex flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           {event.gameNames.slice(0, 3).map((g) => (

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@utah-esports/ui";
 
 export function DiscordLinkPanel() {
+  const router = useRouter();
   const [code, setCode] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -13,7 +15,7 @@ export function DiscordLinkPanel() {
     setError(null);
     const res = await fetch("/api/discord/link", { method: "POST" });
     if (res.status === 401) {
-      window.location.href = "/sign-in";
+      router.push("/sign-in");
       return;
     }
     if (res.ok) {

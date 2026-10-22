@@ -82,6 +82,7 @@ export const eventOccurrences = pgTable(
     lat: doublePrecision("lat"),
     lng: doublePrecision("lng"),
     onlineUrl: text("online_url"),
+    imageUrl: text("image_url"),
     agePolicy: agePolicyEnum("age_policy").notNull().default("unknown"),
     skillLevel: skillLevelEnum("skill_level").notNull().default("unknown"),
     entryMode: entryModeEnum("entry_mode").notNull().default("individual"),

@@ -66,9 +66,86 @@ export default function OrganizersPage() {
         </Link>
       </div>
 
-      <p className="mt-8 max-w-2xl text-sm text-charcoal-600">
-        Basic listings and corrections stay free — forever. Paid tools (if they ever exist) will
-        save you administrative work, never gate accuracy.
+      <section className="mt-12" aria-labelledby="workflow-heading">
+        <h2 id="workflow-heading" className="section-heading">
+          How publishing works
+        </h2>
+        <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              title: "Submit or create",
+              body: "Paste an event URL on the public form, or build the listing yourself in the dashboard. Weekly series are created once and materialize dated occurrences automatically.",
+            },
+            {
+              title: "Moderator review",
+              body: "A human checks the essentials — when, where, cost, ages, register link — and duplicate detection flags likely matches so nothing double-posts.",
+            },
+            {
+              title: "Publish everywhere",
+              body: "The public page, calendar feeds, and your embeddable widget update from one record. Authorized Discord channels get the announcement automatically.",
+            },
+            {
+              title: "Changes propagate",
+              body: "Edits are field-audited, and followers of your events, org, or games get a single update notice. You keep editing on your own platform of record elsewhere? Just edit here too.",
+            },
+            {
+              title: "Freshness nudges",
+              body: "If a listing goes 45 days without confirmation, we email you and mark it needs-verification — one click from the dashboard restores full status.",
+            },
+            {
+              title: "After the event",
+              body: "Ended events move to completed (their URLs keep working) and we ask once for corrections. Broken registration links show up in your link-health queue.",
+            },
+          ].map((s, i) => (
+            <li key={s.title} className="rounded-card border border-charcoal-200 bg-white p-5">
+              <span className="font-display text-sm font-bold text-redrock-500">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3 className="mt-1 font-semibold text-charcoal-900">{s.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-charcoal-600">{s.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="mt-12 max-w-3xl" aria-labelledby="faq-heading">
+        <h2 id="faq-heading" className="section-heading">
+          Organizer FAQ
+        </h2>
+        <dl className="mt-4 space-y-4">
+          {[
+            {
+              q: "Do I have to move registration here?",
+              a: "No — and please don't. Registration stays on start.gg, Facebook, or your own site; we link out and track the click so you keep your tools and we keep discovery.",
+            },
+            {
+              q: "What does it cost?",
+              a: "Basic listings, corrections, and safety information are free permanently. If paid tiers ever exist, they'll save measurable admin work — they'll never gate keeping a listing accurate.",
+            },
+            {
+              q: "Can I manage a team or a school program too?",
+              a: "Yes. Organizations can host events, teams, and school programs together; roles (owner/editor/viewer) control who can edit. Schools should link official contacts only.",
+            },
+            {
+              q: "What about minors?",
+              a: "Youth events must state age rules and use official organizational contacts — no public personal contact details for minors, ever. We'll reject submissions that don't follow this.",
+            },
+            {
+              q: "Will my Facebook event import automatically?",
+              a: "Not yet. Paste its URL on the submit form (we keep the source link) or maintain the listing directly. start.gg tournaments sync automatically when a token is configured.",
+            },
+          ].map((item) => (
+            <div key={item.q} className="border-b border-charcoal-200 pb-4">
+              <dt className="font-semibold text-charcoal-900">{item.q}</dt>
+              <dd className="mt-1 text-sm leading-relaxed text-charcoal-600">{item.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <p className="mt-10 max-w-2xl text-sm text-charcoal-600">
+        Questions or corrections: every public listing has a Report link, and org owners can reach
+        us from the dashboard.
       </p>
     </div>
   );

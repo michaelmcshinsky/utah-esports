@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge, Card, CardContent, CardHeader, CardTitle } from "@utah-esports/ui";
+import { Badge, Card, CardContent, CardHeader, CardTitle, MediaImage } from "@utah-esports/ui";
 import { listTeamsByPathway } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
@@ -49,25 +49,53 @@ export default async function SchoolsPage() {
       <h1 className="font-display text-3xl font-bold text-charcoal-900">Schools & teams</h1>
       <p className="mt-2 max-w-2xl text-charcoal-600">
         Utah&apos;s scholastic and collegiate scenes are run by schools and statewide bodies — not
-        by this site. We point you to the official programs and contacts.
+        by this site. We point you to the official programs and contacts, keeping eligibility-
+        controlled varsity teams separate from open community clubs.
       </p>
 
-      <div className="mt-6 rounded-card border border-charcoal-200 bg-white p-4 text-sm text-charcoal-700">
-        <p className="font-medium">Official pathways in Utah</p>
-        <ul className="mt-2 list-disc space-y-1 pl-5">
-          <li>
-            <a href="https://www.uhsaa.org/" className="text-redrock-600 hover:underline" rel="noopener noreferrer">
-              UHSAA
-            </a>{" "}
-            — sanctioned high school esports championships
-          </li>
-          <li>
-            <a href="https://www.playvs.com/" className="text-redrock-600 hover:underline" rel="noopener noreferrer">
-              PlayVS
-            </a>{" "}
-            — school league platform used by many Utah schools
-          </li>
-        </ul>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="rounded-card border border-charcoal-200 bg-white p-4 text-sm text-charcoal-700">
+          <p className="font-medium text-charcoal-900">Official pathways in Utah</p>
+          <ul className="mt-2 list-disc space-y-1.5 pl-5">
+            <li>
+              <a href="https://www.uhsaa.org/" className="text-redrock-600 hover:underline" rel="noopener noreferrer">
+                UHSAA
+              </a>{" "}
+              — sanctioned high school state championships
+            </li>
+            <li>
+              <a href="https://www.playvs.com/" className="text-redrock-600 hover:underline" rel="noopener noreferrer">
+                PlayVS
+              </a>{" "}
+              — season-based school leagues used by Utah schools
+            </li>
+            <li>
+              <a href="https://kengarffesports.com/" className="text-redrock-600 hover:underline" rel="noopener noreferrer">
+                Ken Garff Esports
+              </a>{" "}
+              — school-oriented programming and events
+            </li>
+            <li>
+              University programs (UVU, U of U, BYU, USU, Weber) set their own eligibility —
+              contact each school directly.
+            </li>
+          </ul>
+        </div>
+        <div className="rounded-card border border-charcoal-200 bg-white p-4 text-sm text-charcoal-700">
+          <p className="font-medium text-charcoal-900">Starting a program?</p>
+          <ol className="mt-2 list-decimal space-y-1.5 pl-5">
+            <li>Gauge interest — a lunch club needs five people, not fifty.</li>
+            <li>Check your school&apos;s club process and advisor requirements.</li>
+            <li>Pick one or two games your group already plays.</li>
+            <li>
+              Publish here:{" "}
+              <Link href="/submit" className="text-redrock-600 hover:underline">
+                submit an event
+              </Link>{" "}
+              or a meetup so recruits can find you.
+            </li>
+          </ol>
+        </div>
       </div>
 
       {byPathway.map((pathway) => (
@@ -83,7 +111,16 @@ export default async function SchoolsPage() {
           ) : (
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {pathway.teams.map((team) => (
-                <Card key={team.id}>
+                <Card key={team.id} className="overflow-hidden">
+                  <MediaImage
+                    src={team.imageUrl}
+                    alt={`${team.name} logo`}
+                    kind="team"
+                    ratio="wide"
+                    fit="contain"
+                    label={team.name}
+                    overlayText={team.imageUrl ? undefined : undefined}
+                  />
                   <CardHeader>
                     <CardTitle>{team.name}</CardTitle>
                   </CardHeader>

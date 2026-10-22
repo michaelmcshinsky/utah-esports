@@ -22,6 +22,13 @@
       "when": 1792618333165,
       "tag": "0002_worthless_malcolm_colcord",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792636740410,
+      "tag": "0003_unknown_gunslinger",
+      "breakpoints": true
     }
   ]
 }

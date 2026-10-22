@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { asc, eq } from "drizzle-orm";
 import { load as parseYaml } from "js-yaml";
@@ -130,6 +130,39 @@ function walkMarkdownFiles(dir: string): string[] {
   return out;
 }
 
+/** Repo-root-relative access to the web app's public images (migrated legacy assets). */
+const IMAGES_DIR = join(
+  import.meta.dirname,
+  "..",
+  "..",
+  "..",
+  "..",
+  "apps",
+  "web",
+  "public",
+  "images",
+);
+
+function findImage(subdir: string, key: string): string | null {
+  for (const ext of [".jpg", ".jpeg", ".png", ".gif", ".svg"]) {
+    if (existsSync(join(IMAGES_DIR, subdir, `${key}${ext}`))) {
+      return `/images/${subdir}/${key}${ext}`;
+    }
+  }
+  return null;
+}
+
+/** Map of lowercase filename-stem → public URL for migrated event posters. */
+function buildEventImageMap(): Map<string, string> {
+  const dir = join(IMAGES_DIR, "events");
+  const map = new Map<string, string>();
+  if (!existsSync(dir)) return map;
+  for (const file of readdirSync(dir)) {
+    map.set(file.replace(/\.[^.]+$/, "").toLowerCase(), `/images/events/${file}`);
+  }
+  return map;
+}
+
 export async function seedLegacy() {
   const db = getDb();
   const legacyDir = join(import.meta.dirname, "..", "..", "seed", "legacy");
@@ -141,12 +174,19 @@ export async function seedLegacy() {
   let venueCount = 0;
   for (const v of legacyVenues) {
     const slug = slugify(v.name);
+    const imageUrl = v.image ? findImage("vendors", v.image) : null;
     const [existing] = await db.select().from(venues).where(eq(venues.slug, slug)).limit(1);
-    if (existing) continue;
+    if (existing) {
+      if (!existing.imageUrl && imageUrl) {
+        await db.update(venues).set({ imageUrl }).where(eq(venues.id, existing.id));
+      }
+      continue;
+    }
     await db.insert(venues).values({
       slug,
       name: v.name,
       websiteUrl: v.url ?? null,
+      imageUrl,
       status: "needs_verification",
       sourceId: source.id,
       lastConfirmedAt: new Date("2019-06-01T00:00:00Z"),
@@ -160,13 +200,19 @@ export async function seedLegacy() {
   let teamCount = 0;
   for (const t of legacyTeams) {
     const slug = slugify(t.team_name ? `${t.name} ${t.team_name}` : t.name);
+    const imageUrl = t.image ? findImage("teams", t.image) : null;
     const [existing] = await db.select().from(teams).where(eq(teams.slug, slug)).limit(1);
-    if (existing) continue;
+    if (existing) {
+      if (!existing.imageUrl && imageUrl) {
+        await db.update(teams).set({ imageUrl }).where(eq(teams.id, existing.id));
+      }
+      continue;
+    }
     const level = (t.level ?? "Local").toLowerCase();
     const pathway =
       level === "university" ? "collegiate" : level === "high school" ? "high_school" : "independent_team";
     const geo = geoForCity(t.name);
-    const [row] = await db
+    await db
       .insert(teams)
       .values({
         name: t.team_name ? `${t.name} — ${t.team_name}` : t.name,
@@ -175,16 +221,12 @@ export async function seedLegacy() {
         institution: level === "university" || level === "high school" ? t.name : null,
         city: geo ? t.name : null,
         websiteUrl: t.url ?? null,
+        imageUrl,
         status: "needs_verification",
         sourceId: source.id,
         lastConfirmedAt: new Date("2019-06-01T00:00:00Z"),
       })
       .returning();
-    // Seed social links as roster-free org shells only; Discord invites from
-    // 2019 are almost certainly dead — link checks will flag them.
-    if (t.discord && row) {
-      // kept in description-level data only; no scraping or re-publishing invites
-    }
     teamCount++;
   }
   console.log(`legacy teams imported: ${teamCount}`);
@@ -234,6 +276,7 @@ export async function seedLegacy() {
   // Historical events -----------------------------------------------------
   const eventsRoot = join(legacyDir, "_events");
   const files = walkMarkdownFiles(eventsRoot);
+  const eventImages = buildEventImageMap();
   let eventCount = 0;
   const slugUpdates: Array<{ from: string; to: string }> = [];
   const venueRows = await db.select().from(venues);
@@ -250,8 +293,15 @@ export async function seedLegacy() {
       // Slug date must match the legacy filename's LOCAL date, not UTC.
       const ymd = startDate.toISOString().slice(0, 10);
       const slug = `${ymd}-${slugify(title)}`;
+      const fileStem = (file.split(/[\\/]/).pop() ?? "").replace(/\.md$/i, "").toLowerCase();
+      const imageUrl = eventImages.get(fileStem) ?? null;
       const [existing] = await db.select().from(eventOccurrences).where(eq(eventOccurrences.slug, slug)).limit(1);
-      if (existing) continue;
+      if (existing) {
+        if (!existing.imageUrl && imageUrl) {
+          await db.update(eventOccurrences).set({ imageUrl }).where(eq(eventOccurrences.id, existing.id));
+        }
+        continue;
+      }
       const venueTitle = typeof data.venue_title === "string" ? data.venue_title : null;
       const venueSlug = venueTitle ? slugify(venueTitle) : null;
       const venue = venueSlug ? venueBySlug.get(venueSlug) : undefined;
@@ -274,9 +324,10 @@ export async function seedLegacy() {
           lat: venue?.lat ?? geo?.lat ?? null,
           lng: venue?.lng ?? geo?.lng ?? null,
           venueId: venue?.id ?? null,
-          registrationUrl: typeof data.event_url === "string" ? data.event_url : null,
-          registrationState: "unknown",
-          status: "completed",
+        registrationUrl: typeof data.event_url === "string" ? data.event_url : null,
+        registrationState: "unknown",
+        imageUrl,
+        status: "completed",
           sourceId: source.id,
           lastObservedAt: now,
           lastConfirmedAt: startsAt,
@@ -297,6 +348,37 @@ export async function seedLegacy() {
     }
   }
   console.log(`legacy events imported: ${eventCount}`);
+
+  // Image backfill: existing legacy events → migrated posters. Stem comes
+  // from the redirects table (original filename) or a direct slug match.
+  const redirectRows = await db.select().from(redirects);
+  const stemBySlug = new Map<string, string>();
+  for (const r of redirectRows) {
+    if (r.fromPath.startsWith("/events/") && r.toPath.startsWith("/events/")) {
+      stemBySlug.set(
+        r.toPath.slice("/events/".length),
+        r.fromPath.slice("/events/".length).toLowerCase(),
+      );
+    }
+  }
+  const legacyEvents = await db
+    .select({ id: eventOccurrences.id, slug: eventOccurrences.slug, imageUrl: eventOccurrences.imageUrl })
+    .from(eventOccurrences)
+    .where(eq(eventOccurrences.sourceId, source.id));
+  let imageBackfilled = 0;
+  for (const ev of legacyEvents) {
+    if (ev.imageUrl) continue;
+    const stem = stemBySlug.get(ev.slug) ?? (eventImages.has(ev.slug) ? ev.slug : null);
+    const image = stem ? eventImages.get(stem) : null;
+    if (image) {
+      await db.update(eventOccurrences).set({ imageUrl: image }).where(eq(eventOccurrences.id, ev.id));
+      imageBackfilled++;
+    }
+  }
+  if (imageBackfilled > 0) {
+    console.log(`legacy event images backfilled: ${imageBackfilled}`);
+  }
+
   for (const r of slugUpdates) {
     const [existing] = await db.select().from(redirects).where(eq(redirects.fromPath, r.from)).limit(1);
     if (!existing) await db.insert(redirects).values({ fromPath: r.from, toPath: r.to, statusCode: 301 });

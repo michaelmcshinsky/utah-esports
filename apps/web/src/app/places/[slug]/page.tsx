@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, EmptyState, FreshnessBadge } from "@utah-esports/ui";
+import { Card, CardContent, CardHeader, CardTitle, EmptyState, FreshnessBadge, MediaImage } from "@utah-esports/ui";
 import { getVenueBySlug, listUpcomingEventsForVenue } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { ReportButton } from "@/src/components/report-button";
@@ -32,7 +32,23 @@ export default async function VenueDetailPage({
       <div className="mt-4 grid gap-8 lg:grid-cols-[1fr_20rem]">
         <article>
           <h1 className="font-display text-3xl font-bold">{venue.name}</h1>
-          {venue.description ? <p className="mt-3 text-charcoal-700">{venue.description}</p> : null}
+          <MediaImage
+            src={venue.imageUrl}
+            alt={venue.name}
+            kind="venue"
+            ratio="wide"
+            className="mt-4 rounded-card"
+            label={venue.city ?? venue.name}
+            overlayText={venue.imageUrl ? undefined : (venue.city ?? "Utah venue")}
+          />
+          {venue.description ? (
+            <p className="mt-4 text-charcoal-700">{venue.description}</p>
+          ) : (
+            <p className="mt-4 text-sm text-charcoal-600">
+              This venue hasn&apos;t published a description yet. Hours, gear, and age rules below
+              come from the last confirmed check — call ahead if you&apos;re making a special trip.
+            </p>
+          )}
           <dl className="mt-6 grid gap-3 sm:grid-cols-2">
             <Info label="Address" value={[venue.address, venue.city, venue.state, venue.postalCode].filter(Boolean).join(", ")} />
             <Info label="Hours" value={venue.hours} />

@@ -28,6 +28,14 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: SITE_NAME,
     type: "website",
+    images: [
+      {
+        url: "/images/home/utah-esports-banner-1.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Utah Esports",
+      },
+    ],
   },
 };
 

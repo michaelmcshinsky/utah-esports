@@ -54,6 +54,7 @@ export default async function ExplorePage({
         slug: event.slug,
         title: event.title,
         gameNames: rows.map((r) => r.game.name),
+        imageUrl: event.imageUrl,
         startsAt: event.startsAt,
         endsAt: event.endsAt,
         format: event.format,
@@ -100,9 +101,14 @@ export default async function ExplorePage({
           <h1 className="font-display text-2xl font-bold text-charcoal-900 sm:text-3xl">
             Explore events
           </h1>
-          <p className="mt-1 text-sm text-charcoal-600">
-            One search across every listing — switch between list, calendar, and map without
-            losing filters.
+          <p className="mt-1 max-w-xl text-sm text-charcoal-600">
+            One search across every listing — tournaments, casual weeklies, watch parties,
+            workshops, and tryouts. Switch between list, calendar, and map without losing your
+            filters, and share any result by copying the URL: the search state lives in it.
+          </p>
+          <p className="mt-1 text-xs text-charcoal-500">
+            Every result carries a last-checked timestamp. Stale listings still appear (labeled)
+            rather than vanish — organizers are nudged to re-confirm them.
           </p>
         </div>
         <nav

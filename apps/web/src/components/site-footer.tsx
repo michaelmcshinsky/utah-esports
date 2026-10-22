@@ -5,7 +5,13 @@ export function SiteFooter() {
     <footer className="mt-16 border-t border-charcoal-800 bg-charcoal-900 text-charcoal-300">
       <div className="page-container grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="font-display text-lg font-bold text-sandstone-50">Utah Esports</p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/site/utah-esports-white-2.png"
+            alt="Utah Esports"
+            className="h-9 w-auto"
+            loading="lazy"
+          />
           <p className="mt-2 text-sm">
             Find something to play, people to play with, and a path into the local competitive
             scene.

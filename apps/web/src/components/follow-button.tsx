@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@utah-esports/ui";
 
 export type FollowKind = "event" | "game" | "community" | "organization" | "venue";
@@ -14,6 +15,7 @@ export function FollowButton({
   targetId: string;
   size?: "sm" | "md";
 }) {
+  const router = useRouter();
   const [following, setFollowing] = useState(false);
   const [checked, setChecked] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -42,7 +44,7 @@ export function FollowButton({
       method: following ? "DELETE" : "POST",
     });
     if (res.status === 401) {
-      window.location.href = "/sign-in";
+      router.push("/sign-in");
       return;
     }
     if (res.ok) setFollowing(!following);

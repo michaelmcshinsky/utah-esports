@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, FreshnessBadge } from "@utah-esports/ui";
+import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, FreshnessBadge, MediaImage, Avatar } from "@utah-esports/ui";
 import {
   getOrganizationBySlug,
   listOrgEvents,
@@ -68,6 +68,16 @@ export default async function OrganizationPublicPage({
           <Badge variant="warning">Unconfirmed ownership</Badge>
         )}
       </div>
+
+      <MediaImage
+        src={null}
+        alt={`${org.name} banner`}
+        kind="organization"
+        ratio="wide"
+        className="mt-4 rounded-card"
+        label={org.name}
+        overlayText={`${org.name}${org.city ? ` · ${org.city}` : ""}`}
+      />
       {org.description ? (
         <p className="mt-3 max-w-2xl text-charcoal-700">{org.description}</p>
       ) : (
@@ -181,8 +191,14 @@ export default async function OrganizationPublicPage({
                 “Claimed” means ownership was checked — not a safety or quality endorsement.
               </p>
               {org.contactEmail ? (
-                <p className="text-xs text-charcoal-500">
-                  Contact: <a href={`mailto:${org.contactEmail}`} className="underline">{org.contactEmail}</a>
+                <p className="flex items-center gap-2 text-xs text-charcoal-500">
+                  <Avatar name={org.name} size="sm" decorative />
+                  <span>
+                    Contact:{" "}
+                    <a href={`mailto:${org.contactEmail}`} className="underline">
+                      {org.contactEmail}
+                    </a>
+                  </span>
                 </p>
               ) : null}
             </CardContent>

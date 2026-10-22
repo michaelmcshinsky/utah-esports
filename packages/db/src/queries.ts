@@ -248,7 +248,7 @@ export async function listTeamsByPathway(db: Database, pathway?: string) {
   const rows = await db
     .select({ team: teams })
     .from(teams)
-    .where(eq(teams.status, "active"))
+    .where(inArray(teams.status, ["active", "needs_verification"] as const))
     .orderBy(asc(teams.name));
   if (!pathway) return rows.map((r) => r.team);
   return rows.map((r) => r.team).filter((t) => t.pathway === pathway);

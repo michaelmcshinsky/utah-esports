@@ -9,6 +9,8 @@ import {
   CardHeader,
   CardTitle,
   FreshnessBadge,
+  MediaImage,
+  Avatar,
   formatPrice,
   formatEventDate,
 } from "@utah-esports/ui";
@@ -128,6 +130,21 @@ export default async function EventDetailPage({
           <p className="mt-2 text-lg font-medium text-redrock-600">
             {formatEventDate(event.startsAt, event.endsAt)}
           </p>
+
+          <MediaImage
+            src={event.imageUrl}
+            alt={`${event.title} poster`}
+            kind="event"
+            ratio="wide"
+            className="mt-5 rounded-card"
+            label={gameRows[0]?.game.name ?? event.title}
+            overlayText={
+              event.imageUrl
+                ? undefined
+                : (gameRows[0]?.game.name ??
+                  (event.city ? `${event.city}, Utah` : "Utah gaming event"))
+            }
+          />
 
           {cancelled ? (
             <Alert variant="danger" title="Cancelled" className="mt-4">
@@ -281,8 +298,11 @@ export default async function EventDetailPage({
                 What should I bring?
               </h2>
               <p className="mt-2 text-sm text-charcoal-600">
-                Not specified. Bring your controller/console/PC as appropriate and check with the
-                organizer if unsure.
+                The organizer hasn&apos;t listed specifics. As a rule of thumb for Utah gaming
+                events: bring your controller (and a spare if you have one), a phone charger,
+                cash or card for venue fees, and arrive 15–20 minutes early for check-in. If the
+                event is BYOD, the venue page will say so — otherwise assume gear is provided.
+                Still unsure? Message the contact below before you drive over.
               </p>
             </section>
           )}
@@ -321,27 +341,32 @@ export default async function EventDetailPage({
             <h2 id="contact" className="text-lg font-semibold">
               Who can answer questions?
             </h2>
-            <p className="mt-2 text-charcoal-700">
+            <div className="mt-3 flex items-start gap-3">
               {event.contactName ? (
-                <>
-                  {event.contactName}
-                  {event.contactEmail ? (
-                    <>
-                      {" · "}
-                      <a href={`mailto:${event.contactEmail}`} className="text-redrock-600 hover:underline">
-                        {event.contactEmail}
-                      </a>
-                    </>
-                  ) : null}
-                </>
-              ) : event.contactEmail ? (
-                <a href={`mailto:${event.contactEmail}`} className="text-redrock-600 hover:underline">
-                  {event.contactEmail}
-                </a>
-              ) : (
-                "Organizer contact not listed."
-              )}
-            </p>
+                <Avatar name={event.contactName} size="md" decorative />
+              ) : null}
+              <p className="text-charcoal-700">
+                {event.contactName ? (
+                  <>
+                    {event.contactName}
+                    {event.contactEmail ? (
+                      <>
+                        {" · "}
+                        <a href={`mailto:${event.contactEmail}`} className="text-redrock-600 hover:underline">
+                          {event.contactEmail}
+                        </a>
+                      </>
+                    ) : null}
+                  </>
+                ) : event.contactEmail ? (
+                  <a href={`mailto:${event.contactEmail}`} className="text-redrock-600 hover:underline">
+                    {event.contactEmail}
+                  </a>
+                ) : (
+                  "Organizer contact not listed — use the Report link if details look wrong, or reach out through the linked registration page."
+                )}
+              </p>
+            </div>
             {relatedCommunity ? (
               <p className="mt-4 text-sm text-charcoal-700">
                 Related community:{" "}

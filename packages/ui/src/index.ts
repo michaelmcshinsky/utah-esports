@@ -38,3 +38,5 @@ export {
   formatPrice,
   type EventCardModel,
 } from "./event-card.js";
+export { MediaImage, type MediaImageProps, type MediaKind, type MediaRatio } from "./media-image.js";
+export { Avatar, initialsOf, avatarColor, type AvatarProps } from "./avatar.js";

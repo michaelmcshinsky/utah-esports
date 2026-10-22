@@ -30,10 +30,16 @@ export default async function CommunitiesPage({
     <div className="page-container py-8">
       <h1 className="font-display text-3xl font-bold text-charcoal-900">Communities</h1>
       <p className="mt-2 max-w-2xl text-charcoal-600">
-        Where Utah&apos;s players gather. Discord is a destination, not a requirement — basic info
-        is always here. Filters:{" "}
+        Where Utah&apos;s players gather between events — Discord servers, Facebook groups, and
+        long-running scenes organized by game. Discord is a destination, not a prerequisite: the
+        basics (who they are, what they play, when they meet) are always on this site. Filters:{" "}
         {game ? <Badge variant="accent">{game}</Badge> : null}{" "}
         {city ? <Badge variant="accent">{city}</Badge> : null}
+      </p>
+      <p className="mt-2 max-w-2xl text-sm text-charcoal-500">
+        Looking to join? Open a community page, read the welcome note and code of conduct, and
+        introduce yourself — mention you found them here. Communities marked with a recent check
+        badge were confirmed within the last month; older ones may need a nudge.
       </p>
 
       {communities.length === 0 ? (

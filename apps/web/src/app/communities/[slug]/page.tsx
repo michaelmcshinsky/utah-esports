@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, FreshnessBadge } from "@utah-esports/ui";
+import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, FreshnessBadge, MediaImage } from "@utah-esports/ui";
 import {
   getCommunityBySlug,
   getCommunityGames,
@@ -41,7 +41,23 @@ export default async function CommunityDetailPage({
       <div className="mt-4 grid gap-8 lg:grid-cols-[1fr_20rem]">
         <article>
           <h1 className="font-display text-3xl font-bold">{community.name}</h1>
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <MediaImage
+            src={null}
+            alt={`${community.name} banner`}
+            kind="community"
+            ratio="wide"
+            className="mt-4 rounded-card"
+            label={games[0]?.game.name ?? community.name}
+            overlayText={
+              games.length
+                ? `${games
+                    .map((g) => g.game.name)
+                    .slice(0, 3)
+                    .join(" · ")}${community.city ? ` · ${community.city}` : ""}`
+                : (community.city ?? "Utah community")
+            }
+          />
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {games.map((g) => (
               <Link key={g.game.id} href={`/communities?game=${g.game.slug}`}>
                 <Badge variant="info">{g.game.name}</Badge>
@@ -55,7 +71,13 @@ export default async function CommunityDetailPage({
             <p className="mt-4 text-charcoal-700">{community.description}</p>
           ) : (
             <p className="mt-4 text-sm text-charcoal-600">
-              This community hasn&apos;t published a description yet.
+              This scene doesn&apos;t have a written description yet — treat the join links on this
+              page as the front door: introduce yourself, read the pinned rules, and ask where
+              newcomers usually start. Don&apos;t see your game? The{" "}
+              <Link href="/explore" className="text-redrock-600 hover:underline">
+                event explorer
+              </Link>{" "}
+              lists every game with upcoming Utah events.
             </p>
           )}
           {community.codeOfConductUrl ? (
