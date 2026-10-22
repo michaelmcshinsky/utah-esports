@@ -13,15 +13,15 @@
     "build": "echo skip"
   },
   "dependencies": {
-    "discord.js": "^14.20.0",
     "@utah-esports/core": "workspace:*",
     "@utah-esports/db": "workspace:*",
     "date-fns": "^4.1.0",
+    "discord.js": "^14.20.0",
     "drizzle-orm": "^0.45.4",
     "pg": "^8.16.3"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.19.2",
     "@types/pg": "^8.15.6",
     "@utah-esports/eslint-config": "workspace:*",
     "@utah-esports/tsconfig": "workspace:*",

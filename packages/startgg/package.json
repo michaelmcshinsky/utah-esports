@@ -16,7 +16,7 @@
     "@utah-esports/core": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.19.2",
     "@utah-esports/eslint-config": "workspace:*",
     "@utah-esports/tsconfig": "workspace:*",
     "eslint": "^9.39.0",
