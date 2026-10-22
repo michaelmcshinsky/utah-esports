@@ -166,6 +166,9 @@ importers:
 
   .:
     devDependencies:
+      '@netlify/plugin-nextjs':
+        specifier: 5.16.4
+        version: 5.16.4
       turbo:
         specifier: ^2.5.6
         version: 2.11.9
@@ -1466,6 +1469,10 @@ packages:
     cpu: [x64]
     os: [linux]
     libc: [glibc]
+
+  '@netlify/plugin-nextjs@5.16.4':
+    resolution: {integrity: sha512-yvFqkPxCeDrdC9y51Fxt5rK0lNWPo+esoc5uYbHBkM6kgop7s7jL2NtFFjN8g5SitbCnXoVm+dOlrgKEYfdx2g==}
+    engines: {node: '>=18.0.0'}
 
   '@next/env@15.5.28':
     resolution: {integrity: sha512-xxW5EBI8fMPuVTPBW7LL980IRbuDXlbkUAwp9DDhtb4Lnich3nJ13uYpvrX4VE74hWPf6AvHHAMmGCidcHjbfg==}
@@ -4781,6 +4788,8 @@ snapshots:
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
+
+  '@netlify/plugin-nextjs@5.16.4': {}
 
   '@next/env@15.5.28': {}
 

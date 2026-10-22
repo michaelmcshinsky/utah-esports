@@ -24,6 +24,7 @@
     "db:studio": "pnpm --filter @utah-esports/db studio"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "5.16.4",
     "turbo": "^2.5.6",
     "typescript": "^5.9.3"
   }

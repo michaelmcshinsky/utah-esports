@@ -26,3 +26,7 @@ coverage/
 .turbo/
 .vercel
 *.local
+
+# netlify local build artifacts
+apps/web/.netlify/
+.netlify/
