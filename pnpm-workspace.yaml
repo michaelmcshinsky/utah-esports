@@ -2,11 +2,15 @@ packages:
   - "apps/*"
   - "packages/*"
 
-# Netlify's Next.js adapter (OpenNext) requires public hoisting with pnpm;
-# without it the deployed function omits `next` and every request crashes.
-# https://opennext.js.org/netlify#pnpm-support
-# (.npmrc duplicates this for tools that still read it; PNPM_FLAGS in
-# netlify.toml covers Netlify's own install step.)
+# Netlify's Next.js adapter bundles the server function from node_modules and
+# the deploy zip does NOT preserve symlinks. pnpm's default isolated linker
+# (and public-hoist, which still symlinks into .pnpm) leaves `next` unresolvable
+# in the function → "Cannot find module 'next/dist/server/lib/start-server.js'".
+# `hoisted` gives a flat, symlink-free layout like npm — the only layout that
+# survives bundling. https://opennext.js.org/netlify#pnpm-support
+nodeLinker: hoisted
+
+# Belt & braces for tools that still read hoist patterns.
 publicHoistPattern:
   - "*"
 
