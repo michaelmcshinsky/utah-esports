@@ -1,0 +1,18 @@
+# Netlify configuration for the Turborepo monorepo.
+# Overrides stale UI settings (the site previously pointed publish at a
+# Vite-style /build directory, which crashed @netlify/plugin-nextjs).
+
+[build]
+  # turbo builds every workspace package; the Next app is @utah-esports/web.
+  command = "npm run build"
+  # Next.js runtime (OpenNext) output for apps/web — do not change to a
+  # static "build" folder; the plugin consumes .next directly.
+  publish = "apps/web/.next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Next.js runtime is auto-included for Next sites; pin it explicitly so the
+# site config can't drift.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
