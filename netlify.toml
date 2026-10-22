@@ -13,7 +13,10 @@
   NODE_VERSION = "22"
   # OpenNext adapter requirement for pnpm (pairs with .npmrc public-hoist-pattern):
   # https://opennext.js.org/netlify#pnpm-support
-  PNPM_FLAGS = "--shamefully-hoist"
+  # --force: guarantees pnpm relinks node_modules to the hoisted layout even
+  # when Netlify restores a dependency cache created before the hoisting
+  # config existed (plain installs CAN skip that transition).
+  PNPM_FLAGS = "--shamefully-hoist --force"
 
 # Next.js runtime is auto-included for Next sites; pin it explicitly so the
 # site config can't drift.
