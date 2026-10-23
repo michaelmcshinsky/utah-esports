@@ -39,12 +39,22 @@ export function SavedSearchesPanel({ searches }: { searches: SavedSearch[] }) {
       });
       return;
     }
+    // Strip pagination from the snapshot — saved searches are filter sets.
+    const params = new URLSearchParams(currentQuery);
+    params.delete("page");
+    const query = params.toString();
+    if (!query) {
+      setError("name", {
+        message: "Open Explore and apply filters first, then come back to save.",
+      });
+      return;
+    }
     const res = await fetch("/api/saved-searches", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         name: values.name,
-        query: currentQuery.replace(/([?&])page=\d+&?|([?&])page=\d+$/, "$1$2"),
+        query,
         notify: true,
       }),
     });

@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { reportSchema, type ReportInput } from "@utah-esports/core";
 import { Button, Dialog, Select, Textarea, Input } from "@utah-esports/ui";
-
-type FormValues = Omit<ReportInput, "targetType" | "targetId">;
+import { reportFormSchema, type ReportFormValues } from "@/src/lib/forms/schemas";
 
 export function ReportButton({
   targetType,
@@ -23,13 +21,13 @@ export function ReportButton({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
-    resolver: zodResolver(reportSchema.omit({ targetType: true, targetId: true })),
+  } = useForm<ReportFormValues>({
+    resolver: zodResolver(reportFormSchema),
     defaultValues: { reason: "incorrect_info", details: "", contactEmail: "" },
     mode: "onBlur",
   });
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: ReportFormValues) {
     setStatus("sending");
     const res = await fetch("/api/reports", {
       method: "POST",
@@ -37,7 +35,7 @@ export function ReportButton({
       body: JSON.stringify({
         reason: values.reason,
         details: values.details?.trim() || null,
-        contactEmail: values.contactEmail?.trim() || null,
+        contactEmail: values.contactEmail.trim() || null,
         targetType,
         targetId,
       }),

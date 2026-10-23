@@ -153,3 +153,24 @@ export const savedSearchFormSchema = z.object({
 });
 
 export type SavedSearchFormValues = z.infer<typeof savedSearchFormSchema>;
+
+/**
+ * Report dialog. The core API schema keeps contactEmail `.email().nullish()`
+ * (server contract) — but RHF submits `""` for an untouched input, which
+ * would fail `.email()`. This form schema accepts blank-as-optional and the
+ * submit handler coerces "" → null before POST.
+ */
+export const reportFormSchema = z.object({
+  reason: z.enum([
+    "incorrect_info",
+    "event_cancelled",
+    "broken_link",
+    "unsafe",
+    "spam",
+    "other",
+  ]),
+  details: z.string().trim().max(2000, "Keep details under 2000 characters").optional(),
+  contactEmail: z.union([z.literal(""), z.string().email("Enter a valid email address")]),
+});
+
+export type ReportFormValues = z.infer<typeof reportFormSchema>;
