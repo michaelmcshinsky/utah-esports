@@ -174,3 +174,25 @@ export const reportFormSchema = z.object({
 });
 
 export type ReportFormValues = z.infer<typeof reportFormSchema>;
+
+// ---------------------------------------------------------------- teams
+
+export const teamFormSchema = z.object({
+  name: z.string().trim().min(2, "Name the team").max(140),
+  pathway: z.enum(["high_school", "collegiate", "youth", "independent_team"]),
+  institution: z.string().trim().max(140).optional(),
+  city: z.string().trim().max(80).optional(),
+  tryoutInfo: z.string().trim().max(500, "Keep tryout info under 500 characters").optional(),
+  websiteUrl: urlOrBlank,
+  description: z.string().trim().max(1000).optional(),
+  /** Discord role id assigned to linked roster members (advanced). */
+  discordRoleId: z.union([
+    z.literal(""),
+    z.string().trim().regex(/^\d{5,25}$/, "Discord role ids are numeric"),
+  ]),
+});
+
+export type TeamFormValues = z.infer<typeof teamFormSchema>;
+
+export const teamPatchSchema = teamFormSchema.partial();
+

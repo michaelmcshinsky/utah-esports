@@ -5,6 +5,7 @@ import { eq, desc } from "drizzle-orm";
 import {
   changeRecords,
   eventOccurrences,
+  getEventGames,
   getMembershipsForUser,
   getOrganizationBySlug,
 } from "@utah-esports/db";
@@ -47,6 +48,8 @@ export default async function EditEventPage({
     .orderBy(desc(changeRecords.createdAt))
     .limit(20);
 
+  const existingGames = await getEventGames(database, event.id);
+
   return (
     <div className="page-container py-8">
       <nav className="text-sm text-charcoal-600">
@@ -71,7 +74,7 @@ export default async function EditEventPage({
           format: event.format,
           startsAt: toLocalInput(event.startsAt),
           endsAt: event.endsAt ? toLocalInput(event.endsAt) : "",
-          gameNames: "",
+          gameNames: existingGames.map((g) => g.game.name).join(", "),
           city: event.city ?? "",
           agePolicy: event.agePolicy,
           skillLevel: event.skillLevel,

@@ -8,12 +8,17 @@ import {
   listOrgEvents,
   eventOccurrences,
   linkChecks,
+  organizationMemberships,
   outboundClicks,
+  teams,
+  userProfiles,
 } from "@utah-esports/db";
 import { roleHasPermission } from "@utah-esports/core";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
+import { TeamsPanel, type TeamRow } from "@/src/components/teams-panel";
+import { MembersPanel, type MemberRow } from "@/src/components/members-panel";
 
 export const metadata: Metadata = { title: "Manage organization" };
 export const revalidate = 0;
@@ -89,6 +94,40 @@ export default async function OrgDashboardPage({
           .where(and(inArray(linkChecks.entityId, orgEventIds), ne(linkChecks.status, "ok")))
           .limit(20)
       : [];
+
+  // Teams + members for the management panels.
+  const teamRows = (
+    await database.select().from(teams).where(eq(teams.organizationId, org.id)).limit(50)
+  ).map(
+    (t): TeamRow => ({
+      id: t.id,
+      name: t.name,
+      slug: t.slug,
+      pathway: t.pathway,
+      tryoutInfo: t.tryoutInfo,
+      websiteUrl: t.websiteUrl,
+      discordRoleId: t.discordRoleId,
+    }),
+  );
+  const memberRows: MemberRow[] = (
+    await database
+      .select({
+        membershipId: organizationMemberships.id,
+        role: organizationMemberships.role,
+        userId: organizationMemberships.userId,
+        email: userProfiles.email,
+        displayName: userProfiles.displayName,
+      })
+      .from(organizationMemberships)
+      .leftJoin(userProfiles, eq(organizationMemberships.userId, userProfiles.id))
+      .where(eq(organizationMemberships.organizationId, org.id))
+  ).map((m) => ({
+    membershipId: m.membershipId,
+    email: m.email ?? "(unknown)",
+    displayName: m.displayName,
+    role: m.role,
+    isSelf: m.userId === user.id,
+  }));
 
   return (
     <div className="page-container py-8">
@@ -250,6 +289,11 @@ export default async function OrgDashboardPage({
           )}
         </CardContent>
       </Card>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <TeamsPanel orgSlug={org.slug} teams={teamRows} canEdit={canEdit} canManage={membership.role === "owner"} />
+        <MembersPanel orgSlug={org.slug} members={memberRows} canManage={membership.role === "owner"} />
+      </div>
     </div>
   );
 }

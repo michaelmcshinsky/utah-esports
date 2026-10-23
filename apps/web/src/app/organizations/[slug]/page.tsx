@@ -193,7 +193,12 @@ export default async function OrganizationPublicPage({
                   {orgTeams.map((t) => (
                     <li key={t.id}>
                       <span className="flex items-center justify-between gap-2">
-                        <span>{t.name}</span>
+                        <Link
+                          href={`/teams/${t.slug}`}
+                          className="text-redrock-600 hover:underline"
+                        >
+                          {t.name}
+                        </Link>
                         {t.pathway ? <Badge variant="neutral">{t.pathway}</Badge> : null}
                       </span>
                       {t.tryoutInfo ? (

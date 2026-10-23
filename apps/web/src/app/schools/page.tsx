@@ -112,7 +112,7 @@ export default async function SchoolsPage() {
           ) : (
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {pathway.teams.map((team) => (
-                <Card key={team.id} className="overflow-hidden">
+                <Card key={team.id} className="relative overflow-hidden">
                   <MediaImage
                     src={team.imageUrl}
                     alt={`${team.name} logo`}
@@ -123,7 +123,14 @@ export default async function SchoolsPage() {
                     overlayText={team.imageUrl ? undefined : undefined}
                   />
                   <CardHeader>
-                    <CardTitle>{team.name}</CardTitle>
+                    <CardTitle>
+                      <Link
+                        href={`/teams/${team.slug}`}
+                        className="after:absolute after:inset-0 hover:text-redrock-600"
+                      >
+                        {team.name}
+                      </Link>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm">
                     {team.institution && team.name.toLowerCase() !== team.institution.toLowerCase() ? (
