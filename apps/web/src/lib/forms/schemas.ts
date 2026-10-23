@@ -18,6 +18,7 @@ import {
  */
 
 const urlOrBlank = z.union([z.literal(""), z.string().url("Enter a valid URL")]);
+const optionalUrl = z.union([z.literal(""), z.string().url("Enter a valid URL")]).optional();
 
 const localDateTime = (label: string) =>
   z
@@ -185,6 +186,11 @@ export const teamFormSchema = z.object({
   tryoutInfo: z.string().trim().max(500, "Keep tryout info under 500 characters").optional(),
   websiteUrl: urlOrBlank,
   description: z.string().trim().max(1000).optional(),
+  facebookUrl: optionalUrl,
+  twitterUrl: optionalUrl,
+  twitchUrl: optionalUrl,
+  instagramUrl: optionalUrl,
+  youtubeUrl: optionalUrl,
   /** Discord role id assigned to linked roster members (advanced). */
   discordRoleId: z.union([
     z.literal(""),

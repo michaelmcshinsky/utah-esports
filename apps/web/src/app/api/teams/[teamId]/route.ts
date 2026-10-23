@@ -52,6 +52,11 @@ export async function PATCH(
   if (d.tryoutInfo !== undefined) patch.tryoutInfo = d.tryoutInfo?.trim() || null;
   if (d.websiteUrl !== undefined) patch.websiteUrl = d.websiteUrl || null;
   if (d.description !== undefined) patch.description = d.description?.trim() || null;
+  if (d.facebookUrl !== undefined) patch.facebookUrl = d.facebookUrl || null;
+  if (d.twitterUrl !== undefined) patch.twitterUrl = d.twitterUrl || null;
+  if (d.twitchUrl !== undefined) patch.twitchUrl = d.twitchUrl || null;
+  if (d.instagramUrl !== undefined) patch.instagramUrl = d.instagramUrl || null;
+  if (d.youtubeUrl !== undefined) patch.youtubeUrl = d.youtubeUrl || null;
   if (d.discordRoleId !== undefined) patch.discordRoleId = d.discordRoleId || null;
   const [updated] = await database
     .update(teams)

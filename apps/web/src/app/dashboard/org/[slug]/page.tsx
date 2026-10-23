@@ -107,6 +107,11 @@ export default async function OrgDashboardPage({
       tryoutInfo: t.tryoutInfo,
       websiteUrl: t.websiteUrl,
       discordRoleId: t.discordRoleId,
+      facebookUrl: t.facebookUrl,
+      twitterUrl: t.twitterUrl,
+      twitchUrl: t.twitchUrl,
+      instagramUrl: t.instagramUrl,
+      youtubeUrl: t.youtubeUrl,
     }),
   );
   const memberRows: MemberRow[] = (

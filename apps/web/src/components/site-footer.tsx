@@ -44,6 +44,11 @@ export function SiteFooter() {
                 Organizations
               </Link>
             </li>
+            <li>
+              <Link href="/sources" className="hover:text-white">
+                Sources we track
+              </Link>
+            </li>
           </ul>
         </div>
         <div>

@@ -127,6 +127,12 @@ export const teams = pgTable(
     institution: text("institution"),
     city: text("city"),
     imageUrl: text("image_url"),
+    facebookUrl: text("facebook_url"),
+    twitterUrl: text("twitter_url"),
+    twitchUrl: text("twitch_url"),
+    instagramUrl: text("instagram_url"),
+    youtubeUrl: text("youtube_url"),
+    discordUrl: text("discord_url"),
     /** Guild role id assigned to linked members of this team by the bot. */
     discordRoleId: text("discord_role_id"),
     status: text("status").notNull().default("active"),

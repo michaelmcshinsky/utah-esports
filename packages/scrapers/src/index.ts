@@ -2,7 +2,8 @@ export * from "./types.js";
 export * from "./infer.js";
 export * from "./registry.js";
 export * from "./listing.js";
-export * from "./venue-sources.js";export {
+export * from "./venue-sources.js";
+export * from "./catalog/utah-sources.js";export {
   legacyJekyllAdapter,
   matchLegacyJekyllUrl,
   parseLegacyEventMarkdown,

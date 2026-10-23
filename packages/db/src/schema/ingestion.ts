@@ -116,3 +116,32 @@ export const duplicateCandidates = pgTable(
   },
   (t) => [index("duplicate_candidates_status_idx").on(t.status)],
 );
+
+/**
+ * Public catalog of known Utah gaming sites (event platforms, venues,
+ * conventions, scholastic bodies, organizers, community hubs) with scrape
+ * instructions. Seeded from packages/scrapers catalog data.
+ */
+export const catalogSources = pgTable(
+  "catalog_sources",
+  {
+    slug: text("slug").primaryKey(),
+    name: text("name").notNull(),
+    kind: text("kind").notNull(),
+    url: text("url").notNull(),
+    city: text("city"),
+    region: text("region"),
+    games: text("games").array().notNull().default(sql`'{}'::text[]`),
+    status: text("status").notNull().default("unknown"),
+    scrapeAdapter: text("scrape_adapter").notNull().default("none"),
+    scrapeUrls: text("scrape_urls").array().notNull().default(sql`'{}'::text[]`),
+    scrapeNotes: text("scrape_notes"),
+    directoryTypes: text("directory_types").array().notNull().default(sql`'{}'::text[]`),
+    directoryImported: boolean("directory_imported").notNull().default(false),
+    notes: text("notes"),
+    lastVerifiedAt: timestamp("last_verified_at", { withTimezone: true }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index("catalog_sources_kind_idx").on(t.kind), index("catalog_sources_status_idx").on(t.status)],
+);

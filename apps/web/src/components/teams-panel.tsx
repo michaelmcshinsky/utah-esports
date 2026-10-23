@@ -15,6 +15,11 @@ export type TeamRow = {
   tryoutInfo: string | null;
   websiteUrl: string | null;
   discordRoleId: string | null;
+  facebookUrl: string | null;
+  twitterUrl: string | null;
+  twitchUrl: string | null;
+  instagramUrl: string | null;
+  youtubeUrl: string | null;
 };
 
 const PATHWAY_OPTIONS = [
@@ -50,6 +55,11 @@ function TeamFields({
         {...register("tryoutInfo")}
       />
       <Input label="Website (optional)" type="url" error={errors.websiteUrl?.message} {...register("websiteUrl")} />
+      <Input label="Facebook (optional)" type="url" error={errors.facebookUrl?.message} {...register("facebookUrl")} />
+      <Input label="Twitter/X (optional)" type="url" error={errors.twitterUrl?.message} {...register("twitterUrl")} />
+      <Input label="Twitch (optional)" type="url" error={errors.twitchUrl?.message} {...register("twitchUrl")} />
+      <Input label="Instagram (optional)" type="url" error={errors.instagramUrl?.message} {...register("instagramUrl")} />
+      <Input label="YouTube (optional)" type="url" error={errors.youtubeUrl?.message} {...register("youtubeUrl")} />
       <Input
         label="Discord role ID (optional)"
         hint="Advanced: bot assigns this role to linked roster members"
@@ -67,6 +77,11 @@ const EMPTY: TeamFormValues = {
   city: "",
   tryoutInfo: "",
   websiteUrl: "",
+  facebookUrl: "",
+  twitterUrl: "",
+  twitchUrl: "",
+  instagramUrl: "",
+  youtubeUrl: "",
   description: "",
   discordRoleId: "",
 };
@@ -113,6 +128,11 @@ export function TeamsPanel({
       city: "",
       tryoutInfo: team.tryoutInfo ?? "",
       websiteUrl: team.websiteUrl ?? "",
+      facebookUrl: team.facebookUrl ?? "",
+      twitterUrl: team.twitterUrl ?? "",
+      twitchUrl: team.twitchUrl ?? "",
+      instagramUrl: team.instagramUrl ?? "",
+      youtubeUrl: team.youtubeUrl ?? "",
       description: "",
       discordRoleId: team.discordRoleId ?? "",
     });

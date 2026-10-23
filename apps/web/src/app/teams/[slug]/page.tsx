@@ -121,15 +121,42 @@ export default async function TeamDetailPage({
                 <dd className="mt-1 text-sm text-charcoal-800">{team.city}</dd>
               </div>
             ) : null}
-            {team.tryoutInfo ? (
-              <div className="rounded-lg border border-charcoal-200 bg-white p-3 sm:col-span-2">
-                <dt className="text-xs font-medium uppercase tracking-wide text-charcoal-500">
-                  Tryouts
-                </dt>
-                <dd className="mt-1 text-sm text-charcoal-800">{team.tryoutInfo}</dd>
-              </div>
-            ) : null}
-          </dl>
+          {team.tryoutInfo ? (
+            <div className="rounded-lg border border-charcoal-200 bg-white p-3 sm:col-span-2">
+              <dt className="text-xs font-medium uppercase tracking-wide text-charcoal-500">
+                Tryouts
+              </dt>
+              <dd className="mt-1 text-sm text-charcoal-800">{team.tryoutInfo}</dd>
+            </div>
+          ) : null}
+          {(team.facebookUrl || team.twitterUrl || team.twitchUrl || team.instagramUrl || team.youtubeUrl) ? (
+            <div className="rounded-lg border border-charcoal-200 bg-white p-3 sm:col-span-2">
+              <dt className="text-xs font-medium uppercase tracking-wide text-charcoal-500">
+                Follow the team
+              </dt>
+              <dd className="mt-1 flex flex-wrap gap-2 text-sm">
+                {[
+                  { label: "Facebook", url: team.facebookUrl },
+                  { label: "Twitter/X", url: team.twitterUrl },
+                  { label: "Twitch", url: team.twitchUrl },
+                  { label: "Instagram", url: team.instagramUrl },
+                  { label: "YouTube", url: team.youtubeUrl },
+                ]
+                  .filter((l): l is { label: string; url: string } => Boolean(l.url))
+                  .map((l) => (
+                    <a
+                      key={l.label}
+                      href={l.url}
+                      rel="noopener noreferrer"
+                      className="rounded-lg border border-charcoal-200 px-3 py-1.5 text-xs font-medium text-charcoal-700 hover:border-redrock-300 hover:text-redrock-600"
+                    >
+                      {l.label} ↗
+                    </a>
+                  ))}
+              </dd>
+            </div>
+          ) : null}
+        </dl>
 
           <section aria-labelledby="roster-heading" className="mt-8">
             <h2 id="roster-heading" className="text-lg font-semibold">

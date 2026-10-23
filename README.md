@@ -129,6 +129,10 @@ pnpm --filter @utah-esports/web dump-redirects   # writes apps/web/redirects.gen
 
 Local dev: `pnpm --filter @utah-esports/workers start` (intervals) or `-- --once`. Production: `apps/workers/src/trigger.ts` defines the same jobs as Trigger.dev scheduled tasks — the job logic itself is plain TS and runner-agnostic.
 
+## Scraping & sources
+
+The catalog of Utah gaming sites (platforms, venues, conventions, scholastic bodies, organizers, hubs) lives in packages/scrapers/src/catalog/utah-sources.ts and renders at **/sources**. Import how-tos, adapter guide, and ethics rules: [docs/SCRAPING.md](docs/SCRAPING.md) · generated reference: [docs/SOURCES.md](docs/SOURCES.md).
+
 ## Repository history
 
 The old ecosystem was archived in favor of this repo:

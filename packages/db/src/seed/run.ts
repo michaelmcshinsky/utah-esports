@@ -14,11 +14,12 @@ import {
   eventOccurrences,
   eventGames,
   redirects,
+  catalogSources,
 } from "../index.js";
 import { SEED_GAMES, LEGACY_TAG_TO_GAME } from "./games.js";
 import { geoForCity } from "./geo.js";
 import { slugify, legacyEventPath } from "@utah-esports/core";
-import { parseLegacyEventMarkdown } from "@utah-esports/scrapers";
+import { parseLegacyEventMarkdown, UTAH_SOURCES } from "@utah-esports/scrapers";
 
 /**
  * Seeds the initial game taxonomy, placeholder organization pages for the
@@ -91,6 +92,54 @@ export async function seedSchoolPrograms() {
     });
   }
   console.log(`seeded school programs: ${programs.length}`);
+}
+
+/** Upsert the Utah source catalog (scrapers package is the source of truth). */
+export async function seedCatalog() {
+  const db = getDb();
+  let upserted = 0;
+  for (const source of UTAH_SOURCES) {
+    await db
+      .insert(catalogSources)
+      .values({
+        slug: source.slug,
+        name: source.name,
+        kind: source.kind,
+        url: source.url,
+        city: source.city ?? null,
+        region: source.region ?? null,
+        games: source.games ?? [],
+        status: source.status,
+        scrapeAdapter: source.scrape.adapter,
+        scrapeUrls: source.scrape.listingUrls ?? [],
+        scrapeNotes: source.scrape.notes ?? null,
+        directoryTypes: source.directory?.types ?? [],
+        directoryImported: source.directory?.imported ?? false,
+        notes: source.notes ?? null,
+        lastVerifiedAt: source.status === "active" ? new Date() : null,
+      })
+      .onConflictDoUpdate({
+        target: catalogSources.slug,
+        set: {
+          name: source.name,
+          kind: source.kind,
+          url: source.url,
+          city: source.city ?? null,
+          region: source.region ?? null,
+          games: source.games ?? [],
+          status: source.status,
+          scrapeAdapter: source.scrape.adapter,
+          scrapeUrls: source.scrape.listingUrls ?? [],
+          scrapeNotes: source.scrape.notes ?? null,
+          directoryTypes: source.directory?.types ?? [],
+          directoryImported: source.directory?.imported ?? false,
+          notes: source.notes ?? null,
+          updatedAt: new Date(),
+        },
+      });
+    upserted++;
+  }
+  console.log(`catalog sources upserted: ${upserted}`);
 }
 
 type LegacyVenue = { name: string; image?: string; url?: string };
@@ -225,6 +274,28 @@ export async function seedLegacy() {
     teamCount++;
   }
   console.log(`legacy teams imported: ${teamCount}`);
+
+  // Social-link refresh: the legacy yml carried Facebook/Twitch/Twitter/etc
+  // per team — attach them to existing rows by slug.
+  const legacyTeamsSocials = readYaml<LegacyTeam[]>(join(legacyDir, "teams-and-clubs.yml"));
+  let socialsUpdated = 0;
+  for (const t of legacyTeamsSocials) {
+    const slug = slugify(t.team_name ? `${t.name} ${t.team_name}` : t.name);
+    const [team] = await db.select().from(teams).where(eq(teams.slug, slug)).limit(1);
+    if (!team) continue;
+    const patch: Partial<typeof teams.$inferInsert> = {};
+    if (!team.facebookUrl && t.facebook) patch.facebookUrl = t.facebook;
+    if (!team.twitterUrl && t.twitter) patch.twitterUrl = t.twitter;
+    if (!team.twitchUrl && t.twitch) patch.twitchUrl = t.twitch;
+    if (!team.instagramUrl && t.instagram) patch.instagramUrl = t.instagram;
+    if (!team.youtubeUrl && t.youtube) patch.youtubeUrl = t.youtube;
+    // Discord invites from 2019 are almost certainly dead — skip re-publishing.
+    if (Object.keys(patch).length > 0) {
+      await db.update(teams).set(patch).where(eq(teams.id, team.id));
+      socialsUpdated++;
+    }
+  }
+  console.log(`legacy team socials refreshed: ${socialsUpdated}`);
 
   // Social groups → communities ------------------------------------------
   // File is a markdown-ish YAML hybrid: "## Heading" sections with list items.
@@ -482,6 +553,7 @@ export async function seedLegacy() {
 async function main() {
   await seedGames();
   await seedSchoolPrograms();
+  await seedCatalog();
   const withLegacy = process.argv.includes("--legacy");
   if (withLegacy) await seedLegacy();
   console.log("seed complete");
