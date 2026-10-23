@@ -21,6 +21,7 @@ This repository is a Turborepo monorepo that replaces the archived 2018 Jekyll s
 ## Product surfaces
 
 - **Explore** (`/explore`) — one filter system (game, date, city, radius, type, format, skill, age, price, registration) across list, calendar, and map views; filter state lives in the URL.
+- **Submit & import** (/submit) - paste an event URL and Fetch details from link: adapters scrape start.gg, legacy Jekyll files (GitHub), or any page with Event JSON-LD/h-event/meta tags, autofilling dates, venue, price, organizer, and inferred games. Reviewers approve everything. CLI: pnpm --filter @utah-esports/workers exec tsx scripts/import-url.ts <url> (exit 2 = likely duplicate).
 - **Event pages** (`/events/[slug]`) — answer in order: what / can I participate / when+where / cost / bring / register / who to ask — plus freshness badges, cancellation notices, ICS download, save, and report.
 - **Communities, Places, Schools & Teams** — connected directories, not link dumps. School pathways (collegiate / high school / youth / independent) stay separate on purpose.
 - **Connected directories** — communities and venues show their **upcoming events**; event pages show the **venue** (address, BYOD) and a **related community**; public **organization pages** (`/organizations/[slug]`) aggregate an org's events, teams, claim status, and calendar.
