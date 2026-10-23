@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { desc, inArray } from "drizzle-orm";
 import { Badge } from "@utah-esports/ui";
-import { catalogSources } from "@utah-esports/db";
+import { catalogSources, venues } from "@utah-esports/db";
 import { KIND_LABELS, KIND_BLURBS, type SourceKind } from "@utah-esports/scrapers";
 import { db } from "@/src/lib/db";
 
@@ -14,6 +14,10 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
+
+// Freshness badges compare against module-load time (server boot); a day or
+// two of drift is irrelevant for a "checked recently" label.
+const PAGE_LOAD_TIME_MS = Date.now();
 
 const KIND_ORDER: SourceKind[] = [
   "event_platform",
@@ -47,12 +51,20 @@ export default async function SourcesPage() {
     .where(inArray(catalogSources.status, ["active", "unknown", "defunct", "archived"]))
     .orderBy(desc(catalogSources.name));
 
+  // Cross-link catalog venues to their directory pages (same-slug match).
+  const venueRows = await database.select({ slug: venues.slug }).from(venues);
+  const venueSlugs = new Set(venueRows.map((v) => v.slug));
+
   const byKind = new Map<string, typeof rows>();
   for (const row of rows) {
     const list = byKind.get(row.kind) ?? [];
     list.push(row);
     byKind.set(row.kind, list);
   }
+  const verifiedWithinDays = (date: Date | null): boolean => {
+    if (!date) return false;
+    return PAGE_LOAD_TIME_MS - date.getTime() < 60 * 24 * 60 * 60 * 1000;
+  };
 
   return (
     <div className="page-container py-8">
@@ -97,7 +109,12 @@ export default async function SourcesPage() {
                     >
                       {source.name} ↗
                     </a>
-                    <Badge variant={STATUS_VARIANT[source.status] ?? "neutral"}>{source.status}</Badge>
+                    <span className="flex gap-1.5">
+                      {verifiedWithinDays(source.lastVerifiedAt) ? (
+                        <Badge variant="success">checked recently</Badge>
+                      ) : null}
+                      <Badge variant={STATUS_VARIANT[source.status] ?? "neutral"}>{source.status}</Badge>
+                    </span>
                   </div>
                   {source.city ? (
                     <p className="mt-1 text-sm text-charcoal-500">{source.city}</p>
@@ -126,6 +143,14 @@ export default async function SourcesPage() {
                   ) : null}
                   {source.notes ? (
                     <p className="mt-1 text-xs text-charcoal-500">{source.notes}</p>
+                  ) : null}
+                  {source.kind === "venue" && venueSlugs.has(source.slug) ? (
+                    <Link
+                      href={`/places/${source.slug}`}
+                      className="relative z-10 mt-2 text-xs font-medium text-redrock-600 hover:underline"
+                    >
+                      Directory page (hours, gear, upcoming events) →
+                    </Link>
                   ) : null}
                 </article>
               ))}

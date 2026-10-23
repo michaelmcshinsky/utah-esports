@@ -1,3 +1,8 @@
+import { eq } from "drizzle-orm";
+import {
+  catalogSources,
+  getDb,
+} from "@utah-esports/db";
 import { scanListingPage, VENUE_SOURCE_URLS, scrapeUrlForDraft } from "@utah-esports/scrapers";
 import { createDraftFromDraft, findDuplicateForDraft } from "./url-import.js";
 import { log } from "../lib/logger.js";
@@ -43,6 +48,19 @@ export async function scanVenueSource(
     return summary;
   }
   summary.candidates = candidates.length;
+
+  // A responsive, parseable listing confirms the catalog entry is still live.
+  if (candidates.length > 0) {
+    try {
+      const db = getDb();
+      await db
+        .update(catalogSources)
+        .set({ lastVerifiedAt: new Date(), updatedAt: new Date() })
+        .where(eq(catalogSources.url, url));
+    } catch {
+      // Catalog update is best-effort; scanning continues either way.
+    }
+  }
 
   for (const candidateUrl of candidates) {
     try {
