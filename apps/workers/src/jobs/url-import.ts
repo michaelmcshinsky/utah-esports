@@ -6,9 +6,9 @@ import {
   getDb,
   sourceRecords,
   sources,
+  venues,
 } from "@utah-esports/db";
-import { findLikelyDuplicate } from "../lib/dedupe.js";
-import { slugify } from "@utah-esports/core";
+import { findLikelyDuplicate, slugify } from "@utah-esports/core";
 import { scrapeUrlForDraft, type EventDraft, type ScrapeDraftResult } from "@utah-esports/scrapers";
 import { log } from "../lib/logger.js";
 
@@ -102,6 +102,17 @@ export async function createDraftFromDraft(draft: EventDraft): Promise<string | 
     .limit(1);
   if (existing) return existing.id;
 
+  // Attach to an existing venue when the scraped name matches a known slug.
+  let venueId: string | null = null;
+  if (draft.venueName) {
+    const [venue] = await db
+      .select({ id: venues.id })
+      .from(venues)
+      .where(eq(venues.slug, slugify(draft.venueName)))
+      .limit(1);
+    venueId = venue?.id ?? null;
+  }
+
   const [event] = await db
     .insert(eventOccurrences)
     .values({
@@ -113,6 +124,7 @@ export async function createDraftFromDraft(draft: EventDraft): Promise<string | 
       startsAt: draft.startsAt,
       endsAt: draft.endsAt ?? null,
       city: draft.city ?? null,
+      venueId,
       onlineUrl: draft.format === "online" ? draft.url : null,
       registrationUrl: draft.url,
       registrationState: draft.registrationState ?? "unknown",

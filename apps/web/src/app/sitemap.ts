@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { desc, eq, inArray } from "drizzle-orm";
-import { communities, eventOccurrences, games, organizations, venues } from "@utah-esports/db";
+import { communities, eventOccurrences, games, organizations, teams, venues } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const database = db();
 
-    const [events, communityRows, venueRows, orgRows, gameRows] = await Promise.all([
+    const [events, communityRows, venueRows, orgRows, gameRows, teamRows] = await Promise.all([
       database
         .select({
           slug: eventOccurrences.slug,
@@ -57,6 +57,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .where(eq(organizations.status, "active"))
         .limit(200),
       database.select({ slug: games.slug, name: games.name }).from(games).limit(100),
+      database
+        .select({ slug: teams.slug, updatedAt: teams.updatedAt })
+        .from(teams)
+        .where(inArray(teams.status, ["active", "needs_verification"] as const))
+        .limit(200),
     ]);
 
     const eventRoutes: MetadataRoute.Sitemap = events
@@ -95,7 +100,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.4,
     }));
 
-    return [...staticRoutes, ...eventRoutes, ...communityRoutes, ...venueRoutes, ...orgRoutes, ...gameRoutes];
+    const teamRoutes: MetadataRoute.Sitemap = teamRows.map((t) => ({
+      url: `${siteUrl}/teams/${t.slug}`,
+      lastModified: t.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    }));
+
+    return [
+      ...staticRoutes,
+      ...eventRoutes,
+      ...communityRoutes,
+      ...venueRoutes,
+      ...orgRoutes,
+      ...gameRoutes,
+      ...teamRoutes,
+    ];
   } catch {
     // No database at build/request time — serve the static skeleton rather
     // than a broken sitemap.

@@ -8,6 +8,7 @@ import { runRecurringGeneration } from "./jobs/recurring.js";
 import { runChangeNotifications } from "./jobs/notify-changes.js";
 import { runSavedSearchAlerts } from "./jobs/saved-search-alerts.js";
 import { runPostEventFollowup } from "./jobs/post-event.js";
+import { runVenueSourceScan } from "./jobs/venue-scan.js";
 
 /**
  * Trigger.dev task definitions (hosted scheduling + retries).
@@ -75,4 +76,11 @@ export const postEventTask = schedules.task({
   cron: "20 */2 * * *",
   maxDuration: 300,
   run: async () => runPostEventFollowup(),
+});
+
+export const venueSourceScanTask = schedules.task({
+  id: "venue-source-scan",
+  cron: "0 7 * * 1",
+  maxDuration: 600,
+  run: async () => runVenueSourceScan(),
 });

@@ -96,7 +96,12 @@ export function SubmitEventForm() {
       body: JSON.stringify({ url }),
     });
     const body = (await res.json().catch(() => null)) as
-      | { error?: string; draft?: PreviewDraft; adapter?: string }
+      | {
+          error?: string;
+          draft?: PreviewDraft;
+          adapter?: string;
+          duplicate?: { slug: string; title: string; score: number } | null;
+        }
       | null;
     if (!res.ok || !body?.draft) {
       setImportState("failed");
@@ -117,8 +122,11 @@ export function SubmitEventForm() {
     if (d.contactName) setValue("contactName", d.contactName);
     if (d.contactEmail) setValue("contactEmail", d.contactEmail);
     setImportState("done");
+    const dupeNote = body.duplicate
+      ? ` ⚠ Looks a lot like the existing listing “${body.duplicate.title}” — double-check it's a different event before submitting.`
+      : "";
     setImportNote(
-      `Imported from ${body.adapter}${d.venueName ? ` · venue: ${d.venueName}` : ""} — review everything before submitting.`,
+      `Imported from ${body.adapter}${d.venueName ? ` · venue: ${d.venueName}` : ""} — review everything before submitting.${dupeNote}`,
     );
   }
 

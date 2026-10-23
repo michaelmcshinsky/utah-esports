@@ -3,6 +3,7 @@ import { parseJsonLdEvents, parseMetaFallback, parseGenericEventHtml } from "./a
 import { extractStartggSlug, matchStartggUrl } from "./adapters/startgg-url.js";
 import { matchLegacyJekyllUrl, toRawUrl } from "./adapters/legacy-jekyll.js";
 import { getAdapterForUrl } from "./registry.js";
+import { extractCandidateEventUrls, scanListingPage } from "./listing.js";
 import "./index.js"; // registers built-in adapters
 
 const JSONLD_HTML = `<!doctype html><html><head>
@@ -109,5 +110,35 @@ describe("registry", () => {
       )?.id,
     ).toBe("legacy-jekyll");
     expect(getAdapterForUrl("https://quartersslc.com/events/friday")?.id).toBe("generic-event");
+  });
+});
+
+describe("listing scanner", () => {
+  const LISTING_HTML = `<html><body>
+    <a href="/events/smash-weekly">Smash Weekly</a>
+    <a href="/about">About the venue</a>
+    <a href="https://start.gg/tournament/some-bracket">Register for the bracket</a>
+    <a href="/menu">Menu</a>
+    <script type="application/ld+json">{"@type":"Event","url":"https://example.com/events/jsonld-one"}</script>
+  </body></html>`;
+
+  it("extracts event-ish anchors and JSON-LD urls, skips plain links", () => {
+    const urls = extractCandidateEventUrls(LISTING_HTML, "https://example.com/");
+    expect(urls).toContain("https://example.com/events/smash-weekly");
+    expect(urls).toContain("https://start.gg/tournament/some-bracket");
+    expect(urls).toContain("https://example.com/events/jsonld-one");
+    expect(urls.some((u) => u.endsWith("/about"))).toBe(false);
+    expect(urls.some((u) => u.endsWith("/menu"))).toBe(false);
+  });
+
+  it("scanListingPage fetches through the provided impl", async () => {
+    const fakeFetch = async () =>
+      new Response(LISTING_HTML, { status: 200, headers: { "content-type": "text/html" } });
+    const urls = await scanListingPage("https://example.com/events", {
+      fetchImpl: fakeFetch as unknown as typeof fetch,
+      limit: 2,
+    });
+    expect(urls.length).toBeLessThanOrEqual(2);
+    expect(urls.length).toBeGreaterThan(0);
   });
 });

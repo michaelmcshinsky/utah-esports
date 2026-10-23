@@ -10,6 +10,7 @@ import { runWeeklyDigest } from "./jobs/weekly-digest.js";
 import { runChangeNotifications } from "./jobs/notify-changes.js";
 import { runSavedSearchAlerts } from "./jobs/saved-search-alerts.js";
 import { runPostEventFollowup } from "./jobs/post-event.js";
+import { runVenueSourceScan } from "./jobs/venue-scan.js";
 import { log } from "./lib/logger.js";
 
 // Repo-root .env — authoritative over inherited shell vars (override).
@@ -36,6 +37,7 @@ const JOBS: Array<{ name: string; everyMs: number; run: () => Promise<unknown> }
   { name: "change-notifications", everyMs: 60 * 60 * 1000, run: () => runChangeNotifications() },
   { name: "saved-search-alerts", everyMs: 60 * 60 * 1000, run: () => runSavedSearchAlerts() },
   { name: "post-event", everyMs: 2 * 60 * 60 * 1000, run: () => runPostEventFollowup() },
+  { name: "venue-scan", everyMs: 24 * 60 * 60 * 1000, run: () => runVenueSourceScan({ limit: 5 }) },
 ];
 
 async function runOnce() {

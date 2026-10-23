@@ -5,3 +5,4 @@ export * from "./slug.js";
 export * from "./permissions.js";
 export * from "./schemas.js";
 export * from "./notify.js";
+export * from "./dedupe.js";
