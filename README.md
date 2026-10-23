@@ -20,6 +20,7 @@ This repository is a Turborepo monorepo that replaces the archived 2018 Jekyll s
 
 ## Product surfaces
 
+- **Upcoming events** (`/events`) — every upcoming listing grouped by calendar week with a search hero; links to Explore for full filtering.
 - **Explore** (`/explore`) — one filter system (game, date, city + radius, type, format, skill, age, price, beginner/youth) across list, calendar, and map views; filter state lives in the URL. "Nearest" sort resolves known Utah cities to coordinates server-side.
 - **Submit & import** (/submit) - paste an event URL and Fetch details from link: adapters scrape start.gg, legacy Jekyll files (GitHub), or any page with Event JSON-LD/h-event/meta tags, autofilling dates, venue, price, organizer, and inferred games. Reviewers approve everything. CLI: pnpm --filter @utah-esports/workers exec tsx scripts/import-url.ts <url> (exit 2 = likely duplicate).
 - **Event pages** (`/events/[slug]`) — answer in order: what / can I participate / when+where / cost / bring / register / who to ask — plus freshness badges, cancellation notices, ICS download, save, and report.

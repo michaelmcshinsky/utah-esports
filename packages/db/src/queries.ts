@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, inArray, isNotNull, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { geoForCity, STALE_AFTER_DAYS, type EventSearchFilter } from "@utah-esports/core";
 import {
   communities,
@@ -289,7 +289,7 @@ export async function getTeamRoster(db: Database, teamId: string) {
   return db
     .select()
     .from(teamMembers)
-    .where(and(eq(teamMembers.teamId, teamId), isNotNull(teamMembers.joinedAt), sql`${teamMembers.leftAt} is null`))
+    .where(and(eq(teamMembers.teamId, teamId), sql`${teamMembers.leftAt} is null`))
     .orderBy(asc(teamMembers.sortWeight), asc(teamMembers.displayName));
 }
 
