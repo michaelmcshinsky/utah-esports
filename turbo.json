@@ -12,8 +12,10 @@
     "NEXT_PUBLIC_SITE_URL",
     "STARTGG_TOKEN",
     "RESEND_API_KEY",
+    "EMAIL_FROM",
     "DISCORD_TOKEN",
     "DISCORD_CLIENT_ID",
+    "DISCORD_GUILD_ID",
     "TRIGGER_SECRET_KEY"
   ],
   "globalDependencies": ["**/.env.*local"],

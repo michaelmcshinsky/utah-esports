@@ -37,7 +37,7 @@ export function extractCandidateEventUrls(html: string, baseUrl: string): string
   }
 
   // 2. Event-ish anchors
-  const anchorRe = /<a\s[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  const anchorRe = /<a\s[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
   while ((m = anchorRe.exec(html)) !== null) {
     const href = (m[1] ?? "").trim();
     const text = (m[2] ?? "").replace(/<[^>]+>/g, " ").trim();

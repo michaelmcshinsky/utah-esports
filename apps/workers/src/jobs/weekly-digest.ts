@@ -1,19 +1,22 @@
-import { asc, eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import {
   digestSends,
   eventGames,
-  eventOccurrences,
   games,
+  searchEvents,
   userPreferences,
   userProfiles,
   getDb,
 } from "@utah-esports/db";
+import { parseFilters } from "@utah-esports/core";
 import { createTransport, renderWeeklyDigest } from "@utah-esports/email";
 import { log } from "../lib/logger.js";
 
 /**
- * Weekly digest built strictly from real upcoming listings.
- * Cancelled events are never included; deduplicated per user+week.
+ * Weekly digest built strictly from real upcoming listings, matched with
+ * the same filter system as /explore (city + radius + games) — an email
+ * can never invent or drop events the site would show. Cancelled events
+ * are never included; deduplicated per user+week.
  */
 export async function runWeeklyDigest(now = new Date()): Promise<{ sent: number }> {
   const db = getDb();
@@ -32,34 +35,26 @@ export async function runWeeklyDigest(now = new Date()): Promise<{ sent: number 
   const transport = createTransport();
   let sent = 0;
 
-  const upcoming = await db
-    .select()
-    .from(eventOccurrences)
-    .where(inArray(eventOccurrences.status, ["published", "needs_verification"]))
-    .orderBy(asc(eventOccurrences.startsAt))
-    .limit(300);
-
   for (const pref of due) {
     const weekRows = await db.select().from(digestSends).where(eq(digestSends.weekOf, weekOf));
     if (weekRows.some((d) => d.userId === pref.userId)) continue;
 
+    // Shared filter system: city text + radius + game slugs from prefs.
+    const filter = parseFilters({
+      ...(pref.city ? { city: pref.city, radiusKm: String(pref.radiusKm) } : {}),
+      ...(pref.gameSlugs.length ? { games: pref.gameSlugs.join(",") } : {}),
+      sort: "soonest",
+      pageSize: "12",
+    });
+    const result = await searchEvents(db, filter);
+
     const digestEvents = [];
-    for (const event of upcoming) {
-      if (event.startsAt < now) continue;
-      if (pref.city && event.city && !event.city.toLowerCase().includes(pref.city.toLowerCase())) {
-        continue;
-      }
+    for (const event of result.items) {
       const gameRows = await db
         .select({ game: games })
         .from(eventGames)
         .innerJoin(games, eq(eventGames.gameId, games.id))
         .where(eq(eventGames.eventId, event.id));
-      if (
-        pref.gameSlugs.length > 0 &&
-        !gameRows.some((g) => pref.gameSlugs.includes(g.game.slug))
-      ) {
-        continue;
-      }
       digestEvents.push({
         title: event.title,
         url: `https://utahesports.net/events/${event.slug}`,
@@ -71,7 +66,6 @@ export async function runWeeklyDigest(now = new Date()): Promise<{ sent: number 
         city: event.city,
         gameNames: gameRows.map((g) => g.game.name),
       });
-      if (digestEvents.length >= 12) break;
     }
 
     if (digestEvents.length === 0) continue;

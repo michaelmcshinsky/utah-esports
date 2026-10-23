@@ -48,21 +48,3 @@ export function can(
   if (!membership) return false;
   return roleHasPermission(membership.role, permission);
 }
-
-export type ModeratorScope =
-  | { kind: "platform" }
-  | { kind: "org"; orgId: string; role: OrgRole };
-
-export function canModerate(
-  scopes: readonly ModeratorScope[],
-  permission: OrgPermission,
-  orgId?: string,
-): boolean {
-  return scopes.some((scope) => {
-    if (scope.kind === "platform") return true;
-    if (orgId && scope.orgId === orgId) {
-      return roleHasPermission(scope.role, permission);
-    }
-    return false;
-  });
-}

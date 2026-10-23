@@ -31,5 +31,9 @@ if (result.status === "no_match") {
   console.log(`No event data found: ${result.error}`);
   process.exit(3);
 }
-console.error(`✗ Import failed${result.adapter ? ` (${result.adapter})` : ""}: ${result.error}`);
+if (result.status === "error") {
+  console.error(`✗ Import failed${result.adapter ? ` (${result.adapter})` : ""}: ${result.error}`);
+  process.exit(1);
+}
+console.error("✗ Import failed unexpectedly");
 process.exit(1);

@@ -1,29 +1,40 @@
-import { desc, eq, inArray } from "drizzle-orm";
-import { communities, eventOccurrences, linkChecks, getDb } from "@utah-esports/db";
+import { and, asc, eq, gte, inArray } from "drizzle-orm";
+import { catalogSources, communities, eventOccurrences, linkChecks, getDb } from "@utah-esports/db";
 import { log } from "../lib/logger.js";
 
 /**
- * Link checks flag broken registration/community links. A single failed
- * request is NOT proof of deletion — we require consecutive failures before
- * marking a link broken, and never auto-remove listings.
+ * Link checks flag broken registration/community/catalog links. A single
+ * failed request is NOT proof of deletion — we require consecutive failures
+ * before marking a link broken, and never auto-remove listings.
  */
 export async function runLinkChecks(): Promise<{ checked: number; broken: number }> {
   const db = getDb();
-  const targets: Array<{ url: string; entityType: string; entityId: string }> = [];
+  const targets: Array<{ url: string; entityType: string; entityId: string | null }> = [];
+  const seenUrls = new Set<string>();
+  const addTarget = (url: string, entityType: string, entityId: string | null) => {
+    if (!url || seenUrls.has(url)) return;
+    seenUrls.add(url);
+    targets.push({ url, entityType, entityId });
+  };
 
+  const since = new Date();
+  since.setDate(since.getDate() - 7); // include just-started events
   const upcoming = await db
     .select({
       id: eventOccurrences.id,
       registrationUrl: eventOccurrences.registrationUrl,
     })
     .from(eventOccurrences)
-    .where(inArray(eventOccurrences.status, ["published", "needs_verification"]))
-    .orderBy(desc(eventOccurrences.startsAt))
-    .limit(100);
+    .where(
+      and(
+        inArray(eventOccurrences.status, ["published", "needs_verification"]),
+        gte(eventOccurrences.startsAt, since),
+      ),
+    )
+    .orderBy(asc(eventOccurrences.startsAt))
+    .limit(200);
   for (const e of upcoming) {
-    if (e.registrationUrl) {
-      targets.push({ url: e.registrationUrl, entityType: "event", entityId: e.id });
-    }
+    if (e.registrationUrl) addTarget(e.registrationUrl, "event", e.id);
   }
 
   const communityRows = await db
@@ -36,8 +47,21 @@ export async function runLinkChecks(): Promise<{ checked: number; broken: number
     .where(eq(communities.status, "published"))
     .limit(50);
   for (const c of communityRows) {
-    const url = c.discordUrl ?? c.websiteUrl;
-    if (url) targets.push({ url, entityType: "community", entityId: c.id });
+    // Check both when present — a live Discord link can mask a dead site.
+    if (c.discordUrl) addTarget(c.discordUrl, "community", c.id);
+    if (c.websiteUrl) addTarget(c.websiteUrl, "community", c.id);
+  }
+
+  // Catalog sources: the scrape targets themselves should stay reachable;
+  // the venue-scan job flips lastVerifiedAt on successful listing parses.
+  const catalogRows = await db
+    .select({ slug: catalogSources.slug, url: catalogSources.url })
+    .from(catalogSources)
+    .where(inArray(catalogSources.status, ["active", "unknown"]))
+    .limit(60);
+  for (const s of catalogRows) {
+    // Catalog slug is text; link_checks.entity_id is uuid — the URL is the key.
+    addTarget(s.url, "catalog_source", null);
   }
 
   let checked = 0;

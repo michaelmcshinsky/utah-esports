@@ -123,7 +123,8 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
     filter.ages.length +
     (filter.freeOnly ? 1 : 0) +
     (filter.beginnerOnly ? 1 : 0) +
-    (filter.youthOnly ? 1 : 0);
+    (filter.youthOnly ? 1 : 0) +
+    (filter.radiusKm != null ? 1 : 0);
 
   return (
     <section
@@ -261,6 +262,28 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
                 { value: "distance", label: "Nearest (set city)" },
               ]}
             />
+            {filter.sort === "distance" ? (
+              <Select
+                label="Radius"
+                hint="From the city center — known Utah cities only"
+                value={filter.radiusKm ? String(filter.radiusKm) : ""}
+                onChange={(e) =>
+                  apply({
+                    ...filter,
+                    radiusKm: e.target.value ? Number(e.target.value) : undefined,
+                    page: 1,
+                  })
+                }
+                options={[
+                  { value: "", label: "Any distance" },
+                  { value: "10", label: "Within 10 km" },
+                  { value: "25", label: "Within 25 km" },
+                  { value: "50", label: "Within 50 km" },
+                  { value: "100", label: "Within 100 km" },
+                  { value: "200", label: "Within 200 km" },
+                ]}
+              />
+            ) : null}
             {activeCount > 0 ? (
               <Button
                 type="button"
@@ -277,6 +300,7 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
                     freeOnly: false,
                     beginnerOnly: false,
                     youthOnly: false,
+                    radiusKm: undefined,
                     page: 1,
                   })
                 }

@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { scanListingPage, scrapeUrlForDraft } from "@utah-esports/scrapers";
-import { createDraftFromDraft, findDuplicateForDraft } from "../src/jobs/url-import.js";
+import { createDraftFromDraft, findDuplicateForDraft, queueDuplicateForDraft } from "../src/jobs/url-import.js";
 
 /**
  * Scan a listing page and import candidate events as drafts.
@@ -37,7 +37,8 @@ for (const candidateUrl of candidates) {
   }
   const duplicate = await findDuplicateForDraft(scraped.draft);
   if (duplicate) {
-    console.log(`duplicate of ${duplicate.slug} (score ${duplicate.score})`);
+    await queueDuplicateForDraft(scraped.draft, duplicate);
+    console.log(`duplicate of ${duplicate.slug} (score ${duplicate.score}) — queued for review`);
     summary.duplicates++;
     continue;
   }

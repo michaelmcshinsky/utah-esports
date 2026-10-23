@@ -1,4 +1,4 @@
-import type { StartggEvent, StartggVideogame } from "./types.js";
+import type { StartggEvent } from "./types.js";
 
 /**
  * Normalizer: start.gg event → our event draft fields.
@@ -64,14 +64,6 @@ export function normalizeStartggEvent(event: StartggEvent): NormalizedStartggEve
     imageUrl: image,
     sourceUrl: `https://start.gg/tournament/${event.slug}`,
   };
-}
-
-export function normalizeVideogame(v: StartggVideogame): {
-  externalId: string;
-  name: string;
-  slug: string | null;
-} {
-  return { externalId: v.id, name: v.name, slug: v.slug };
 }
 
 /**

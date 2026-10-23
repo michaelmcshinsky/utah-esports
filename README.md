@@ -20,7 +20,7 @@ This repository is a Turborepo monorepo that replaces the archived 2018 Jekyll s
 
 ## Product surfaces
 
-- **Explore** (`/explore`) — one filter system (game, date, city, radius, type, format, skill, age, price, registration) across list, calendar, and map views; filter state lives in the URL.
+- **Explore** (`/explore`) — one filter system (game, date, city + radius, type, format, skill, age, price, beginner/youth) across list, calendar, and map views; filter state lives in the URL. "Nearest" sort resolves known Utah cities to coordinates server-side.
 - **Submit & import** (/submit) - paste an event URL and Fetch details from link: adapters scrape start.gg, legacy Jekyll files (GitHub), or any page with Event JSON-LD/h-event/meta tags, autofilling dates, venue, price, organizer, and inferred games. Reviewers approve everything. CLI: pnpm --filter @utah-esports/workers exec tsx scripts/import-url.ts <url> (exit 2 = likely duplicate).
 - **Event pages** (`/events/[slug]`) — answer in order: what / can I participate / when+where / cost / bring / register / who to ask — plus freshness badges, cancellation notices, ICS download, save, and report.
 - **Communities, Places, Schools & Teams** — connected directories, not link dumps. School pathways (collegiate / high school / youth / independent) stay separate on purpose.
@@ -90,18 +90,20 @@ Everything is documented in [`.env.example`](.env.example).
 | `STARTGG_TOKEN` | start.gg tournament sync (skips gracefully when absent) |
 | `RESEND_API_KEY` | real email (falls back to console transport) |
 | `DISCORD_TOKEN` / `DISCORD_CLIENT_ID` | bot |
+| `DISCORD_GUILD_ID` | optional: register slash commands to one server instantly (empty = global) |
+| `EMAIL_FROM` | optional: from-address for outbound mail (defaults to onboarding@resend.dev) |
 | `TRIGGER_SECRET_KEY` | hosted Trigger.dev schedules (optional; local runner works standalone) |
 
 ### Quality gates
 
 ```bash
 pnpm lint        # ESLint 9 flat config, shared from packages/eslint-config
-pnpm typecheck   # strict TypeScript across all workspaces
-pnpm test        # Vitest: filters, ICS, dedupe, normalizer, UI, redirects, email
+pnpm typecheck   # strict TypeScript across all workspaces (src + scripts)
+pnpm test        # Vitest: filters, ICS, dedupe, scrapers, normalizer, UI, redirects, email
 pnpm build       # Next production build (no DB required at build time)
 ```
 
-CI runs all four on every PR (`.github/workflows/ci.yml`).
+CI runs all four on every PR plus a `drizzle-kit check` migration-consistency gate (`.github/workflows/ci.yml`).
 
 ### Redirects
 
@@ -118,11 +120,12 @@ pnpm --filter @utah-esports/web dump-redirects   # writes apps/web/redirects.gen
 | Job | Cadence | What it does |
 |---|---|---|
 | `startgg-sync` | every 6h | imports Utah-window tournaments with source IDs; dedupe → review queue (moderator decisions respected on later runs) |
+| `venue-source-scan` | daily | walks catalog listing URLs (venues/hubs) for new event pages; imports as drafts; duplicates → review queue |
 | `freshness-check` | daily | >45-day unconfirmed listings → `needs_verification` + owner email; one-click confirm in the dashboard |
-| `link-check` | daily | HEAD/GET checks; 3 consecutive failures = broken (never auto-deletes) |
+| `link-check` | daily | HEAD/GET checks on registration, community (Discord + website), and catalog URLs; 3 consecutive failures = broken (never auto-deletes) |
 | `recurring-generation` | hourly | materializes series occurrences (capped, draft by default) |
 | `deadline-reminders` | hourly | 48h-out registration deadlines, quiet hours respected, deduplicated |
-| `weekly-digest` | Mondays | grounded digest from real listings, excluded cancelled, deduped per week |
+| `weekly-digest` | Mondays | digest matched via the same filter system as /explore (city + radius + games); cancelled excluded, deduped per week |
 | `change-notifications` | hourly | followers of the event, its org, or its games hear about material edits (48h window, quiet hours queue, per-user dedupe) |
 | `saved-search-alerts` | hourly | emails when *new* events match a saved search — same filter system as the site |
 | `post-event-followup` | every 2h | ends → `completed` transition + one organizer request to correct details or share a recap |

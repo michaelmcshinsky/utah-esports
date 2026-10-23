@@ -7,7 +7,7 @@
     "dev": "tsx watch src/local-runner.ts",
     "start": "tsx src/local-runner.ts",
     "trigger-dev": "trigger dev",
-    "lint": "eslint src",
+    "lint": "eslint src scripts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "build": "echo skip"

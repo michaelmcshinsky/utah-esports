@@ -1,4 +1,4 @@
 {
   "extends": "@utah-esports/tsconfig/library.json",
-  "include": ["src"]
+  "include": ["src", "scripts"]
 }

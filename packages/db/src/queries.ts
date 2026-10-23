@@ -1,5 +1,5 @@
 import { and, asc, eq, gte, inArray, isNotNull, lte, sql } from "drizzle-orm";
-import type { EventSearchFilter } from "@utah-esports/core";
+import { geoForCity, type EventSearchFilter } from "@utah-esports/core";
 import {
   communities,
   communityGames,
@@ -94,7 +94,13 @@ export async function searchEvents(
   if (filter.youthOnly) {
     conditions.push(eq(eventOccurrences.youthProgram, true));
   }
-  if (filter.city?.length) {
+  // Known Utah cities (incl. aliases like "slc") switch to coordinate
+  // semantics — but only when the query actually asks for distance
+  // (radius filter or nearest sort). Plain "events in this city" browsing
+  // keeps the substring match so aliases never dump the whole catalog.
+  const cityGeo = geoForCity(filter.city);
+  const geoCityMode = Boolean(cityGeo) && (filter.sort === "distance" || filter.radiusKm != null);
+  if (filter.city?.length && !geoCityMode) {
     conditions.push(sql`lower(${eventOccurrences.city}) like ${`%${filter.city.toLowerCase()}%`}`);
   }
   if (filter.region?.length) {
@@ -107,22 +113,37 @@ export async function searchEvents(
     );
   }
 
-  const where = and(...conditions);
   const pageSize = filter.pageSize ?? PAGE_SIZE_FALLBACK;
   const offset = (filter.page - 1) * pageSize;
 
-  const distanceExpr =
+  // Distance origin: explicit lat/lng win, else resolve the city filter
+  // against the shared Utah city table so "Nearest" works from a plain
+  // city name in the URL (one canonical resolution for every caller).
+  const origin =
     filter.lat != null && filter.lng != null
-      ? haversineKm(filter.lat, filter.lng).as("distance_km")
-      : sql<null>`null`.as("distance_km");
+      ? { lat: filter.lat, lng: filter.lng }
+      : geoCityMode
+        ? cityGeo
+        : null;
+
+  if (origin && filter.radiusKm != null) {
+    // Events without coordinates can't be proven inside the radius, so they
+    // drop out — the honest behavior for a radius filter.
+    conditions.push(sql`${haversineKm(origin.lat, origin.lng)} <= ${filter.radiusKm}`);
+  }
+
+  const where = and(...conditions);
+
+  const distance = origin != null ? haversineKm(origin.lat, origin.lng) : null;
+  const distanceExpr = distance
+    ? distance.as("distance_km")
+    : sql<null>`null`.as("distance_km");
 
   let orderBy;
-  if (filter.sort === "distance" && filter.lat != null && filter.lng != null) {
-    orderBy = [
-      sql`distance_km is null`,
-      sql`distance_km asc`,
-      asc(eventOccurrences.startsAt),
-    ];
+  if (filter.sort === "distance" && distance) {
+    // Postgres allows a bare alias in ORDER BY but not alias expressions
+    // ("distance_km is null"), so order by the full haversine term.
+    orderBy = [sql`${distance} is null`, sql`${distance} asc`, asc(eventOccurrences.startsAt)];
   } else {
     orderBy = [asc(eventOccurrences.startsAt)];
   }
@@ -284,14 +305,6 @@ export async function listOrgEvents(db: Database, organizationId: string, limit 
     )
     .orderBy(asc(eventOccurrences.startsAt))
     .limit(limit);
-}
-
-export async function listEventsForSeries(db: Database, seriesId: string) {
-  return db
-    .select()
-    .from(eventOccurrences)
-    .where(eq(eventOccurrences.seriesId, seriesId))
-    .orderBy(asc(eventOccurrences.startsAt));
 }
 
 export async function getMembershipsForUser(db: Database, userId: string) {

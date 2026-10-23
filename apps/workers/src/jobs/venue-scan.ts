@@ -1,10 +1,7 @@
-import { eq } from "drizzle-orm";
-import {
-  catalogSources,
-  getDb,
-} from "@utah-esports/db";
+import { eq, inArray } from "drizzle-orm";
+import { catalogSources, getDb } from "@utah-esports/db";
 import { scanListingPage, VENUE_SOURCE_URLS, scrapeUrlForDraft } from "@utah-esports/scrapers";
-import { createDraftFromDraft, findDuplicateForDraft } from "./url-import.js";
+import { createDraftFromDraft, findDuplicateForDraft, queueDuplicateForDraft } from "./url-import.js";
 import { log } from "../lib/logger.js";
 
 export type VenueScanSummary = {
@@ -16,11 +13,30 @@ export type VenueScanSummary = {
   failed: number;
 };
 
+/** Listing-page URLs to scan: built-in venue list + catalog scrapeUrls (one fetch set, deduped). */
+export async function listingScanTargets(): Promise<Array<{ name: string; url: string }>> {
+  const targets = new Map<string, string>();
+  for (const source of VENUE_SOURCE_URLS) {
+    targets.set(source.url, source.name);
+  }
+  const db = getDb();
+  const catalogRows = await db
+    .select({ name: catalogSources.name, scrapeUrls: catalogSources.scrapeUrls })
+    .from(catalogSources)
+    .where(inArray(catalogSources.status, ["active", "unknown"]));
+  for (const row of catalogRows) {
+    for (const listingUrl of row.scrapeUrls) {
+      if (!targets.has(listingUrl)) targets.set(listingUrl, row.name);
+    }
+  }
+  return [...targets].map(([url, name]) => ({ url, name }));
+}
+
 /**
  * Scan a venue/community listing page and import new events as drafts.
  * Tolerant by design: a dead or reworked site yields a failed count, never
- * an exception, and duplicate matches are skipped (moderators can review
- * them on-site instead).
+ * an exception. Duplicate matches are queued for moderator review instead
+ * of being silently skipped.
  */
 export async function scanVenueSource(
   url: string,
@@ -73,6 +89,7 @@ export async function scanVenueSource(
       }
       const duplicate = await findDuplicateForDraft(scraped.draft);
       if (duplicate) {
+        await queueDuplicateForDraft(scraped.draft, duplicate);
         summary.duplicates++;
         continue;
       }
@@ -88,15 +105,22 @@ export async function scanVenueSource(
   return summary;
 }
 
-/** Scan the built-in venue source list (best-effort, never throws). */
+/** Scan built-in + catalog listing sources (best-effort, never throws). */
 export async function runVenueSourceScan(
   opts: { limit?: number; startggToken?: string } = {},
 ): Promise<{ sources: number; imported: number; duplicates: number }> {
   let imported = 0;
   let duplicates = 0;
   let sources = 0;
-  for (const source of VENUE_SOURCE_URLS) {
-    const summary = await scanVenueSource(source.url, source.name, opts);
+  let targets: Array<{ name: string; url: string }>;
+  try {
+    targets = await listingScanTargets();
+  } catch {
+    // DB unavailable (bare CLI): fall back to the built-in list.
+    targets = VENUE_SOURCE_URLS;
+  }
+  for (const target of targets) {
+    const summary = await scanVenueSource(target.url, target.name, opts);
     sources++;
     imported += summary.imported;
     duplicates += summary.duplicates;
