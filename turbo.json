@@ -16,7 +16,8 @@
     "DISCORD_TOKEN",
     "DISCORD_CLIENT_ID",
     "DISCORD_GUILD_ID",
-    "TRIGGER_SECRET_KEY"
+    "TRIGGER_SECRET_KEY",
+    "TRIGGER_PROJECT_ID"
   ],
   "globalDependencies": ["**/.env.*local"],
   "tasks": {

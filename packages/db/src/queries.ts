@@ -1,5 +1,5 @@
-import { and, asc, eq, gte, inArray, isNotNull, lte, sql } from "drizzle-orm";
-import { geoForCity, type EventSearchFilter } from "@utah-esports/core";
+import { and, asc, desc, eq, gte, inArray, isNotNull, lte, sql } from "drizzle-orm";
+import { geoForCity, STALE_AFTER_DAYS, type EventSearchFilter } from "@utah-esports/core";
 import {
   communities,
   communityGames,
@@ -144,6 +144,16 @@ export async function searchEvents(
     // Postgres allows a bare alias in ORDER BY but not alias expressions
     // ("distance_km is null"), so order by the full haversine term.
     orderBy = [sql`${distance} is null`, sql`${distance} asc`, asc(eventOccurrences.startsAt)];
+  } else if (filter.sort === "recently_added") {
+    orderBy = [desc(eventOccurrences.updatedAt), asc(eventOccurrences.startsAt)];
+  } else if (filter.hideStale) {
+    // Stale listings sink below fresh ones; hideStale=false keeps pure
+    // soonest-first ordering.
+    const staleCutoff = new Date(Date.now() - STALE_AFTER_DAYS * 24 * 60 * 60 * 1000);
+    orderBy = [
+      sql`(${eventOccurrences.lastConfirmedAt} is null or ${eventOccurrences.lastConfirmedAt} < ${staleCutoff}) asc`,
+      asc(eventOccurrences.startsAt),
+    ];
   } else {
     orderBy = [asc(eventOccurrences.startsAt)];
   }

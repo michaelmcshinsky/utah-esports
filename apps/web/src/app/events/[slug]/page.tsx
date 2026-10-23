@@ -69,10 +69,11 @@ export async function generateMetadata({
       title: event.title,
       description,
       type: "website",
-      ...(event.imageUrl ? { images: [event.imageUrl] } : {}),
+      images: event.imageUrl ? [event.imageUrl] : ["/og-image.jpg"],
     },
     twitter: {
       card: event.imageUrl ? "summary_large_image" : "summary",
+      images: event.imageUrl ? [event.imageUrl] : ["/og-image.jpg"],
     },
   };
 }
@@ -472,6 +473,7 @@ export default async function EventDetailPage({
         registrationUrl={event.registrationUrl}
         organizerName={org?.name ?? event.contactName}
         status={event.status}
+        registrationState={event.registrationState}
       />
     </>
   );

@@ -118,6 +118,7 @@ export type FilterableEvent = {
   title: string;
   description: string | null;
   startsAt: Date;
+  updatedAt?: Date | null;
   format: string | null;
   eventType: string | null;
   city: string | null;
@@ -138,6 +139,9 @@ export type FilterableEvent = {
 };
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Listings not re-confirmed within this window are considered stale. */
+export const STALE_AFTER_DAYS = 120;
 
 /** Haversine distance in kilometers. */
 export function distanceKm(
@@ -160,7 +164,7 @@ export type MatchResult = { matches: boolean; distance: number | null };
 export function matchesFilter(
   event: FilterableEvent,
   filter: EventSearchFilter,
-  now = new Date(),
+  _now = new Date(),
 ): MatchResult {
   if (event.status === "cancelled" || event.status === "archived") {
     return { matches: false, distance: null };
@@ -258,14 +262,6 @@ export function matchesFilter(
     }
   }
 
-  if (filter.hideStale && event.lastConfirmedAt) {
-    const ageDays = (now.getTime() - event.lastConfirmedAt.getTime()) / DAY_MS;
-    // Stale imported listings stay searchable but sink; caller applies ranking.
-    if (ageDays > 120 && filter.sort !== "recently_added") {
-      // still a match — freshness is a ranking signal, not a hard filter
-    }
-  }
-
   return { matches: true, distance };
 }
 
@@ -295,10 +291,13 @@ export function filterAndSort(
       return a.startsAt.getTime() - b.startsAt.getTime();
     }
     if (filter.sort === "recently_added") {
-      return b.startsAt.getTime() - a.startsAt.getTime();
+      const ta = a.updatedAt?.getTime() ?? a.startsAt.getTime();
+      const tb = b.updatedAt?.getTime() ?? b.startsAt.getTime();
+      if (ta !== tb) return tb - ta;
+      return a.startsAt.getTime() - b.startsAt.getTime();
     }
-    const fa = freshnessPenalty(a);
-    const fb = freshnessPenalty(b);
+    const fa = filter.hideStale ? freshnessPenalty(a) : 0;
+    const fb = filter.hideStale ? freshnessPenalty(b) : 0;
     // Confirmed-soon events first, then soonest start; stale sinks below.
     const bucketA = Math.floor(a.startsAt.getTime() / (7 * DAY_MS)) + fa * 100;
     const bucketB = Math.floor(b.startsAt.getTime() / (7 * DAY_MS)) + fb * 100;

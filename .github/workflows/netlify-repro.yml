@@ -27,7 +27,10 @@ jobs:
           cache: pnpm
 
       - name: Install (Netlify-style flags)
-        run: pnpm install --shamefully-hoist --force
+        # nodeLinker: hoisted in pnpm-workspace.yaml already gives the flat
+        # layout; --shamefully-hoist is redundant and --force skips the lockfile
+        # check (both were needed under the old public-hoist approach).
+        run: pnpm install --frozen-lockfile
 
       - name: netlify build (offline, filter web)
         run: npx --yes netlify-cli@latest build --offline --filter "@utah-esports/web"

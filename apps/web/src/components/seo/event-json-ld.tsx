@@ -16,6 +16,7 @@ type EventJsonLdProps = {
   registrationUrl?: string | null;
   organizerName?: string | null;
   status?: string | null;
+  registrationState?: string | null;
 };
 
 /**
@@ -51,7 +52,10 @@ export function EventJsonLd(props: EventJsonLdProps) {
           price: (props.priceCents / 100).toFixed(2),
           priceCurrency: "USD",
           url: props.registrationUrl ?? url,
-          availability: "https://schema.org/LimitedAvailability",
+          availability:
+            props.registrationState === "open"
+              ? "https://schema.org/InStock"
+              : "https://schema.org/LimitedAvailability",
         }
       : undefined;
 

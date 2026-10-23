@@ -130,6 +130,22 @@ describe("filterAndSort", () => {
     const result = filterAndSort([far, near], filter);
     expect(result[0]?.title).toBe("Near");
   });
+
+  it("sorts by listing recency when sort is recently_added", () => {
+    const older = makeEvent({
+      title: "Older listing",
+      startsAt: new Date("2026-11-01T18:00:00Z"),
+      updatedAt: new Date("2026-10-01T00:00:00Z"),
+    });
+    const newer = makeEvent({
+      title: "Newer listing",
+      startsAt: new Date("2026-12-01T18:00:00Z"),
+      updatedAt: new Date("2026-10-15T00:00:00Z"),
+    });
+    const filter = parseFilters(new URLSearchParams("sort=recently_added"));
+    const result = filterAndSort([older, newer], filter);
+    expect(result[0]?.title).toBe("Newer listing");
+  });
 });
 
 describe("distanceKm", () => {
