@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, Button, Input } from "@utah-esports/ui";
 import { createSupabaseBrowserClient, supabaseConfigured } from "@/src/lib/supabase/browser";
+import { signInFormSchema, type SignInFormValues } from "@/src/lib/forms/schemas";
 
 function AccountBenefits() {
   return (
@@ -17,9 +20,16 @@ function AccountBenefits() {
 }
 
 export default function SignInPage() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const [message, setMessage] = useState("");
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(signInFormSchema),
+    defaultValues: { email: "" },
+  });
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   if (!supabaseConfigured()) {
     return (
@@ -42,21 +52,18 @@ export default function SignInPage() {
     );
   }
 
-  async function sendMagicLink(e: FormEvent) {
-    e.preventDefault();
-    setStatus("sending");
+  async function sendMagicLink(values: SignInFormValues) {
     const supabase = createSupabaseBrowserClient();
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: values.email,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
     if (error) {
-      setStatus("error");
-      setMessage(error.message);
+      setError("email", { message: error.message });
     } else {
-      setStatus("sent");
+      setSentTo(values.email);
     }
   }
 
@@ -78,27 +85,21 @@ export default function SignInPage() {
         </p>
         <AccountBenefits />
 
-        {status === "sent" ? (
+        {sentTo ? (
           <Alert variant="success" title="Check your email" className="mt-6">
-            We sent a magic link to {email}. Click it to finish signing in.
+            We sent a magic link to {sentTo}. Click it to finish signing in.
           </Alert>
         ) : (
-          <form onSubmit={sendMagicLink} className="mt-6 space-y-4">
+          <form onSubmit={handleSubmit(sendMagicLink)} className="mt-6 space-y-4" noValidate>
             <Input
               label="Email"
               type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
+              error={errors.email?.message}
+              {...register("email")}
             />
-            {status === "error" ? (
-              <Alert variant="danger" title="Could not send link">
-                {message}
-              </Alert>
-            ) : null}
-            <Button type="submit" className="w-full" disabled={status === "sending"}>
-              {status === "sending" ? "Sending…" : "Send magic link"}
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Sending…" : "Send magic link"}
             </Button>
           </form>
         )}

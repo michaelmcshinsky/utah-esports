@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, Button, Checkbox, Input, Select, Textarea } from "@utah-esports/ui";
-import { eventSubmissionSchema } from "@utah-esports/core";
+import {
+  submitEventFormSchema,
+  type SubmitEventFormValues,
+} from "@/src/lib/forms/schemas";
 
 const EVENT_TYPE_OPTIONS = [
   { value: "tournament", label: "Tournament" },
@@ -16,65 +21,88 @@ const EVENT_TYPE_OPTIONS = [
 
 export function SubmitEventForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SubmitEventFormValues>({
+    resolver: zodResolver(submitEventFormSchema),
+    defaultValues: {
+      title: "",
+      url: "",
+      eventType: "casual",
+      format: "in_person",
+      startsAt: "",
+      endsAt: "",
+      gameNames: "",
+      city: "",
+      agePolicy: "unknown",
+      skillLevel: "unknown",
+      beginnerFriendly: false,
+      youthProgram: false,
+      priceDollars: "",
+      registrationState: "open",
+      description: "",
+      contactName: "",
+      contactEmail: "",
+      notes: "",
+    },
+  });
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function onSubmit(values: SubmitEventFormValues) {
     setStatus("sending");
-    setErrors({});
-    const form = e.currentTarget;
-    const data = new FormData(form);
     const payload = {
-      title: String(data.get("title") ?? ""),
-      description: String(data.get("description") ?? "") || null,
-      url: String(data.get("url") ?? ""),
-      eventType: String(data.get("eventType") ?? "casual"),
-      format: String(data.get("format") ?? "in_person"),
-      startsAt: new Date(String(data.get("startsAt") ?? "")).toISOString(),
-      endsAt: data.get("endsAt") ? new Date(String(data.get("endsAt"))).toISOString() : null,
-      gameNames: String(data.get("gameNames") ?? "")
+      title: values.title,
+      description: values.description?.trim() || null,
+      url: values.url,
+      eventType: values.eventType,
+      format: values.format,
+      startsAt: new Date(values.startsAt).toISOString(),
+      endsAt: values.endsAt ? new Date(values.endsAt).toISOString() : null,
+      gameNames: values.gameNames
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      city: String(data.get("city") ?? "") || null,
-      onlineUrl: data.get("format") === "online" ? String(data.get("url") ?? "") : null,
-      agePolicy: String(data.get("agePolicy") ?? "unknown"),
-      skillLevel: String(data.get("skillLevel") ?? "unknown"),
-      beginnerFriendly: data.get("beginnerFriendly") === "on",
-      youthProgram: data.get("youthProgram") === "on",
-      priceCents: data.get("priceDollars")
-        ? Math.round(Number(String(data.get("priceDollars"))) * 100)
-        : null,
-      registrationUrl: String(data.get("url") ?? "") || null,
-      registrationState: String(data.get("registrationState") ?? "unknown"),
-      contactName: String(data.get("contactName") ?? ""),
-      contactEmail: String(data.get("contactEmail") ?? ""),
-      notes: String(data.get("notes") ?? "") || null,
+      city: values.city?.trim() || null,
+      onlineUrl: values.format === "online" ? values.url : null,
+      agePolicy: values.agePolicy,
+      skillLevel: values.skillLevel,
+      beginnerFriendly: values.beginnerFriendly,
+      youthProgram: values.youthProgram,
+      priceCents: values.priceDollars ? Math.round(Number(values.priceDollars) * 100) : null,
+      registrationUrl: values.url || null,
+      registrationState: values.registrationState,
+      contactName: values.contactName,
+      contactEmail: values.contactEmail,
+      notes: values.notes?.trim() || null,
     };
-
-    const parsed = eventSubmissionSchema.safeParse(payload);
-    if (!parsed.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of parsed.error.issues) {
-        const key = String(issue.path[0] ?? "form");
-        fieldErrors[key] ??= issue.message;
-      }
-      setErrors(fieldErrors);
-      setStatus("error");
-      return;
-    }
 
     const res = await fetch("/api/submissions", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(parsed.data),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       setStatus("sent");
-      form.reset();
-    } else {
-      setStatus("error");
+      return;
     }
+    const body = (await res.json().catch(() => null)) as {
+      issues?: Array<{ path: (string | number)[]; message: string }>;
+    } | null;
+    if (body?.issues?.length) {
+      for (const issue of body.issues) {
+        const path = String(issue.path[0] ?? "");
+        if (path === "startsAt" || path === "url" || path === "gameNames") {
+          setError(path as keyof SubmitEventFormValues, { message: issue.message });
+        } else {
+          setError("root", { message: issue.message });
+        }
+      }
+    } else {
+      setError("root", { message: "Something went wrong. Try again." });
+    }
+    setStatus("error");
   }
 
   if (status === "sent") {
@@ -87,45 +115,47 @@ export function SubmitEventForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 space-y-4">
-      <Input label="Event title" name="title" required error={errors.title} />
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4" noValidate>
+      <Input label="Event title" error={errors.title?.message} {...register("title")} />
       <Input
         label="Registration / info link"
-        name="url"
         type="url"
-        required
         hint="start.gg, Facebook, or your own page"
-        error={errors.url}
+        error={errors.url?.message}
+        {...register("url")}
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        <Select label="Event type" name="eventType" options={EVENT_TYPE_OPTIONS} required />
+        <Select
+          label="Event type"
+          options={EVENT_TYPE_OPTIONS}
+          error={errors.eventType?.message}
+          {...register("eventType")}
+        />
         <Select
           label="Format"
-          name="format"
-          required
           options={[
             { value: "in_person", label: "In person" },
             { value: "online", label: "Online" },
             { value: "hybrid", label: "Hybrid" },
           ]}
+          error={errors.format?.message}
+          {...register("format")}
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Input label="Starts" name="startsAt" type="datetime-local" required error={errors.startsAt} />
-        <Input label="Ends (optional)" name="endsAt" type="datetime-local" />
+        <Input label="Starts" type="datetime-local" error={errors.startsAt?.message} {...register("startsAt")} />
+        <Input label="Ends (optional)" type="datetime-local" error={errors.endsAt?.message} {...register("endsAt")} />
       </div>
       <Input
         label="Games"
-        name="gameNames"
-        required
         hint="Comma-separated, e.g. Smash Ultimate, Rocket League"
-        error={errors.gameNames}
+        error={errors.gameNames?.message}
+        {...register("gameNames")}
       />
-      <Input label="City" name="city" hint="Leave blank for online events" />
+      <Input label="City" hint="Leave blank for online events" error={errors.city?.message} {...register("city")} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Select
           label="Age policy"
-          name="agePolicy"
           options={[
             { value: "all_ages", label: "All ages" },
             { value: "teen", label: "Teens" },
@@ -133,10 +163,11 @@ export function SubmitEventForm() {
             { value: "21_plus", label: "21+" },
             { value: "unknown", label: "Not specified" },
           ]}
+          error={errors.agePolicy?.message}
+          {...register("agePolicy")}
         />
         <Select
           label="Skill level"
-          name="skillLevel"
           options={[
             { value: "beginner_friendly", label: "Beginner-friendly" },
             { value: "open", label: "Open" },
@@ -145,46 +176,50 @@ export function SubmitEventForm() {
             { value: "competitive", label: "Competitive" },
             { value: "unknown", label: "Not specified" },
           ]}
+          error={errors.skillLevel?.message}
+          {...register("skillLevel")}
         />
       </div>
       <Input
         label="Entry price (USD)"
-        name="priceDollars"
         type="number"
         step="0.01"
         min="0"
         hint="Leave blank if free or unknown"
-        error={errors.priceCents}
+        error={errors.priceDollars?.message}
+        {...register("priceDollars")}
       />
       <Select
         label="Registration state"
-        name="registrationState"
         options={[
           { value: "open", label: "Open" },
           { value: "closing_soon", label: "Closing soon" },
           { value: "closed", label: "Closed" },
           { value: "unknown", label: "Not sure" },
         ]}
+        error={errors.registrationState?.message}
+        {...register("registrationState")}
       />
-      <Checkbox label="Beginner-friendly" name="beginnerFriendly" />
-      <Checkbox label="Youth program (adult-supervised)" name="youthProgram" />
+      <Checkbox label="Beginner-friendly" {...register("beginnerFriendly")} />
+      <Checkbox label="Youth program (adult-supervised)" {...register("youthProgram")} />
       <Textarea
         label="Description"
-        name="description"
         rows={5}
         hint="What should players expect? Format, rules highlights, first-timer notes."
+        error={errors.description?.message}
+        {...register("description")}
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        <Input label="Contact name" name="contactName" required error={errors.contactName} />
-        <Input label="Contact email" name="contactEmail" type="email" required error={errors.contactEmail} />
+        <Input label="Contact name" error={errors.contactName?.message} {...register("contactName")} />
+        <Input label="Contact email" type="email" error={errors.contactEmail?.message} {...register("contactEmail")} />
       </div>
-      <Textarea label="Notes for moderators" name="notes" rows={3} />
-      {status === "error" && Object.keys(errors).length === 0 ? (
+      <Textarea label="Notes for moderators" rows={3} error={errors.notes?.message} {...register("notes")} />
+      {errors.root?.message ? (
         <Alert variant="danger" title="Submission failed">
-          Something went wrong. Try again, or check that all fields are valid.
+          {errors.root.message}
         </Alert>
       ) : null}
-      <Button type="submit" size="lg" disabled={status === "sending"}>
+      <Button type="submit" disabled={isSubmitting || status === "sending"}>
         {status === "sending" ? "Submitting…" : "Submit for review"}
       </Button>
     </form>

@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input } from "@utah-esports/ui";
+import {
+  savedSearchFormSchema,
+  type SavedSearchFormValues,
+} from "@/src/lib/forms/schemas";
 
 type SavedSearch = {
   id: string;
@@ -13,25 +18,43 @@ type SavedSearch = {
 
 export function SavedSearchesPanel({ searches }: { searches: SavedSearch[] }) {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [busy, setBusy] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<SavedSearchFormValues>({
+    resolver: zodResolver(savedSearchFormSchema),
+    defaultValues: { name: "" },
+  });
 
   const currentQuery =
     typeof window !== "undefined" ? window.location.search.replace(/^\?/, "") : "";
 
-  async function saveCurrent() {
-    if (!name.trim()) return;
-    setBusy(true);
-    const query = new URLSearchParams(window.location.search);
-    query.delete("page");
-    await fetch("/api/saved-searches", {
+  async function saveCurrent(values: SavedSearchFormValues) {
+    if (!currentQuery) {
+      setError("name", {
+        message: "Open Explore and apply filters first, then come back to save.",
+      });
+      return;
+    }
+    const res = await fetch("/api/saved-searches", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), query: query.toString(), notify: true }),
+      body: JSON.stringify({
+        name: values.name,
+        query: currentQuery.replace(/([?&])page=\d+&?|([?&])page=\d+$/, "$1$2"),
+        notify: true,
+      }),
     });
-    setName("");
-    setBusy(false);
-    router.refresh();
+    if (res.ok) {
+      reset();
+      router.refresh();
+    } else {
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      setError("name", { message: body?.error ?? "Could not save — try again." });
+    }
   }
 
   return (
@@ -51,25 +74,31 @@ export function SavedSearchesPanel({ searches }: { searches: SavedSearch[] }) {
                 <a href={`/explore?${s.query}`} className="text-redrock-600 hover:underline">
                   {s.name}
                 </a>
-                <span className="text-xs text-charcoal-500">{s.notify ? "notifying" : "paused"}</span>
+                <span className="text-xs text-charcoal-500">
+                  {s.notify ? "notifying" : "paused"}
+                </span>
               </li>
             ))}
           </ul>
         )}
-        <div className="mt-4 flex gap-2">
-          <Input
-            label="Save current search"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Weekend Smash near Provo"
-            className="flex-1"
-          />
+        <form
+          onSubmit={handleSubmit(saveCurrent)}
+          className="mt-4 flex gap-2"
+          noValidate
+        >
+          <div className="flex-1">
+            <Input
+              label="Save current search"
+              error={errors.name?.message}
+              {...register("name")}
+            />
+          </div>
           <div className="flex items-end">
-            <Button size="sm" onClick={saveCurrent} disabled={busy || !name.trim()}>
-              Save
+            <Button type="submit" size="sm" disabled={isSubmitting}>
+              {isSubmitting ? "Saving…" : "Save"}
             </Button>
           </div>
-        </div>
+        </form>
         {currentQuery ? (
           <p className="mt-2 text-xs text-charcoal-500">Based on: /explore?{currentQuery}</p>
         ) : (

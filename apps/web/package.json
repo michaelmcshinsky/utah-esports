@@ -13,6 +13,7 @@
     "dump-redirects": "tsx scripts/dump-redirects.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^6.0.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.58.0",
     "@utah-esports/core": "workspace:*",
@@ -26,6 +27,7 @@
     "pg": "^8.16.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.90.0",
     "react-leaflet": "^5.0.0",
     "zod": "^3.25.76"
   },

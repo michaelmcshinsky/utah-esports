@@ -1,115 +1,113 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Button, Input, Select, Textarea, Checkbox, Alert } from "@utah-esports/ui";
+import { Alert, Button, Checkbox, Input, Select, Textarea } from "@utah-esports/ui";
+import { eventFormSchema, type EventFormValues } from "@/src/lib/forms/schemas";
 
-export type EventFormValues = {
-  id?: string;
-  title: string;
-  description: string;
-  url: string;
-  eventType: string;
-  format: string;
-  startsAt: string;
-  endsAt: string;
-  gameNames: string;
-  city: string;
-  agePolicy: string;
-  skillLevel: string;
-  beginnerFriendly: boolean;
-  youthProgram: boolean;
-  priceDollars: string;
-  registrationState: string;
-  registrationDeadline: string;
-  contactName: string;
-  contactEmail: string;
-  status: string;
+export type EventFormProps = {
+  orgSlug: string;
+  values?: Partial<EventFormValues> & { id?: string };
 };
 
-export function EventForm({
-  orgSlug,
-  values,
-}: {
-  orgSlug: string;
-  values?: EventFormValues;
-}) {
+export function EventForm({ orgSlug, values }: EventFormProps) {
+  const isEdit = Boolean(values?.id);
   const router = useRouter();
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<EventFormValues>({
+    resolver: zodResolver(eventFormSchema),
+    defaultValues: {
+      title: values?.title ?? "",
+      url: values?.url ?? "",
+      eventType: values?.eventType ?? "casual",
+      format: values?.format ?? "in_person",
+      startsAt: values?.startsAt ?? "",
+      endsAt: values?.endsAt ?? "",
+      gameNames: values?.gameNames ?? "",
+      city: values?.city ?? "",
+      agePolicy: values?.agePolicy ?? "unknown",
+      skillLevel: values?.skillLevel ?? "unknown",
+      beginnerFriendly: values?.beginnerFriendly ?? false,
+      youthProgram: values?.youthProgram ?? false,
+      priceDollars: values?.priceDollars ?? "",
+      registrationState: values?.registrationState ?? "open",
+      registrationDeadline: values?.registrationDeadline ?? "",
+      description: values?.description ?? "",
+      contactName: values?.contactName ?? "",
+      contactEmail: values?.contactEmail ?? "",
+      status: values?.status ?? "draft",
+      repeatWeekly: false,
+      recurrenceHint: values?.recurrenceHint ?? "",
+      seriesEndsOn: values?.seriesEndsOn ?? "",
+    },
+  });
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
-    const data = new FormData(e.currentTarget);
+  async function onSubmit(formValues: EventFormValues) {
     const payload = {
-      title: data.get("title"),
-      description: data.get("description") || null,
-      url: data.get("url"),
-      eventType: data.get("eventType"),
-      format: data.get("format"),
-      startsAt: new Date(String(data.get("startsAt"))).toISOString(),
-      endsAt: data.get("endsAt") ? new Date(String(data.get("endsAt"))).toISOString() : null,
-      gameNames: String(data.get("gameNames") ?? "")
+      organizationSlug: orgSlug,
+      title: formValues.title,
+      description: formValues.description?.trim() || null,
+      url: formValues.url,
+      eventType: formValues.eventType,
+      format: formValues.format,
+      startsAt: new Date(formValues.startsAt).toISOString(),
+      endsAt: formValues.endsAt ? new Date(formValues.endsAt).toISOString() : null,
+      gameNames: formValues.gameNames
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      city: data.get("city") || null,
-      agePolicy: data.get("agePolicy"),
-      skillLevel: data.get("skillLevel"),
-      beginnerFriendly: data.get("beginnerFriendly") === "on",
-      youthProgram: data.get("youthProgram") === "on",
-      priceCents: data.get("priceDollars")
-        ? Math.round(Number(String(data.get("priceDollars"))) * 100)
+      city: formValues.city?.trim() || null,
+      agePolicy: formValues.agePolicy,
+      skillLevel: formValues.skillLevel,
+      beginnerFriendly: formValues.beginnerFriendly,
+      youthProgram: formValues.youthProgram,
+      priceCents: formValues.priceDollars ? Math.round(Number(formValues.priceDollars) * 100) : null,
+      registrationUrl: formValues.url || null,
+      registrationState: formValues.registrationState,
+      registrationDeadline: formValues.registrationDeadline
+        ? new Date(formValues.registrationDeadline).toISOString()
         : null,
-      registrationUrl: data.get("url") || null,
-      registrationState: data.get("registrationState"),
-      registrationDeadline: data.get("registrationDeadline")
-        ? new Date(String(data.get("registrationDeadline"))).toISOString()
+      contactName: formValues.contactName,
+      contactEmail: formValues.contactEmail,
+      status: formValues.status,
+      recurrenceHint: !isEdit && formValues.repeatWeekly
+        ? formValues.recurrenceHint?.trim() || "Weekly"
         : null,
-      contactName: data.get("contactName"),
-      contactEmail: data.get("contactEmail"),
-      status: data.get("status"),
-      recurrenceHint: data.get("repeatWeekly") === "on" ? String(data.get("recurrenceHint") || "Weekly") : null,
-      seriesEndsOn: data.get("repeatWeekly") === "on" ? String(data.get("seriesEndsOn") || "") || null : null,
+      seriesEndsOn: !isEdit && formValues.repeatWeekly ? formValues.seriesEndsOn || null : null,
     };
-    const res = await fetch(
-      values?.id ? `/api/events/${values.id}` : "/api/events",
-      {
-        method: values?.id ? "PATCH" : "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...payload, organizationSlug: orgSlug }),
-      },
-    );
+
+    const res = await fetch(isEdit ? `/api/events/${values?.id}` : "/api/events", {
+      method: isEdit ? "PATCH" : "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
     if (res.ok) {
-      const body = await res.json().catch(() => ({}));
       router.push(`/dashboard/org/${orgSlug}/events`);
       router.refresh();
-      void body;
-    } else {
-      const body = await res.json().catch(() => ({}));
-      setError(body.error ?? "Could not save event");
+      return;
     }
-    setBusy(false);
+    const body = (await res.json().catch(() => null)) as { error?: string } | null;
+    setError("root", { message: body?.error ?? "Could not save event" });
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 max-w-2xl space-y-4">
-      <Input label="Title" name="title" required defaultValue={values?.title} />
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-6 max-w-2xl space-y-4" noValidate>
+      <Input label="Title" error={errors.title?.message} {...register("title")} />
       <Input
         label="Registration / info link"
-        name="url"
         type="url"
-        required
-        defaultValue={values?.url}
         hint="Where players register — start.gg, Facebook, your site"
+        error={errors.url?.message}
+        {...register("url")}
       />
       <div className="grid gap-4 sm:grid-cols-2">
         <Select
           label="Type"
-          name="eventType"
-          defaultValue={values?.eventType ?? "casual"}
           options={[
             { value: "tournament", label: "Tournament" },
             { value: "casual", label: "Casual session" },
@@ -119,35 +117,34 @@ export function EventForm({
             { value: "league", label: "League" },
             { value: "other", label: "Other" },
           ]}
+          error={errors.eventType?.message}
+          {...register("eventType")}
         />
         <Select
           label="Format"
-          name="format"
-          defaultValue={values?.format ?? "in_person"}
           options={[
             { value: "in_person", label: "In person" },
             { value: "online", label: "Online" },
             { value: "hybrid", label: "Hybrid" },
           ]}
+          error={errors.format?.message}
+          {...register("format")}
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Input label="Starts" name="startsAt" type="datetime-local" required defaultValue={values?.startsAt} />
-        <Input label="Ends" name="endsAt" type="datetime-local" defaultValue={values?.endsAt} />
+        <Input label="Starts" type="datetime-local" error={errors.startsAt?.message} {...register("startsAt")} />
+        <Input label="Ends" type="datetime-local" error={errors.endsAt?.message} {...register("endsAt")} />
       </div>
       <Input
         label="Games"
-        name="gameNames"
-        required
-        defaultValue={values?.gameNames}
         hint="Comma-separated"
+        error={errors.gameNames?.message}
+        {...register("gameNames")}
       />
-      <Input label="City" name="city" defaultValue={values?.city} />
+      <Input label="City" error={errors.city?.message} {...register("city")} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Select
           label="Age policy"
-          name="agePolicy"
-          defaultValue={values?.agePolicy ?? "unknown"}
           options={[
             { value: "all_ages", label: "All ages" },
             { value: "teen", label: "Teens" },
@@ -155,84 +152,62 @@ export function EventForm({
             { value: "21_plus", label: "21+" },
             { value: "unknown", label: "Not specified" },
           ]}
+          error={errors.agePolicy?.message}
+          {...register("agePolicy")}
         />
         <Select
           label="Skill"
-          name="skillLevel"
-          defaultValue={values?.skillLevel ?? "unknown"}
           options={[
             { value: "beginner_friendly", label: "Beginner-friendly" },
             { value: "open", label: "Open" },
             { value: "competitive", label: "Competitive" },
             { value: "unknown", label: "Not specified" },
           ]}
+          error={errors.skillLevel?.message}
+          {...register("skillLevel")}
         />
       </div>
       <Input
         label="Entry price (USD)"
-        name="priceDollars"
         type="number"
         step="0.01"
         min="0"
-        defaultValue={values?.priceDollars}
+        error={errors.priceDollars?.message}
+        {...register("priceDollars")}
       />
       <Select
         label="Registration"
-        name="registrationState"
-        defaultValue={values?.registrationState ?? "open"}
         options={[
           { value: "open", label: "Open" },
           { value: "closing_soon", label: "Closing soon" },
           { value: "closed", label: "Closed" },
           { value: "unknown", label: "Unknown" },
         ]}
+        error={errors.registrationState?.message}
+        {...register("registrationState")}
       />
       <Input
         label="Registration deadline"
-        name="registrationDeadline"
         type="datetime-local"
-        defaultValue={values?.registrationDeadline}
+        error={errors.registrationDeadline?.message}
+        {...register("registrationDeadline")}
       />
-      <Checkbox
-        label="Beginner-friendly"
-        name="beginnerFriendly"
-        defaultChecked={values?.beginnerFriendly}
-      />
-      <Checkbox label="Youth program" name="youthProgram" defaultChecked={values?.youthProgram} />
+      <Checkbox label="Beginner-friendly" {...register("beginnerFriendly")} />
+      <Checkbox label="Youth program" {...register("youthProgram")} />
       <Textarea
         label="Description"
-        name="description"
         rows={5}
-        defaultValue={values?.description}
-        hint="What players should know — format, rules, first-timer notes"
+        hint="What players should know — format, rules, first-timer notes."
+        error={errors.description?.message}
+        {...register("description")}
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        <Input label="Contact name" name="contactName" required defaultValue={values?.contactName} />
-        <Input label="Contact email" name="contactEmail" type="email" required defaultValue={values?.contactEmail} />
+        <Input label="Contact name" error={errors.contactName?.message} {...register("contactName")} />
+        <Input label="Contact email" type="email" error={errors.contactEmail?.message} {...register("contactEmail")} />
       </div>
-      {values?.id ? null : (
-        <fieldset className="rounded-lg border border-charcoal-200 p-4">
-          <Checkbox
-            label="Repeat weekly (series)"
-            name="repeatWeekly"
-            hint="Generates dated occurrences automatically; individual nights can be cancelled safely."
-          />
-          <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            <Input
-              label="Recurrence description"
-              name="recurrenceHint"
-              placeholder="Every Thursday 7pm"
-              hint="Shown on the listing"
-            />
-            <Input label="Series ends (optional)" name="seriesEndsOn" type="date" />
-          </div>
-        </fieldset>
-      )}
-      {values?.id ? (
+      {isEdit ? (
         <Select
           label="Status"
-          name="status"
-          defaultValue={values.status ?? "draft"}
           options={[
             { value: "draft", label: "Draft" },
             { value: "published", label: "Published" },
@@ -241,15 +216,36 @@ export function EventForm({
             { value: "completed", label: "Completed" },
             { value: "needs_verification", label: "Needs verification" },
           ]}
+          error={errors.status?.message}
+          {...register("status")}
         />
-      ) : null}
-      {error ? (
+      ) : (
+        <fieldset className="rounded-lg border border-charcoal-200 p-4">
+          <Checkbox label="Repeat weekly (series)" {...register("repeatWeekly")} />
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <Input
+              label="Recurrence description"
+              placeholder="Every Thursday 7pm"
+              hint="Shown on the listing"
+              error={errors.recurrenceHint?.message}
+              {...register("recurrenceHint")}
+            />
+            <Input
+              label="Series ends (optional)"
+              type="date"
+              error={errors.seriesEndsOn?.message}
+              {...register("seriesEndsOn")}
+            />
+          </div>
+        </fieldset>
+      )}
+      {errors.root?.message ? (
         <Alert variant="danger" title="Save failed">
-          {error}
+          {errors.root.message}
         </Alert>
       ) : null}
-      <Button type="submit" disabled={busy}>
-        {busy ? "Saving…" : values?.id ? "Save changes" : "Create event"}
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Saving…" : isEdit ? "Save changes" : "Create event"}
       </Button>
     </form>
   );

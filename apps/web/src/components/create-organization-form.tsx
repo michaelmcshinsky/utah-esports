@@ -1,41 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Select } from "@utah-esports/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Select, Textarea } from "@utah-esports/ui";
+import {
+  createOrganizationFormSchema,
+  type CreateOrganizationFormValues,
+} from "@/src/lib/forms/schemas";
 
 export function CreateOrganizationForm() {
   const router = useRouter();
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateOrganizationFormValues>({
+    resolver: zodResolver(createOrganizationFormSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      kind: "community",
+      contactEmail: "",
+      city: "",
+      websiteUrl: "",
+      description: "",
+    },
+  });
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
-    const form = e.currentTarget;
-    const data = new FormData(form);
+  async function onSubmit(values: CreateOrganizationFormValues) {
     const res = await fetch("/api/organizations", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        name: data.get("name"),
-        slug: data.get("slug"),
-        kind: data.get("kind"),
-        contactEmail: data.get("contactEmail"),
-        city: data.get("city") || null,
-        websiteUrl: data.get("websiteUrl") || null,
-        description: data.get("description") || null,
+        name: values.name,
+        slug: values.slug,
+        kind: values.kind,
+        contactEmail: values.contactEmail,
+        city: values.city?.trim() || null,
+        websiteUrl: values.websiteUrl || null,
+        description: values.description?.trim() || null,
       }),
     });
     if (res.ok) {
-      form.reset();
       router.refresh();
-    } else {
-      const body = await res.json().catch(() => ({}));
-      setError(body.error ?? "Could not create organization");
+      return;
     }
-    setBusy(false);
+    const body = (await res.json().catch(() => null)) as { error?: string } | null;
+    setError("root", { message: body?.error ?? "Could not create organization" });
   }
 
   return (
@@ -44,12 +57,11 @@ export function CreateOrganizationForm() {
         <CardTitle>Create an organization</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-3">
-          <Input label="Name" name="name" required />
-          <Input label="Slug" name="slug" required hint="lowercase-with-dashes" />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
+          <Input label="Name" error={errors.name?.message} {...register("name")} />
+          <Input label="Slug" hint="lowercase-with-dashes" error={errors.slug?.message} {...register("slug")} />
           <Select
             label="Kind"
-            name="kind"
             options={[
               { value: "community", label: "Community" },
               { value: "organizer", label: "Event organizer" },
@@ -60,17 +72,20 @@ export function CreateOrganizationForm() {
               { value: "youth", label: "Youth program" },
               { value: "other", label: "Other" },
             ]}
+            error={errors.kind?.message}
+            {...register("kind")}
           />
-          <Input label="Contact email" name="contactEmail" type="email" required />
-          <Input label="City" name="city" />
-          <Input label="Website" name="websiteUrl" type="url" />
-          {error ? (
+          <Input label="Contact email" type="email" error={errors.contactEmail?.message} {...register("contactEmail")} />
+          <Input label="City" error={errors.city?.message} {...register("city")} />
+          <Input label="Website" type="url" error={errors.websiteUrl?.message} {...register("websiteUrl")} />
+          <Textarea label="Description" rows={3} error={errors.description?.message} {...register("description")} />
+          {errors.root?.message ? (
             <p role="alert" className="text-sm text-danger-600">
-              {error}
+              {errors.root.message}
             </p>
           ) : null}
-          <Button type="submit" disabled={busy}>
-            {busy ? "Creating…" : "Create"}
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Creating…" : "Create"}
           </Button>
         </form>
       </CardContent>

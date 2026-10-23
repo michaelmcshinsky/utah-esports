@@ -1,7 +1,12 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { reportSchema, type ReportInput } from "@utah-esports/core";
 import { Button, Dialog, Select, Textarea, Input } from "@utah-esports/ui";
+
+type FormValues = Omit<ReportInput, "targetType" | "targetId">;
 
 export function ReportButton({
   targetType,
@@ -13,25 +18,33 @@ export function ReportButton({
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(reportSchema.omit({ targetType: true, targetId: true })),
+    defaultValues: { reason: "incorrect_info", details: "", contactEmail: "" },
+    mode: "onBlur",
+  });
+
+  async function onSubmit(values: FormValues) {
     setStatus("sending");
     const res = await fetch("/api/reports", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        reason: values.reason,
+        details: values.details?.trim() || null,
+        contactEmail: values.contactEmail?.trim() || null,
         targetType,
         targetId,
-        reason: data.get("reason"),
-        details: data.get("details") || null,
-        contactEmail: data.get("contactEmail") || null,
       }),
     });
     if (res.ok) {
       setStatus("sent");
-      form.reset();
+      reset();
     } else {
       setStatus("error");
     }
@@ -53,11 +66,10 @@ export function ReportButton({
             Report received. A moderator will review it.
           </p>
         ) : (
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <Select
               label="What's wrong?"
-              name="reason"
-              required
+              error={errors.reason?.message}
               options={[
                 { value: "incorrect_info", label: "Incorrect information" },
                 { value: "event_cancelled", label: "Event is cancelled / didn't happen" },
@@ -66,20 +78,28 @@ export function ReportButton({
                 { value: "spam", label: "Spam" },
                 { value: "other", label: "Something else" },
               ]}
+              {...register("reason")}
             />
-            <Textarea label="Details" name="details" rows={4} hint="What should we fix?" />
+            <Textarea
+              label="Details"
+              rows={4}
+              hint="What should we fix?"
+              error={errors.details?.message}
+              {...register("details")}
+            />
             <Input
               label="Your email (optional)"
-              name="contactEmail"
               type="email"
               hint="Only used if a moderator needs follow-up"
+              error={errors.contactEmail?.message}
+              {...register("contactEmail")}
             />
             {status === "error" ? (
               <p role="alert" className="text-sm text-danger-600">
                 Couldn&apos;t send the report. Try again.
               </p>
             ) : null}
-            <Button type="submit" disabled={status === "sending"}>
+            <Button type="submit" disabled={isSubmitting || status === "sending"}>
               {status === "sending" ? "Sending…" : "Send report"}
             </Button>
           </form>

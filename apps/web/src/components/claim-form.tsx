@@ -1,28 +1,39 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Textarea } from "@utah-esports/ui";
+import { claimFormSchema, type ClaimFormValues } from "@/src/lib/forms/schemas";
 
 export function ClaimForm({ organizationId }: { organizationId: string }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<ClaimFormValues>({
+    resolver: zodResolver(claimFormSchema),
+    defaultValues: { proofUrl: "", contactEmail: "", message: "" },
+  });
+  const [sent, setSent] = useState(false);
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setStatus("sending");
-    const form = e.currentTarget;
-    const data = new FormData(form);
+  async function onSubmit(values: ClaimFormValues) {
     const res = await fetch("/api/claims", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         organizationId,
-        proofUrl: data.get("proofUrl"),
-        contactEmail: data.get("contactEmail"),
-        message: data.get("message") || null,
+        proofUrl: values.proofUrl,
+        contactEmail: values.contactEmail,
+        message: values.message?.trim() || null,
       }),
     });
-    setStatus(res.ok ? "sent" : "error");
-    if (res.ok) form.reset();
+    if (res.ok) {
+      setSent(true);
+      return;
+    }
+    setError("root", { message: "Submission failed. Try again." });
   }
 
   return (
@@ -31,28 +42,28 @@ export function ClaimForm({ organizationId }: { organizationId: string }) {
         <CardTitle>Claim request</CardTitle>
       </CardHeader>
       <CardContent>
-        {status === "sent" ? (
+        {sent ? (
           <p className="text-sm text-success-700">
             Claim submitted. A moderator will review your proof link.
           </p>
         ) : (
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <Input
               label="Proof URL"
-              name="proofUrl"
               type="url"
-              required
               hint="Public page linking your name/email to this organization"
+              error={errors.proofUrl?.message}
+              {...register("proofUrl")}
             />
-            <Input label="Contact email" name="contactEmail" type="email" required />
-            <Textarea label="Message" name="message" rows={3} />
-            {status === "error" ? (
+            <Input label="Contact email" type="email" error={errors.contactEmail?.message} {...register("contactEmail")} />
+            <Textarea label="Message" rows={3} error={errors.message?.message} {...register("message")} />
+            {errors.root?.message ? (
               <p role="alert" className="text-sm text-danger-600">
-                Submission failed. Try again.
+                {errors.root.message}
               </p>
             ) : null}
-            <Button type="submit" disabled={status === "sending"}>
-              {status === "sending" ? "Submitting…" : "Submit claim"}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting…" : "Submit claim"}
             </Button>
           </form>
         )}

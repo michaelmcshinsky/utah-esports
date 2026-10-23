@@ -2,6 +2,8 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   applyPreset,
   parseFilters,
@@ -13,6 +15,10 @@ import {
   AGE_POLICIES,
 } from "@utah-esports/core";
 import { Button, Checkbox, Chip, Input, Select } from "@utah-esports/ui";
+import {
+  dateRangeFormSchema,
+  type DateRangeFormValues,
+} from "@/src/lib/forms/schemas";
 
 const TYPE_LABELS: Record<string, string> = {
   tournament: "Tournament",
@@ -51,6 +57,14 @@ function toggleListValue(values: string[], value: string): string[] {
   return values.includes(value) ? values.filter((v) => v !== value) : [...values, value];
 }
 
+/** Expand yyyy-MM-dd to local day bounds as ISO (filter schema needs offsets). */
+function dayStartIso(date: string): string {
+  return new Date(`${date}T00:00:00`).toISOString();
+}
+function dayEndIso(date: string): string {
+  return new Date(`${date}T23:59:59.999`).toISOString();
+}
+
 export type FilterBarProps = {
   gameOptions: Array<{ slug: string; name: string }>;
 };
@@ -66,6 +80,20 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
   const [isPending, startTransition] = useTransition();
   const filter = parseFilters(searchParams);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DateRangeFormValues>({
+    resolver: zodResolver(dateRangeFormSchema),
+    defaultValues: {
+      q: filter.q ?? "",
+      city: filter.city ?? "",
+      from: filter.from ? filter.from.slice(0, 10) : "",
+      to: filter.to ? filter.to.slice(0, 10) : "",
+    },
+  });
+
   const apply = useCallback(
     (next: typeof filter) => {
       const query = serializeFilters(next);
@@ -75,6 +103,17 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
     },
     [router, pathname],
   );
+
+  const onDateSearch = handleSubmit((values) => {
+    apply({
+      ...filter,
+      q: values.q?.trim() || undefined,
+      city: values.city?.trim() || undefined,
+      from: values.from ? dayStartIso(values.from) : undefined,
+      to: values.to ? dayEndIso(values.to) : undefined,
+      page: 1,
+    });
+  });
 
   const activeCount =
     filter.games.length +
@@ -97,7 +136,9 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
             (preset.id === "beginner" && filter.beginnerOnly) ||
             (preset.id === "free" && filter.freeOnly) ||
             (preset.id === "youth" && filter.youthOnly) ||
-            (preset.id === "online" && filter.formats.length === 1 && filter.formats[0] === "online");
+            (preset.id === "online" &&
+              filter.formats.length === 1 &&
+              filter.formats[0] === "online");
           return (
             <Chip
               key={preset.id}
@@ -110,45 +151,23 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
         })}
       </div>
 
-      <form
-        className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const data = new FormData(e.currentTarget);
-          apply({
-            ...filter,
-            q: (data.get("q") as string) || undefined,
-            city: (data.get("city") as string) || undefined,
-            from: (data.get("from") as string) || undefined,
-            to: (data.get("to") as string) || undefined,
-            page: 1,
-          });
-        }}
-      >
+      <form className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" onSubmit={onDateSearch} noValidate>
         <Input
           label="Search"
-          name="q"
-          defaultValue={filter.q ?? ""}
+          type="search"
           placeholder="Event or game name"
+          error={errors.q?.message}
+          {...register("q")}
         />
         <Input
           label="City"
-          name="city"
-          defaultValue={filter.city ?? ""}
+          type="search"
           placeholder="Salt Lake City, Provo…"
+          error={errors.city?.message}
+          {...register("city")}
         />
-        <Input
-          label="From"
-          name="from"
-          type="date"
-          defaultValue={filter.from ? filter.from.slice(0, 10) : ""}
-        />
-        <Input
-          label="To"
-          name="to"
-          type="date"
-          defaultValue={filter.to ? filter.to.slice(0, 10) : ""}
-        />
+        <Input label="From" type="date" error={errors.from?.message} {...register("from")} />
+        <Input label="To" type="date" error={errors.to?.message} {...register("to")} />
         <div className="sm:col-span-2 lg:col-span-4">
           <Button type="submit" size="sm">
             Apply dates & text
@@ -235,9 +254,7 @@ export function FilterBar({ gameOptions }: FilterBarProps) {
             <Select
               label="Sort"
               value={filter.sort}
-              onChange={(e) =>
-                apply({ ...filter, sort: e.target.value as typeof filter.sort })
-              }
+              onChange={(e) => apply({ ...filter, sort: e.target.value as typeof filter.sort })}
               options={[
                 { value: "soonest", label: "Soonest first" },
                 { value: "recently_added", label: "Newest listed" },

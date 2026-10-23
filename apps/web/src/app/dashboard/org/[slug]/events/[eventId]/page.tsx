@@ -12,6 +12,7 @@ import { roleHasPermission } from "@utah-esports/core";
 import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
 import { EventForm } from "@/src/components/event-form";
+import type { EventFormValues } from "@/src/lib/forms/schemas";
 
 export const metadata: Metadata = { title: "Edit event" };
 export const revalidate = 0;
@@ -83,7 +84,7 @@ export default async function EditEventPage({
             : "",
           contactName: event.contactName ?? "",
           contactEmail: event.contactEmail ?? "",
-          status: event.status,
+          status: event.status as EventFormValues["status"],
         }}
       />
 
