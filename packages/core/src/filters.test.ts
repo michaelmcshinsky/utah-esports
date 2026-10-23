@@ -107,6 +107,98 @@ describe("matchesFilter", () => {
     const filter = parseFilters(new URLSearchParams("city=west valley"));
     expect(matchesFilter(makeEvent(), filter).matches).toBe(true);
   });
+
+  it("filters by multiple games with OR semantics", () => {
+    const filter = parseFilters(new URLSearchParams("games=valorant,super-smash-brothers-ultimate"));
+    expect(matchesFilter(makeEvent(), filter).matches).toBe(true);
+    const noMatch = parseFilters(new URLSearchParams("games=valorant,rocket-league"));
+    expect(matchesFilter(makeEvent(), noMatch).matches).toBe(false);
+  });
+
+  it("filters by entry mode", () => {
+    const filter = parseFilters(new URLSearchParams("entryModes=team"));
+    expect(matchesFilter(makeEvent({ entryMode: "team" }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ entryMode: "individual" }), filter).matches).toBe(false);
+    // "either" is a distinct value — does not match "team" filter
+    expect(matchesFilter(makeEvent({ entryMode: "either" }), filter).matches).toBe(false);
+  });
+
+  it("filters by registration state", () => {
+    const filter = parseFilters(new URLSearchParams("registration=open"));
+    expect(matchesFilter(makeEvent({ registrationState: "open" }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ registrationState: "closed" }), filter).matches).toBe(false);
+  });
+
+  it("filters by format", () => {
+    const filter = parseFilters(new URLSearchParams("formats=online"));
+    expect(matchesFilter(makeEvent({ format: "online" }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ format: "in_person" }), filter).matches).toBe(false);
+  });
+
+  it("filters by type", () => {
+    const filter = parseFilters(new URLSearchParams("types=tournament"));
+    expect(matchesFilter(makeEvent({ eventType: "tournament" }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ eventType: "casual" }), filter).matches).toBe(false);
+  });
+
+  it("filters by date range", () => {
+    const filter = parseFilters(
+      new URLSearchParams("from=2026-10-23T00:00:00Z&to=2026-10-25T00:00:00Z"),
+    );
+    // Event starts 2026-10-24T18:00Z — inside range
+    expect(matchesFilter(makeEvent(), filter).matches).toBe(true);
+    // Event starts 2026-10-26 — outside range
+    expect(
+      matchesFilter(makeEvent({ startsAt: new Date("2026-10-26T18:00:00Z") }), filter).matches,
+    ).toBe(false);
+  });
+
+  it("filters by region", () => {
+    const filter = parseFilters(new URLSearchParams("region=salt_lake_valley"));
+    expect(matchesFilter(makeEvent({ region: "salt_lake_valley" }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ region: "utah_county" }), filter).matches).toBe(false);
+  });
+
+  it("freeOnly matches null price", () => {
+    const filter = parseFilters(new URLSearchParams("freeOnly=true"));
+    expect(matchesFilter(makeEvent({ priceCents: null }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ priceCents: 0 }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ priceCents: 500 }), filter).matches).toBe(false);
+  });
+
+  it("beginnerOnly matches beginnerFriendly flag", () => {
+    const filter = parseFilters(new URLSearchParams("beginnerOnly=true"));
+    expect(matchesFilter(makeEvent({ beginnerFriendly: true }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ beginnerFriendly: false }), filter).matches).toBe(false);
+  });
+
+  it("youthOnly matches youthProgram flag", () => {
+    const filter = parseFilters(new URLSearchParams("youthOnly=true"));
+    expect(matchesFilter(makeEvent({ youthProgram: true }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ youthProgram: false }), filter).matches).toBe(false);
+  });
+
+  it("multi-word q requires all terms present", () => {
+    const filter = parseFilters(new URLSearchParams("q=smash+weekly"));
+    expect(matchesFilter(makeEvent({ title: "Smash Weekly Night" }), filter).matches).toBe(true);
+    expect(matchesFilter(makeEvent({ title: "Smash Only" }), filter).matches).toBe(false);
+  });
+
+  it("rejects completed and unknown statuses from public search", () => {
+    expect(matchesFilter(makeEvent({ status: "completed" }), DEFAULT_FILTERS).matches).toBe(false);
+    // needs_verification is public by default
+    expect(
+      matchesFilter(makeEvent({ status: "needs_verification" }), DEFAULT_FILTERS).matches,
+    ).toBe(true);
+  });
+
+  it("explicit status filter includes needs_verification even if not listed", () => {
+    const filter = parseFilters(new URLSearchParams("status=published"));
+    expect(
+      matchesFilter(makeEvent({ status: "needs_verification" }), filter).matches,
+    ).toBe(true);
+    expect(matchesFilter(makeEvent({ status: "completed" }), filter).matches).toBe(false);
+  });
 });
 
 describe("filterAndSort", () => {

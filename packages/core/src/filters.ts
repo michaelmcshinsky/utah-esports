@@ -169,7 +169,9 @@ export function matchesFilter(
   if (event.status === "cancelled" || event.status === "archived") {
     return { matches: false, distance: null };
   }
-  if (event.status === "draft") return { matches: false, distance: null };
+  if (event.status === "draft" || event.status === "completed") {
+    return { matches: false, distance: null };
+  }
   if (
     filter.status?.length &&
     !filter.status.includes(event.status as never) &&

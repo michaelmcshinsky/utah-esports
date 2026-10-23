@@ -20,6 +20,11 @@ export function SiteFooter() {
           <h2 className="text-sm font-semibold text-sandstone-100">Discover</h2>
           <ul className="mt-2 space-y-1.5 text-sm">
             <li>
+              <Link href="/events" className="hover:text-white">
+                Upcoming events
+              </Link>
+            </li>
+            <li>
               <Link href="/explore" className="hover:text-white">
                 Explore events
               </Link>
