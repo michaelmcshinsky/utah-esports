@@ -18,6 +18,7 @@
     "@supabase/supabase-js": "^2.58.0",
     "@utah-esports/core": "workspace:*",
     "@utah-esports/db": "workspace:*",
+    "@utah-esports/scrapers": "workspace:*",
     "@utah-esports/ui": "workspace:*",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

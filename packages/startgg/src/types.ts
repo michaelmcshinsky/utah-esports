@@ -153,3 +153,54 @@ export const VIDEOGAMES_QUERY = /* GraphQL */ `
     }
   }
 `;
+
+export type TournamentQueryResult = {
+  tournament: Omit<StartggEvent, "id"> & { id: string } | null;
+};
+
+export const TOURNAMENT_QUERY = /* GraphQL */ `
+  query UtahEsportsTournament($slug: String!) {
+    tournament(slug: $slug) {
+      id
+      name
+      slug
+      startAt
+      endAt
+      timezone
+      isOnline
+      city
+      region
+      postalCode
+      addrState
+      countryCode
+      registrationDeadline
+      currency
+      images {
+        url
+        type
+      }
+      host {
+        id
+        name
+        slug
+      }
+      venue {
+        id
+        name
+        address
+        city
+        state
+        postalCode
+        countryCode
+        latitude
+        longitude
+      }
+      videogame {
+        id
+        name
+        slug
+      }
+      type
+    }
+  }
+`;

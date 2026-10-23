@@ -1,4 +1,4 @@
-import { EVENTS_QUERY, VIDEOGAMES_QUERY, type EventsQueryResult, type StartggEvent, type StartggVideogame, type VideogamesQueryResult } from "./types.js";
+import { EVENTS_QUERY, VIDEOGAMES_QUERY, TOURNAMENT_QUERY, type EventsQueryResult, type StartggEvent, type StartggVideogame, type VideogamesQueryResult, type TournamentQueryResult } from "./types.js";
 
 export { StartggClient, StartggError, RateLimiter, type StartggClientOptions } from "./client.js";
 export * from "./types.js";
@@ -61,6 +61,15 @@ export async function fetchVideogameBySlug(
     slug,
   });
   return data.videgames.nodes[0] ?? null;
+}
+
+/** Fetch a single tournament by its start.gg slug (for URL imports). */
+export async function fetchTournamentBySlug(
+  client: StartggClient,
+  slug: string,
+): Promise<StartggEvent | null> {
+  const data = await client.query<TournamentQueryResult>(TOURNAMENT_QUERY, { slug });
+  return (data.tournament as StartggEvent | null) ?? null;
 }
 
 export async function collectUtahEvents(

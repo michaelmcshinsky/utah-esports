@@ -17,6 +17,7 @@
     "@utah-esports/core": "workspace:*",
     "@utah-esports/db": "workspace:*",
     "@utah-esports/email": "workspace:*",
+    "@utah-esports/scrapers": "workspace:*",
     "@utah-esports/startgg": "workspace:*",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.45.4",

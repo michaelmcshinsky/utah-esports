@@ -18,6 +18,7 @@ import {
 import { SEED_GAMES, LEGACY_TAG_TO_GAME } from "./games.js";
 import { geoForCity } from "./geo.js";
 import { slugify, legacyEventPath } from "@utah-esports/core";
+import { parseLegacyEventMarkdown } from "@utah-esports/scrapers";
 
 /**
  * Seeds the initial game taxonomy, placeholder organization pages for the
@@ -113,12 +114,6 @@ function readYaml<T>(path: string): T {
   return parseYaml(readFileSync(path, "utf8")) as T;
 }
 
-function parseFrontmatter(raw: string): { data: Record<string, unknown>; body: string } {
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
-  if (!match) return { data: {}, body: raw };
-  const data = parseYaml(match[1] ?? "") as Record<string, unknown>;
-  return { data, body: match[2] ?? "" };
-}
 
 function walkMarkdownFiles(dir: string): string[] {
   const out: string[] = [];
@@ -281,56 +276,76 @@ export async function seedLegacy() {
   const slugUpdates: Array<{ from: string; to: string }> = [];
   const venueRows = await db.select().from(venues);
   const venueBySlug = new Map(venueRows.map((v) => [v.slug, v]));
+
+  /** Resolve/create a game row by display name (slugs match SEED_GAMES). */
+  const resolveGameByName = async (name: string) => {
+    const gameSlug = slugify(name);
+    let [game] = await db.select().from(games).where(eq(games.slug, gameSlug)).limit(1);
+    if (!game) {
+      [game] = await db.insert(games).values({ slug: gameSlug, name }).returning();
+    }
+    return game ?? null;
+  };
+
   for (const file of files) {
     try {
       const raw = readFileSync(file, "utf8");
-      const { data } = parseFrontmatter(raw);
-      const title = typeof data.title === "string" ? data.title : null;
-      const startDate = toDate(data.start_date);
-      if (!title || !startDate) continue;
-      const startsAt = atLocalEvening(startDate, 18);
-      if (Number.isNaN(startsAt.getTime())) continue;
+      const filename = file.split(/[\\/]/).pop() ?? file;
+      const draft = parseLegacyEventMarkdown(filename, raw);
+      if (!draft?.startsAt) continue;
+
       // Slug date must match the legacy filename's LOCAL date, not UTC.
-      const ymd = startDate.toISOString().slice(0, 10);
-      const slug = `${ymd}-${slugify(title)}`;
-      const fileStem = (file.split(/[\\/]/).pop() ?? "").replace(/\.md$/i, "").toLowerCase();
+      const fmDate = String(
+        (draft.raw as { frontmatter?: Record<string, string> } | undefined)?.frontmatter
+          ?.start_date ?? "",
+      ).trim();
+      if (!/^\d{4}-\d{2}-\d{2}/.test(fmDate)) continue;
+      const ymd = fmDate.slice(0, 10);
+      const slug = `${ymd}-${slugify(draft.title)}`;
+      const fileStem = filename.replace(/\.md$/i, "").toLowerCase();
       const imageUrl = eventImages.get(fileStem) ?? null;
-      const [existing] = await db.select().from(eventOccurrences).where(eq(eventOccurrences.slug, slug)).limit(1);
+
+      const [existing] = await db
+        .select()
+        .from(eventOccurrences)
+        .where(eq(eventOccurrences.slug, slug))
+        .limit(1);
       if (existing) {
         if (!existing.imageUrl && imageUrl) {
           await db.update(eventOccurrences).set({ imageUrl }).where(eq(eventOccurrences.id, existing.id));
         }
         continue;
       }
-      const venueTitle = typeof data.venue_title === "string" ? data.venue_title : null;
-      const venueSlug = venueTitle ? slugify(venueTitle) : null;
+
+      const venueSlug = draft.venueName ? slugify(draft.venueName) : null;
       const venue = venueSlug ? venueBySlug.get(venueSlug) : undefined;
-      const city = venue?.city ?? (typeof data.venue_city === "string" && data.venue_city ? data.venue_city : null);
+      const city = draft.city ?? venue?.city ?? null;
       const geo = geoForCity(city);
-      const legacyPath = legacyEventPath(file.split(/[\\/]/).pop() ?? "");
-      const endDate = toDate(data.end_date);
+      const legacyPath = legacyEventPath(filename);
+
       const [row] = await db
         .insert(eventOccurrences)
         .values({
           slug,
-          title,
-          description: typeof data.excerpt === "string" ? data.excerpt : null,
-          eventType: "tournament",
+          title: draft.title,
+          description: draft.description,
+          eventType: draft.eventType,
           format: "in_person",
-          startsAt,
-          endsAt: endDate ? atLocalEvening(endDate, 23) : null,
+          startsAt: draft.startsAt,
+          endsAt: draft.endsAt,
           city: city ?? (venue ? venue.name : null),
           region: geo?.region ?? venue?.region ?? null,
           lat: venue?.lat ?? geo?.lat ?? null,
           lng: venue?.lng ?? geo?.lng ?? null,
           venueId: venue?.id ?? null,
-        registrationUrl: typeof data.event_url === "string" ? data.event_url : null,
-        registrationState: "unknown",
-        imageUrl,
-        status: "completed",
+          registrationUrl: draft.url || null,
+          registrationState: "unknown",
+          imageUrl,
+          priceCents: draft.priceCents ?? null,
+          status: "completed",
           sourceId: source.id,
           lastObservedAt: now,
-          lastConfirmedAt: startsAt,
+          lastConfirmedAt: draft.startsAt,
           publishedAt: now,
         })
         .returning();
@@ -339,9 +354,24 @@ export async function seedLegacy() {
         if (legacyPath.toLowerCase() !== `/events/${slug}`) {
           slugUpdates.push({ from: legacyPath, to: `/events/${slug}` });
         }
-        // Attach "other" game; titles are too noisy for reliable auto-tagging.
-        const other = gameById.get("other");
-        if (other) await db.insert(eventGames).values({ eventId: row.id, gameId: other.id }).onConflictDoNothing();
+        for (const gameName of draft.gameNames) {
+          const game = await resolveGameByName(gameName);
+          if (game) {
+            await db
+              .insert(eventGames)
+              .values({ eventId: row.id, gameId: game.id })
+              .onConflictDoNothing();
+          }
+        }
+        if (draft.gameNames.length === 0) {
+          const other = gameById.get("other");
+          if (other) {
+            await db
+              .insert(eventGames)
+              .values({ eventId: row.id, gameId: other.id })
+              .onConflictDoNothing();
+          }
+        }
       }
     } catch (err) {
       console.warn(`skipping ${file}: ${err instanceof Error ? err.message : String(err)}`);
@@ -379,6 +409,67 @@ export async function seedLegacy() {
     console.log(`legacy event images backfilled: ${imageBackfilled}`);
   }
 
+  // Metadata refresh: legacy imports previously stamped everything
+  // "tournament" with an "other" game link. Re-infer per title.
+  const rowsForMeta = await db
+    .select({
+      id: eventOccurrences.id,
+      slug: eventOccurrences.slug,
+      title: eventOccurrences.title,
+      description: eventOccurrences.description,
+      eventType: eventOccurrences.eventType,
+      priceCents: eventOccurrences.priceCents,
+    })
+    .from(eventOccurrences)
+    .where(eq(eventOccurrences.sourceId, source.id));
+  let metaUpdated = 0;
+  for (const ev of rowsForMeta) {
+    const draft = parseLegacyEventMarkdown(`${ev.slug}.md`, `---\ntitle: "${ev.title.replace(/"/g, "'")}"\nstart_date: ${ev.slug.slice(0, 10)}\n---\n${ev.description ?? ""}`);
+    const inferred = draft
+      ? { eventType: draft.eventType, gameNames: draft.gameNames, priceCents: draft.priceCents }
+      : null;
+    if (!inferred) continue;
+
+    if (ev.eventType !== inferred.eventType) {
+      await db
+        .update(eventOccurrences)
+        .set({ eventType: inferred.eventType })
+        .where(eq(eventOccurrences.id, ev.id));
+      metaUpdated++;
+    }
+    if (ev.priceCents == null && inferred.priceCents != null) {
+      await db
+        .update(eventOccurrences)
+        .set({ priceCents: inferred.priceCents })
+        .where(eq(eventOccurrences.id, ev.id));
+    }
+
+    const currentLinks = await db
+      .select({ gameId: eventGames.gameId })
+      .from(eventGames)
+      .where(eq(eventGames.eventId, ev.id));
+    const currentIds = new Set(currentLinks.map((l) => l.gameId));
+    const otherId = gameById.get("other")?.id;
+    const onlyOther =
+      currentIds.size === 0 || (otherId !== undefined && currentIds.size === 1 && currentIds.has(otherId));
+    if (inferred.gameNames.length > 0 && onlyOther) {
+      if (otherId) {
+        await db.delete(eventGames).where(eq(eventGames.eventId, ev.id));
+      }
+      for (const gameName of inferred.gameNames) {
+        const game = await resolveGameByName(gameName);
+        if (game) {
+          await db
+            .insert(eventGames)
+            .values({ eventId: ev.id, gameId: game.id })
+            .onConflictDoNothing();
+        }
+      }
+      metaUpdated++;
+    }
+  }
+  console.log(`legacy metadata refreshed: ${metaUpdated}`);
+
   for (const r of slugUpdates) {
     const [existing] = await db.select().from(redirects).where(eq(redirects.fromPath, r.from)).limit(1);
     if (!existing) await db.insert(redirects).values({ fromPath: r.from, toPath: r.to, statusCode: 301 });
@@ -386,19 +477,7 @@ export async function seedLegacy() {
   console.log(`redirects recorded: ${slugUpdates.length}`);
 }
 
-function toDate(value: unknown): Date | null {
-  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
-  if (typeof value === "string" && value.trim()) {
-    const d = new Date(value);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-  return null;
-}
 
-function atLocalEvening(date: Date, hour: number): Date {
-  const ymd = date.toISOString().slice(0, 10);
-  return new Date(`${ymd}T${String(hour).padStart(2, "0")}:00:00-06:00`);
-}
 
 async function main() {
   await seedGames();

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@utah-esports/core": "workspace:*",
+    "@utah-esports/scrapers": "workspace:*",
     "drizzle-orm": "^0.45.4",
     "js-yaml": "^4.1.0",
     "pg": "^8.16.3",

@@ -15,6 +15,7 @@ This repository is a Turborepo monorepo that replaces the archived 2018 Jekyll s
 | `packages/core` | `@utah-esports/core` | Domain enums, the single event-filter system, ICS generation, permissions, Zod schemas |
 | `packages/ui` | `@utah-esports/ui` | Accessible component library + "Utah outdoors" design tokens (Tailwind v4) |
 | `packages/startgg` | `@utah-esports/startgg` | Typed start.gg GraphQL client with rate limiting + normalization |
+| `packages/scrapers` | `@utah-esports/scrapers` | Event-URL scraper registry: start.gg URLs, legacy Jekyll markdown (GitHub), and a generic JSON-LD → h-event → meta adapter; shared title→game/type/price inference |
 | `packages/email` | `@utah-esports/email` | Resend/console transport + digest, reminder, change, freshness templates |
 
 ## Product surfaces

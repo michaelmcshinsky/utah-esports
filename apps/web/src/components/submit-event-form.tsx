@@ -19,12 +19,42 @@ const EVENT_TYPE_OPTIONS = [
   { value: "other", label: "Other" },
 ];
 
+/** ISO → datetime-local value for <input type="datetime-local">. */
+function toLocalInput(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+type PreviewDraft = {
+  title: string;
+  description: string;
+  url: string;
+  eventType: SubmitEventFormValues["eventType"];
+  format: SubmitEventFormValues["format"];
+  startsAt: string | null;
+  endsAt: string | null;
+  gameNames: string;
+  city: string;
+  priceDollars: string;
+  registrationState: SubmitEventFormValues["registrationState"];
+  contactName: string;
+  contactEmail: string;
+  venueName: string | null;
+};
+
 export function SubmitEventForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [importState, setImportState] = useState<"idle" | "loading" | "done" | "failed">("idle");
+  const [importNote, setImportNote] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     setError,
+    setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<SubmitEventFormValues>({
     resolver: zodResolver(submitEventFormSchema),
@@ -49,6 +79,48 @@ export function SubmitEventForm() {
       notes: "",
     },
   });
+
+  /** Pull metadata from the pasted URL and autofill the form. */
+  async function importFromUrl() {
+    const url = getValues("url")?.trim();
+    if (!/^https?:\/\//i.test(url ?? "")) {
+      setImportState("failed");
+      setImportNote("Paste a full event URL (https://…) first.");
+      return;
+    }
+    setImportState("loading");
+    setImportNote(null);
+    const res = await fetch("/api/submissions/preview", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ url }),
+    });
+    const body = (await res.json().catch(() => null)) as
+      | { error?: string; draft?: PreviewDraft; adapter?: string }
+      | null;
+    if (!res.ok || !body?.draft) {
+      setImportState("failed");
+      setImportNote(body?.error ?? "Couldn't read event details — fill the form manually.");
+      return;
+    }
+    const d = body.draft;
+    setValue("title", d.title);
+    setValue("description", d.description);
+    setValue("eventType", d.eventType);
+    setValue("format", d.format);
+    setValue("startsAt", toLocalInput(d.startsAt));
+    setValue("endsAt", toLocalInput(d.endsAt));
+    setValue("gameNames", d.gameNames);
+    setValue("city", d.city);
+    setValue("priceDollars", d.priceDollars);
+    setValue("registrationState", d.registrationState);
+    if (d.contactName) setValue("contactName", d.contactName);
+    if (d.contactEmail) setValue("contactEmail", d.contactEmail);
+    setImportState("done");
+    setImportNote(
+      `Imported from ${body.adapter}${d.venueName ? ` · venue: ${d.venueName}` : ""} — review everything before submitting.`,
+    );
+  }
 
   async function onSubmit(values: SubmitEventFormValues) {
     setStatus("sending");
@@ -124,6 +196,29 @@ export function SubmitEventForm() {
         error={errors.url?.message}
         {...register("url")}
       />
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={importFromUrl}
+          disabled={importState === "loading"}
+        >
+          {importState === "loading" ? "Reading link…" : "Fetch details from link"}
+        </Button>
+        {importNote ? (
+          <span
+            role="status"
+            className={`text-xs ${importState === "failed" ? "text-danger-600" : "text-charcoal-600"}`}
+          >
+            {importNote}
+          </span>
+        ) : (
+          <span className="text-xs text-charcoal-500">
+            Paste a start.gg or event-page URL, then fetch to autofill.
+          </span>
+        )}
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Select
           label="Event type"

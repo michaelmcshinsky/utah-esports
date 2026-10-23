@@ -30,7 +30,7 @@ export const metadata: Metadata = {
       { url: "/favicon.png", type: "image/png", sizes: "32x32" },
       { url: "/favicon.ico", sizes: "any" },
     ],
-    apple: "/favicon.png",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     siteName: SITE_NAME,
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/images/home/utah-esports-banner-1.jpg",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Utah Esports",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/images/home/utah-esports-banner-1.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 
