@@ -9,7 +9,7 @@
     "start": "node scripts/start.js",
     "lint": "eslint src scripts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "dump-redirects": "tsx scripts/dump-redirects.ts"
   },
   "dependencies": {

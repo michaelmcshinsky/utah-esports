@@ -9,7 +9,7 @@
     "trigger-dev": "trigger dev",
     "lint": "eslint src scripts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "build": "echo skip"
   },
   "dependencies": {

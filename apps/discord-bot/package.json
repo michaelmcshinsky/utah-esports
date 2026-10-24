@@ -9,7 +9,7 @@
     "register-commands": "tsx src/register-commands.ts",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "build": "echo skip"
   },
   "dependencies": {
