@@ -13,6 +13,7 @@ const ROOT_ENV = join(import.meta.dirname, "..", "..", "..", ".env");
 if (existsSync(ROOT_ENV)) loadEnv({ path: ROOT_ENV, override: true });
 
 const SEARCH_URLS = [
+  // Utah — core gaming terms
   "https://www.eventbrite.com/d/utah--salt-lake-city/gaming-tournament/",
   "https://www.eventbrite.com/d/utah--salt-lake-city/smash-bros/",
   "https://www.eventbrite.com/d/utah--salt-lake-city/esports-tournament/",
@@ -21,10 +22,36 @@ const SEARCH_URLS = [
   "https://www.eventbrite.com/d/utah/gaming/",
   "https://www.eventbrite.com/d/provo--utah/gaming/",
   "https://www.eventbrite.com/d/utah--salt-lake-city/lan-party/",
+  // Utah — specific titles
+  "https://www.eventbrite.com/d/utah/valorant/",
+  "https://www.eventbrite.com/d/utah/mario-kart/",
+  "https://www.eventbrite.com/d/utah/rocket-league/",
+  "https://www.eventbrite.com/d/utah/league-of-legends/",
+  "https://www.eventbrite.com/d/utah/street-fighter/",
+  "https://www.eventbrite.com/d/utah/mortal-kombat/",
+  "https://www.eventbrite.com/d/utah/tekken/",
+  "https://www.eventbrite.com/d/utah/minecraft/",
+  "https://www.eventbrite.com/d/utah/fortnite/",
+  "https://www.eventbrite.com/d/utah/apex-legends/",
+  "https://www.eventbrite.com/d/utah/overwatch/",
+  "https://www.eventbrite.com/d/utah/call-of-duty/",
+  "https://www.eventbrite.com/d/utah/marvel-rivals/",
+  "https://www.eventbrite.com/d/utah/street-fighter-6/",
+  // Utah — game night / arcade / retro
+  "https://www.eventbrite.com/d/utah/game-night/",
+  "https://www.eventbrite.com/d/utah--salt-lake-city/game-night/",
+  "https://www.eventbrite.com/d/utah/arcade/",
+  "https://www.eventbrite.com/d/utah/retro-gaming/",
+  // Cities
+  "https://www.eventbrite.com/d/provo--utah/esports/",
+  "https://www.eventbrite.com/d/ogden--utah/gaming/",
+  "https://www.eventbrite.com/d/utah-county--utah/gaming/",
+  "https://www.eventbrite.com/d/utah/trivia-night/",
+  "https://www.eventbrite.com/d/utah--salt-lake-city/board-game/",
 ];
 
 const GAMING_HINTS =
-  /\b(gaming|game|esports?|tournament|smash|valorant|league of legends|rocket league|fortnite|minecraft|video game|lan|bracket|competitive|playstation|xbox|nintendo|pc gaming|gamer|arcade|street fighter|tekken|mortal kombat|apex|overwatch|call of duty|counter.?strike|dota|hearthstone|super smash|melee|ultimate|brawl|watch party|gaming event)\b/i;
+  /\b(gaming|game|esports?|tournament|smash|valorant|league of legends|rocket league|fortnite|minecraft|video game|lan\s*party|bracket|competitive|playstation|xbox|nintendo|pc gaming|gamer|arcade|street fighter|tekken|mortal kombat|apex legends|overwatch|call of duty|counter.?strike|dota|hearthstone|super smash|melee|ultimate|brawl|watch party|mario kart|smash ultimate|trivia|board game|tabletop|d&d|dungeons|rpg|puzzle|speedrun|speedrun|fighting game|fgc|platform fighter|party game|cozy game|speedrun)\b/i;
 
 const seen = new Set<string>();
 const summary = { imported: 0, duplicates: 0, skipped: 0, failed: 0, filtered: 0 };
@@ -33,7 +60,7 @@ for (const searchUrl of SEARCH_URLS) {
   console.log(`\nScanning: ${searchUrl}`);
   let candidates: string[];
   try {
-    candidates = await scanListingPage(searchUrl, { limit: 12 });
+    candidates = await scanListingPage(searchUrl, { limit: 15 });
   } catch (e) {
     console.log(`  scan failed: ${e instanceof Error ? e.message : String(e)}`);
     continue;
