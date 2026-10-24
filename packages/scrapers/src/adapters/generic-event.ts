@@ -136,6 +136,7 @@ export function parseJsonLdEvents(html: string, pageUrl: string): EventDraft[] {
           externalId: asString(ev["@id"]) ?? asString(ev.identifier) ?? undefined,
         },
         confidence: 0.9,
+        imageUrl: images,
         raw: { jsonLd: ev, image: images },
       });
     }
@@ -214,6 +215,7 @@ export function parseMetaFallback(html: string, pageUrl: string): EventDraft[] {
         originUrl: pageUrl,
       },
       confidence: startsAt ? 0.55 : 0.3,
+      imageUrl: image,
       raw: { image, meta: { title, startsRaw, description } },
     },
   ];

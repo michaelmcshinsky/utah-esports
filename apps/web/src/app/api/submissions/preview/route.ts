@@ -77,6 +77,7 @@ export async function POST(request: Request) {
       contactName: d.contactName ?? "",
       contactEmail: d.contactEmail ?? "",
       venueName: d.venueName,
+      imageUrl: d.imageUrl ?? null,
       source: d.source,
     },
   });

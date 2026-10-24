@@ -35,6 +35,8 @@ export type EventDraft = {
   };
   /** 0–1; low-confidence drafts surface first in review queues. */
   confidence: number;
+  /** Banner/thumbnail image URL extracted from the source page. */
+  imageUrl?: string | null;
   /** Adapter-specific original payload, kept for moderators. */
   raw?: unknown;
 };

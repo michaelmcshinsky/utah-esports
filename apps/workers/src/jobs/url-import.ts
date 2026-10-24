@@ -168,6 +168,7 @@ export async function createDraftFromDraft(
       priceCents: draft.priceCents ?? null,
       contactName: draft.contactName ?? null,
       contactEmail: draft.contactEmail ?? null,
+      imageUrl: draft.imageUrl ?? null,
       status: "draft",
       sourceId: provenanceLink?.sourceId ?? null,
       sourceRecordId: provenanceLink?.recordId ?? null,
