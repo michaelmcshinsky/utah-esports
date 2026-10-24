@@ -56,16 +56,32 @@ const GAMING_HINTS =
 const seen = new Set<string>();
 const summary = { imported: 0, duplicates: 0, skipped: 0, failed: 0, filtered: 0 };
 
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const SEARCH_DELAY_MS = 4_000;
+
 for (const searchUrl of SEARCH_URLS) {
   console.log(`\nScanning: ${searchUrl}`);
   let candidates: string[];
   try {
     candidates = await scanListingPage(searchUrl, { limit: 15 });
   } catch (e) {
-    console.log(`  scan failed: ${e instanceof Error ? e.message : String(e)}`);
-    continue;
+    const msg = e instanceof Error ? e.message : String(e);
+    if (msg.includes("429")) {
+      console.log("  rate-limited, waiting 30s...");
+      await delay(30_000);
+      try {
+        candidates = await scanListingPage(searchUrl, { limit: 15 });
+      } catch (e2) {
+        console.log(`  still failed: ${e2 instanceof Error ? e2.message : String(e2)}`);
+        continue;
+      }
+    } else {
+      console.log(`  scan failed: ${msg}`);
+      continue;
+    }
   }
   console.log(`  ${candidates.length} candidates`);
+  await delay(SEARCH_DELAY_MS);
 
   for (const url of candidates) {
     const normalized = url.split("?")[0] ?? url;
@@ -107,6 +123,7 @@ for (const searchUrl of SEARCH_URLS) {
     } else {
       summary.failed++;
     }
+    await delay(1_000);
   }
 }
 
