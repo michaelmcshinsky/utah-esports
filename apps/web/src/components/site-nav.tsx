@@ -15,14 +15,13 @@ export async function SiteNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-charcoal-800/60 bg-charcoal-900/95 text-sandstone-50 backdrop-blur">
       <div className="page-container flex h-16 items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
-          <span
-            aria-hidden
-            className="grid size-8 place-items-center rounded-lg bg-redrock-500 text-sm font-black text-white"
-          >
-            UE
-          </span>
-          <span className="hidden sm:inline">Utah Esports</span>
+        <Link href="/" className="flex items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/site/utah-esports-white-2.png"
+            alt="Utah Esports"
+            className="h-9 w-auto"
+          />
         </Link>
         <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
           {NAV_ITEMS.map((item) => (
