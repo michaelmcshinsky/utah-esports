@@ -20,6 +20,16 @@ import { SEED_GAMES, LEGACY_TAG_TO_GAME } from "./games.js";
 import { geoForCity } from "./geo.js";
 import { slugify, legacyEventPath } from "@utah-esports/core";
 import { parseLegacyEventMarkdown, UTAH_SOURCES } from "@utah-esports/scrapers";
+import { seedRbac } from "./rbac.js";
+
+// Repo-root .env drives `pnpm db:seed` (documented in README). Absent file
+// is fine — CI/hosts export DATABASE_URL directly.
+const ROOT_ENV = join(import.meta.dirname, "..", "..", "..", "..", ".env");
+try {
+  process.loadEnvFile(ROOT_ENV);
+} catch {
+  // no local .env — rely on inherited environment
+}
 
 /**
  * Seeds the initial game taxonomy, placeholder organization pages for the
@@ -551,6 +561,7 @@ export async function seedLegacy() {
 
 
 async function main() {
+  await seedRbac();
   await seedGames();
   await seedSchoolPrograms();
   await seedCatalog();
