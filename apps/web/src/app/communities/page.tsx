@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, FreshnessBadge } from "@utah-esports/ui";
+import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState } from "@utah-esports/ui";
 import { getCommunityGames, listCommunities } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
@@ -87,10 +87,6 @@ export default async function CommunitiesPage({
                 {community.description ? (
                   <p className="line-clamp-3 text-sm text-charcoal-700">{community.description}</p>
                 ) : null}
-                <FreshnessBadge
-                  className="mt-auto pt-2"
-                  lastConfirmedAt={community.lastConfirmedAt}
-                />
               </CardContent>
             </Card>
           ))}

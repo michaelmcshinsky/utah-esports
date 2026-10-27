@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge, Card, CardContent, CardHeader, CardTitle, FreshnessBadge, MediaImage } from "@utah-esports/ui";
+import { Badge, Card, CardContent, CardHeader, CardTitle, MediaImage } from "@utah-esports/ui";
 import { listVenues } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
@@ -51,7 +51,6 @@ export default async function PlacesPage() {
               {venue.city ? <p className="text-charcoal-600">{venue.city}, UT</p> : null}
               {venue.typicalCostNotes ? <p>{venue.typicalCostNotes}</p> : null}
               {venue.byodRequired ? <Badge variant="neutral">Bring your own device</Badge> : null}
-              <FreshnessBadge className="mt-auto pt-2" lastConfirmedAt={venue.lastConfirmedAt} />
             </CardContent>
           </Card>
         ))}

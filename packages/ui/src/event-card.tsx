@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { cn } from "./lib.js";
 import { Badge } from "./badge.js";
 import { Card, CardContent, CardFooter } from "./card.js";
-import { FreshnessBadge } from "./freshness.js";
 import { MediaImage } from "./media-image.js";
 
 /**
@@ -204,12 +203,6 @@ export function EventCard({
             })}
           </p>
         ) : null}
-        <FreshnessBadge
-          lastConfirmedAt={event.lastConfirmedAt}
-          sourceLabel={event.sourceLabel}
-          now={now}
-          className="mt-auto pt-1"
-        />
       </CardContent>
       <CardFooter className="relative z-10">
         {footerAction ?? (

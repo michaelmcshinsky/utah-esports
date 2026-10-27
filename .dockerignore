@@ -1,0 +1,15 @@
+node_modules
+.turbo
+dist
+build
+.tmp
+.env
+.env.*
+!.env.example
+*.log
+coverage
+test-results
+playwright-report
+.git
+.github
+.netlify
