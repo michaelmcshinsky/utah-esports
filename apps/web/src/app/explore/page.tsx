@@ -96,116 +96,118 @@ export default async function ExplorePage({
     }));
 
   return (
-    <div className="page-container py-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-charcoal-900 sm:text-3xl">
-            Explore events
-          </h1>
-          <p className="mt-1 max-w-xl text-sm text-charcoal-600">
+    <>
+      {/* Hero banner */}
+      <div
+        className="hero-section text-white"
+        style={{
+          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="page-container py-14">
+          <h1 className="font-display text-3xl font-bold sm:text-4xl">Explore events</h1>
+          <p className="mt-3 max-w-2xl text-charcoal-200">
             One search across every listing — tournaments, casual weeklies, watch parties,
             workshops, and tryouts. Switch between list, calendar, and map without losing your
             filters, and share any result by copying the URL: the search state lives in it.
           </p>
-          <p className="mt-1 text-xs text-charcoal-500">
+          <p className="mt-2 max-w-2xl text-sm text-charcoal-300">
             Every result carries a last-checked timestamp. Stale listings still appear (labeled)
             rather than vanish — organizers are nudged to re-confirm them.
           </p>
         </div>
-        <nav
-          aria-label="View"
-          className="flex rounded-lg border border-charcoal-300 bg-white p-0.5"
-        >
-          {(["list", "calendar", "map"] as const).map((v) => (
-            <Link
-              key={v}
-              href={viewHref(v)}
-              aria-current={view === v ? "page" : undefined}
-              className={
-                view === v
-                  ? "rounded-md bg-charcoal-900 px-3 py-1.5 text-sm font-medium text-white"
-                  : "rounded-md px-3 py-1.5 text-sm font-medium text-charcoal-600 hover:text-charcoal-900"
-              }
-            >
-              {v === "list" ? "List" : v === "calendar" ? "Calendar" : "Map"}
-            </Link>
-          ))}
-        </nav>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[20rem_1fr]">
-        <div>
-          <Suspense fallback={<div className="h-40 rounded-card bg-white" />}>
-            <FilterBar
-              gameOptions={gameOptions.map((g) => ({ slug: g.slug, name: g.name }))}
-            />
-          </Suspense>
-        </div>
+      {/* Search + results */}
+      <section className="section" aria-labelledby="explore-heading">
+        <div className="page-container">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <nav aria-label="View" className="flex rounded-lg border border-charcoal-300 bg-white p-0.5">
+              {(["list", "calendar", "map"] as const).map((v) => (
+                <Link
+                  key={v}
+                  href={viewHref(v)}
+                  aria-current={view === v ? "page" : undefined}
+                  className={
+                    view === v
+                      ? "rounded-md bg-redrock-500 px-3 py-1.5 text-sm font-medium text-white"
+                      : "rounded-md px-3 py-1.5 text-sm font-medium text-charcoal-600 hover:text-charcoal-900"
+                  }
+                >
+                  {v === "list" ? "List" : v === "calendar" ? "Calendar" : "Map"}
+                </Link>
+              ))}
+            </nav>
+          </div>
 
-        <div aria-live="polite">
-          <p className="mb-3 text-sm text-charcoal-600">
-            {result.total === 0
-              ? "No matching events"
-              : `${result.total} event${result.total === 1 ? "" : "s"}`}
-          </p>
-          <h2 className="sr-only">Search results</h2>
+          <div className="mt-6 grid gap-6 lg:grid-cols-[20rem_1fr]">
+            <div>
+              <Suspense fallback={<div className="h-40 rounded-lg bg-white" />}>
+                <FilterBar
+                  gameOptions={gameOptions.map((g) => ({ slug: g.slug, name: g.name }))}
+                />
+              </Suspense>
+            </div>
 
-          {cards.length === 0 ? (
-            <EmptyState
-              title="Nothing matches those filters yet"
-              description="Utah's listing coverage is growing — try a wider date range, remove the city filter, or check online events and communities instead."
-              actions={
+            <div aria-live="polite">
+              <p className="mb-3 text-sm text-charcoal-600">
+                {result.total === 0
+                  ? "No matching events"
+                  : `${result.total} event${result.total === 1 ? "" : "s"}`}
+              </p>
+              <h2 className="sr-only">Search results</h2>
+
+              {cards.length === 0 ? (
+                <EmptyState
+                  title="Nothing matches those filters yet"
+                  description="Utah's listing coverage is growing — try a wider date range, remove the city filter, or check online events and communities instead."
+                  actions={
+                    <>
+                      <Link href="/explore" className="btn-danger">
+                        Reset filters
+                      </Link>
+                      <Link href="/explore?formats=online" className="btn-outline">
+                        Online events
+                      </Link>
+                      <Link href="/communities" className="btn-outline">
+                        Communities
+                      </Link>
+                    </>
+                  }
+                />
+              ) : view === "map" ? (
+                <EventMapView points={mapPoints} />
+              ) : view === "calendar" ? (
+                <EventCalendarView
+                  events={cards.map((c) => ({
+                    slug: c.slug,
+                    title: c.title,
+                    startsAt: c.startsAt.toISOString(),
+                    gameNames: c.gameNames,
+                  }))}
+                />
+              ) : (
                 <>
-                  <Link
-                    href="/explore"
-                    className="rounded-lg bg-charcoal-900 px-4 py-2 text-sm font-medium text-white"
-                  >
-                    Reset filters
-                  </Link>
-                  <Link
-                    href="/explore?formats=online"
-                    className="rounded-lg border border-charcoal-300 px-4 py-2 text-sm font-medium"
-                  >
-                    Online events
-                  </Link>
-                  <Link
-                    href="/communities"
-                    className="rounded-lg border border-charcoal-300 px-4 py-2 text-sm font-medium"
-                  >
-                    Communities
-                  </Link>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    {cards.map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                  <ExplorePagination filter={filter} total={result.total} view={view} />
                 </>
-              }
-            />
-          ) : view === "map" ? (
-            <EventMapView points={mapPoints} />
-          ) : view === "calendar" ? (
-            <EventCalendarView
-              events={cards.map((c) => ({
-                slug: c.slug,
-                title: c.title,
-                startsAt: c.startsAt.toISOString(),
-                gameNames: c.gameNames,
-              }))}
-            />
-          ) : (
-            <>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {cards.map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
-              <ExplorePagination filter={filter} total={result.total} view={view} />
-            </>
-          )}
+              )}
 
-          {cards.length > 0 && view === "list" ? (
-            <p className="mt-4 text-xs text-charcoal-500">
-              Tip: dates and filters live in the URL — bookmark or share this page.
-            </p>
-          ) : null}
+              {cards.length > 0 && view === "list" ? (
+                <p className="mt-4 text-xs text-charcoal-500">
+                  Tip: dates and filters live in the URL — bookmark or share this page.
+                </p>
+              ) : null}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }

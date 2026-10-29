@@ -120,87 +120,91 @@ export default async function EventsHubPage() {
   const sortedWeeks = [...weeks.entries()].sort(([a], [b]) => a.localeCompare(b));
 
   return (
-    <div className="page-container py-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-bold text-charcoal-900">
-            Upcoming events
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-charcoal-600">
+    <>
+      {/* Hero banner */}
+      <div
+        className="hero-section text-white"
+        style={{
+          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="page-container py-14">
+          <h1 className="font-display text-3xl font-bold sm:text-4xl">Upcoming events</h1>
+          <p className="mt-3 max-w-2xl text-charcoal-200">
             Every listing on the site, ordered by date. Use{" "}
-            <Link href="/explore" className="font-medium text-redrock-600 hover:underline">
+            <Link href="/explore" className="text-gold-400 hover:text-gold-200">
               Explore
             </Link>{" "}
-            to filter by game, city, skill level, price, and more - or search below.
+            to filter by game, city, skill level, price, and more — or search below.
           </p>
+          <Suspense fallback={<div className="mt-6 h-[124px] rounded-lg bg-charcoal-800/50" />}>
+            <SearchHero className="mt-6" />
+          </Suspense>
         </div>
-        <Link
-          href="/explore"
-          className="inline-flex items-center rounded-lg border border-charcoal-300 px-4 py-2 text-sm font-medium text-charcoal-800 hover:bg-sandstone-50"
-        >
-          Open full filters
-        </Link>
       </div>
 
-      <Suspense fallback={<div className="mt-6 h-[124px] rounded-card bg-charcoal-100" />}>
-        <SearchHero className="mt-6" />
-      </Suspense>
+      {/* Weekly sections */}
+      <section className="section" aria-labelledby="events-heading">
+        <div className="page-container">
+          {events.length === 0 ? (
+            <div className="mt-10 rounded-xl border-2 border-dashed border-charcoal-200 bg-white px-6 py-16 text-center">
+              <p className="text-lg font-medium text-charcoal-900">No upcoming events listed yet.</p>
+              <p className="mt-2 text-sm text-charcoal-600">
+                Know about one?{" "}
+                <Link href="/submit" className="text-redrock-500 hover:text-redrock-600">
+                  Submit an event
+                </Link>{" "}
+                — it takes about two minutes and a moderator reviews it before it goes live.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-10">
+              {sortedWeeks.map(([key, { label, events: weekEvents }]) => (
+                <div key={key}>
+                  <div className="flex items-baseline gap-3 border-b border-charcoal-200 pb-2">
+                    <h2
+                      className="font-display text-xl font-semibold text-charcoal-900"
+                      id={`week-${key}`}
+                    >
+                      {label}
+                    </h2>
+                    <span className="text-sm text-charcoal-500">
+                      {weekEvents.length} event{weekEvents.length === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                  <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {weekEvents.map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-      {events.length === 0 ? (
-        <div className="mt-10 rounded-card border border-dashed border-charcoal-300 bg-white px-6 py-12 text-center">
-          <p className="font-medium text-charcoal-800">No upcoming events listed yet.</p>
-          <p className="mt-1 text-sm text-charcoal-600">
-            Know about one?{" "}
-            <Link href="/submit" className="font-medium text-redrock-600 hover:underline">
-              Submit an event
-            </Link>{" "}
-            - it takes about two minutes and a moderator reviews it before it goes live.
-          </p>
+          {events.length >= 60 ? (
+            <p className="mt-8 text-center text-sm text-charcoal-500">
+              Showing the next 60 events.{" "}
+              <Link href="/explore" className="text-redrock-500 hover:text-redrock-600">
+                Explore with filters
+              </Link>{" "}
+              to see the full catalog.
+            </p>
+          ) : null}
         </div>
-      ) : (
-        <div className="mt-10 space-y-10">
-          {sortedWeeks.map(([key, { label, events: weekEvents }]) => (
-            <section key={key} aria-labelledby={`week-${key}`}>
-              <div className="flex items-baseline gap-3 border-b border-charcoal-200 pb-2">
-                <h2
-                  id={`week-${key}`}
-                  className="font-display text-lg font-semibold text-charcoal-900"
-                >
-                  {label}
-                </h2>
-                <span className="text-sm text-charcoal-500">
-                  {weekEvents.length} event{weekEvents.length === 1 ? "" : "s"}
-                </span>
-              </div>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {weekEvents.map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      )}
-
-      {events.length >= 60 ? (
-        <p className="mt-8 text-center text-sm text-charcoal-500">
-          Showing the next 60 events.{" "}
-          <Link href="/explore" className="font-medium text-redrock-600 hover:underline">
-            Explore with filters
-          </Link>{" "}
-          to see the full catalog.
-        </p>
-      ) : null}
+      </section>
 
       {/* FAQ */}
-      <section className="mt-16 border-t border-charcoal-200 pt-12" aria-labelledby="faq-heading">
-        <div className="flex flex-wrap items-baseline gap-3">
+      <section className="section section-light" aria-labelledby="faq-heading">
+        <div className="page-container">
           <h2 id="faq-heading" className="section-title">
             Frequently asked questions
           </h2>
+          <Accordion className="mt-8" items={EVENTS_FAQ} />
         </div>
-        <Accordion className="mt-8" items={EVENTS_FAQ} />
       </section>
-    </div>
+    </>
   );
 }
