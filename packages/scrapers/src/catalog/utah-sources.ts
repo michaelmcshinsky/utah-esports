@@ -24,6 +24,17 @@ export type SourceKind =
 
 export type SourceStatus = "active" | "unknown" | "defunct" | "archived";
 
+export type SourceSocials = {
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  twitch?: string;
+  youtube?: string;
+  discord?: string;
+  linktree?: string;
+  linkedin?: string;
+};
+
 export type SourceEntry = {
   slug: string;
   name: string;
@@ -34,6 +45,8 @@ export type SourceEntry = {
   /** Game slugs from our taxonomy (packages/db seed). */
   games?: string[];
   status: SourceStatus;
+  /** Social media links — verified current as of late Oct 2026. */
+  socials?: SourceSocials;
   scrape: {
     /** Adapter id from @utah-esports/scrapers, or "manual" / "none". */
     adapter: string;
@@ -444,8 +457,16 @@ export const UTAH_SOURCES: SourceEntry[] = [
     kind: "scholastic",
     url: "https://kengarffesports.com/",
     status: "active",
-    notes: "School-oriented programming and events across Utah.",
+    socials: {
+      instagram: "https://instagram.com/kengarffesports",
+      twitch: "https://twitch.tv/ken_garff_esports",
+      youtube: "https://youtube.com/@kengarffesports",
+      discord: "https://discord.com/invite/DcyyGSjUJW",
+      linkedin: "https://linkedin.com/company/ken-garff-esports",
+    },
+    notes: "Dominant high school/scholastic program (100+ schools). Partners with UHSAA & PlayVS.",
     scrape: { adapter: "generic-event", notes: "Scan homepage for event links; mostly registration pages." },
+    directory: { types: ["team"], imported: true },
   },
   {
     slug: "uvu-esports",
@@ -455,6 +476,13 @@ export const UTAH_SOURCES: SourceEntry[] = [
     city: "Orem",
     region: "utah_valley",
     status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/UVUEsportsOrg",
+      twitter: "https://twitter.com/UVUeSports",
+      instagram: "https://instagram.com/uvuesports",
+      twitch: "https://twitch.tv/uvuesports",
+      discord: "https://discordapp.com/invite/cQfDkpT",
+    },
     scrape: { adapter: "generic-event", listingUrls: ["https://www.uvu.edu/recsports/esports/"] },
     directory: { types: ["team"], imported: true, notes: "Crimson Gaming seeded as a collegiate team/org." },
   },
@@ -466,6 +494,12 @@ export const UTAH_SOURCES: SourceEntry[] = [
     city: "Salt Lake City",
     region: "salt_lake_valley",
     status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/UUtahesports",
+      twitter: "https://twitter.com/UUtah_Esports",
+      instagram: "https://instagram.com/uutah_esports",
+      twitch: "https://twitch.tv/uutah_esports",
+    },
     scrape: { adapter: "generic-event", listingUrls: ["https://eae.utah.edu/esports/"] },
     directory: { types: ["team"], imported: true },
   },
@@ -477,6 +511,11 @@ export const UTAH_SOURCES: SourceEntry[] = [
     city: "Provo",
     region: "utah_valley",
     status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/groups/byuesports",
+      twitter: "https://twitter.com/byu_esports",
+      discord: "https://discordapp.com/invite/sxPBBTK",
+    },
     scrape: { adapter: "none", notes: "Club directory page; events surface via campus channels." },
     directory: { types: ["team"], imported: true },
   },
@@ -487,7 +526,12 @@ export const UTAH_SOURCES: SourceEntry[] = [
     url: "https://www.usu.edu/",
     city: "Logan",
     region: "cache_valley",
-    status: "unknown",
+    status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/groups/USUeSports",
+      twitch: "https://twitch.tv/usuleagueofgamers",
+      discord: "https://discord.gg/usu-esports",
+    },
     scrape: { adapter: "generic-event", notes: "Program pages move; verify current URL before scanning." },
     directory: { types: ["team"], imported: true },
   },
@@ -495,10 +539,14 @@ export const UTAH_SOURCES: SourceEntry[] = [
     slug: "weber-state-esports",
     name: "Weber State Esports (Claw Gaming)",
     kind: "scholastic",
-    url: "https://www.weber.edu/",
+    url: "https://www.weber.edu/esports/",
     city: "Ogden",
     region: "davis_weber",
-    status: "unknown",
+    status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/WeberStateEsports",
+      twitter: "https://twitter.com/clawgaming_wsu",
+    },
     scrape: { adapter: "generic-event", notes: "Verify current program URL." },
     directory: { types: ["team"], imported: true },
   },
@@ -534,6 +582,13 @@ export const UTAH_SOURCES: SourceEntry[] = [
     city: "Salt Lake City",
     region: "salt_lake_valley",
     status: "active",
+    socials: {
+      twitter: "https://twitter.com/Spacestation",
+      instagram: "https://instagram.com/spacestationgaming",
+      twitch: "https://twitch.tv/spacestation",
+      youtube: "https://youtube.com/@spacestationgaming",
+      linkedin: "https://linkedin.com/company/spacestation-gaming",
+    },
     notes: "SLC-based pro esports org (Rocket League, Rainbow Six, and more). Brand directory entry — events are international.",
     scrape: { adapter: "none", notes: "Pro org; directory listing only." },
     directory: { types: ["team"], imported: true },
@@ -545,9 +600,17 @@ export const UTAH_SOURCES: SourceEntry[] = [
     url: "https://jazzgaming.nba.co/",
     city: "Salt Lake City",
     region: "salt_lake_valley",
-    games: ["other"],
-    status: "unknown",
-    notes: "Utah Jazz-affiliated NBA 2K League team (2019 archive entry).",
+    games: ["nba-2k"],
+    status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/UtahJazzGaming",
+      twitter: "https://twitter.com/UtahJazzGaming",
+      instagram: "https://instagram.com/utahjazzgaming",
+      twitch: "https://twitch.tv/utahjazzgaming",
+      youtube: "https://youtube.com/@utahjazzgaming",
+      linktree: "https://linktr.ee/jazzgamingofficial",
+    },
+    notes: "Utah Jazz-affiliated NBA 2K League team.",
     scrape: { adapter: "none", notes: "League team; directory listing only." },
     directory: { types: ["team"], imported: true },
   },
@@ -680,8 +743,13 @@ export const UTAH_SOURCES: SourceEntry[] = [
     region: "southern_utah",
     games: ["marvel-rivals", "overwatch-2", "rocket-league", "valorant", "call-of-duty", "super-smash-brothers-ultimate", "league-of-legends"],
     status: "active",
-    notes: "Growing club (500+ members). Dedicated venue in Uplaza Building D (opened ~Oct 2026, 12 PCs). Titles: Marvel Rivals, Overwatch 2, Rocket League, Valorant, CoD, Smash, LoL. Instagram @utahtechesports.",
-    scrape: { adapter: "generic-event", listingUrls: ["https://recreation.utahtech.edu/e-sports/"], notes: "Recreation page + socials/Discord. New venue announcements." },
+    socials: {
+      instagram: "https://instagram.com/utahtechesports",
+      discord: "https://discord.gg/utahtech-esports",
+      linktree: "https://linktr.ee/utahtechesports",
+    },
+    notes: "Growing club (500+ members). Dedicated venue in Uplaza Building D (opened ~Oct 2026, 12 PCs).",
+    scrape: { adapter: "generic-event", listingUrls: ["https://recreation.utahtech.edu/e-sports/"], notes: "Recreation page + socials/Discord." },
     directory: { types: ["team"], imported: true },
   },
 
@@ -691,9 +759,14 @@ export const UTAH_SOURCES: SourceEntry[] = [
     name: "EDF Esports",
     kind: "organizer",
     url: "https://www.edfesports.com/",
-    status: "unknown",
-    notes: "Local Utah org — local events/competitions. Activity levels vary; check site + socials (FB/Twitter/IG).",
-    scrape: { adapter: "generic-event", listingUrls: ["https://www.edfesports.com/"], notes: "Low volume — periodic check. Site + socials." },
+    status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/EDFeSports",
+      twitter: "https://twitter.com/edf_esports",
+      instagram: "https://instagram.com/edfesports",
+    },
+    notes: "Local Utah org — local events/competitions.",
+    scrape: { adapter: "generic-event", listingUrls: ["https://www.edfesports.com/"], notes: "Low volume — periodic check." },
     directory: { types: ["team"], imported: true },
   },
   {
@@ -701,9 +774,15 @@ export const UTAH_SOURCES: SourceEntry[] = [
     name: "Chaotic Convergence Gaming",
     kind: "organizer",
     url: "https://chaoticconvergence.wixsite.com/ccgaming",
-    status: "unknown",
+    status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/GamingCCG",
+      twitter: "https://twitter.com/GamingCCG",
+      instagram: "https://instagram.com/chaotic_convergence_gaming",
+      youtube: "https://youtube.com/@chaoticconvergencegaming",
+    },
     notes: "Local Utah gaming/esports group. Community events and Discord activity.",
-    scrape: { adapter: "generic-event", listingUrls: ["https://chaoticconvergence.wixsite.com/ccgaming"], notes: "Wix site scrape + Discord (manual or bot if invited). Socials." },
+    scrape: { adapter: "generic-event", listingUrls: ["https://chaoticconvergence.wixsite.com/ccgaming"], notes: "Wix site scrape + Discord." },
     directory: { types: ["team"], imported: true },
   },
   {
@@ -711,9 +790,16 @@ export const UTAH_SOURCES: SourceEntry[] = [
     name: "Armada GG",
     kind: "organizer",
     url: "https://armada.gg/",
-    status: "unknown",
+    status: "active",
+    socials: {
+      facebook: "https://www.facebook.com/ArmadaGG",
+      twitter: "https://twitter.com/armadagg",
+      instagram: "https://instagram.com/armada_Esports",
+      twitch: "https://twitch.tv/team/armada",
+      youtube: "https://youtube.com/@armadagg",
+    },
     notes: "Local Utah org — competitive teams and streams.",
-    scrape: { adapter: "generic-event", listingUrls: ["https://armada.gg/"], notes: "Site + socials (Twitch/Twitter/IG/Discord/YouTube)." },
+    scrape: { adapter: "generic-event", listingUrls: ["https://armada.gg/"], notes: "Site + socials." },
     directory: { types: ["team"], imported: true },
   },
   {
@@ -756,10 +842,18 @@ export const UTAH_SOURCES: SourceEntry[] = [
     region: "utah_valley",
     games: ["super-smash-brothers-ultimate", "super-smash-brothers-melee", "street-fighter-6", "tekken-8"],
     status: "active",
+    socials: {
+      twitter: "https://twitter.com/LANKingGaming",
+      instagram: "https://instagram.com/lanking",
+      twitch: "https://twitch.tv/lanking",
+      youtube: "https://youtube.com/@lanking",
+      discord: "https://discord.gg/8aZH42j",
+      linktree: "https://linktr.ee/lanking",
+    },
     scrape: {
       adapter: "generic-event",
       listingUrls: ["https://play.lanking.us/", "http://lanking.us/"],
-      notes: "Premium PC/console/VR lounge. Weekly Smash Ultimate (start.gg/lkweekly or similar, Tuesdays ~7pm). Cash prizes, squads. 144 Hz hardware. X @LANKingGaming for weekly links. Address: 746 E 820 N, Provo, UT 84606. Phone: (385) 503-5464.",
+      notes: "Premium PC/console/VR lounge. Weekly Smash Ultimate (start.gg/lkweekly, Tuesdays ~7pm). Cash prizes, squads. 144 Hz hardware. X @LANKingGaming. Address: 746 E 820 N, Provo, UT 84606. Phone: (385) 503-5464. Linktree has all platforms.",
     },
     directory: { types: ["vendor"], imported: true },
     notes: "Major local hub for Provo/Utah Valley. Weekly tournaments, memberships, parties.",
@@ -773,6 +867,9 @@ export const UTAH_SOURCES: SourceEntry[] = [
     region: "salt_lake_valley",
     games: ["super-smash-brothers-ultimate", "street-fighter-6", "overwatch-2"],
     status: "active",
+    socials: {
+      discord: "https://discord.gg/gamerplanet",
+    },
     scrape: {
       adapter: "generic-event",
       listingUrls: ["https://gamerplanet.net/"],

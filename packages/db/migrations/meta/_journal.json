@@ -57,6 +57,13 @@
       "when": 1793285063158,
       "tag": "0007_low_madrox",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793287781149,
+      "tag": "0008_lean_warstar",
+      "breakpoints": true
     }
   ]
 }
