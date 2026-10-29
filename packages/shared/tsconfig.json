@@ -1,0 +1,9 @@
+{
+  "extends": "@utah-esports/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}
