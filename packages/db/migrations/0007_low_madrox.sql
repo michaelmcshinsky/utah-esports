@@ -1,0 +1,1 @@
+ALTER TABLE "catalog_sources" ADD COLUMN "scrape_events" text[] DEFAULT '{}'::text[] NOT NULL;

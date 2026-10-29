@@ -135,6 +135,7 @@ export const catalogSources = pgTable(
     status: text("status").notNull().default("unknown"),
     scrapeAdapter: text("scrape_adapter").notNull().default("none"),
     scrapeUrls: text("scrape_urls").array().notNull().default(sql`'{}'::text[]`),
+    scrapeEvents: text("scrape_events").array().notNull().default(sql`'{}'::text[]`),
     scrapeNotes: text("scrape_notes"),
     directoryTypes: text("directory_types").array().notNull().default(sql`'{}'::text[]`),
     directoryImported: boolean("directory_imported").notNull().default(false),

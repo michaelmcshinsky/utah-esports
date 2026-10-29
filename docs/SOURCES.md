@@ -3,7 +3,7 @@
 > Generated from `packages/scrapers/src/catalog/utah-sources.ts` — edit that file and re-run
 > `pnpm --filter @utah-esports/scrapers exec tsx scripts/generate-sources-doc.ts`.
 
-**48 tracked sources** across 7 categories. See [SCRAPING.md](./SCRAPING.md) for how imports work.
+**63 tracked sources** across 7 categories. See [SCRAPING.md](./SCRAPING.md) for how imports work.
 
 ## Event platforms
 
@@ -209,6 +209,51 @@
 - **Games**: super-smash-brothers-melee, street-fighter-6, dota-2
 - **Notes**: SLC arcade behind GameTyrant Melee/FGC Monthlies and Dota tournaments (2018–19). Closure reported; verify before linking.
 
+### LAN King Gaming Lounge (LK Play)
+
+- **URL**: https://play.lanking.us/
+- **Location**: Provo (utah_valley)
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://play.lanking.us/, http://lanking.us/
+- **How**: Premium PC/console/VR lounge. Weekly Smash Ultimate (start.gg/lkweekly or similar, Tuesdays ~7pm). Cash prizes, squads. 144 Hz hardware. X @LANKingGaming for weekly links. Address: 746 E 820 N, Provo, UT 84606. Phone: (385) 503-5464.
+- **Directory**: vendor — imported ✓
+- **Games**: super-smash-brothers-ultimate, super-smash-brothers-melee, street-fighter-6, tekken-8
+- **Notes**: Major local hub for Provo/Utah Valley. Weekly tournaments, memberships, parties.
+
+### Gamer Planet
+
+- **URL**: https://gamerplanet.net/
+- **Location**: Sandy (salt_lake_valley)
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://gamerplanet.net/
+- **How**: PC + VR lounge (Oculus Quest). 60+ games, memberships, parties, local comps. GGCircuit booking system + Discord. Address: 8745 S 700 E Suite #6, Sandy.
+- **Directory**: vendor — imported ✓
+- **Games**: super-smash-brothers-ultimate, street-fighter-6, overwatch-2
+- **Notes**: Community events via Discord.
+
+### GameTyrant
+
+- **URL**: https://www.gametyrant.com/
+- **Location**: North Salt Lake (salt_lake_valley)
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://www.gametyrant.com/
+- **How**: Large family-friendly LAN center (~10k sq ft). PC, console, VR. Weekly/Saturday tournaments, birthday parties, LAN parties. North Salt Lake / SLC area (~640 N Main). Site calendar + socials.
+- **Directory**: vendor — imported ✓
+- **Games**: super-smash-brothers-melee, street-fighter-6, dota-2, rocket-league
+- **Notes**: Major local LAN center.
+
+### Salt Palace Convention Center
+
+- **URL**: https://www.visitsaltlake.com/meetings-and-conventions/salt-palace/
+- **Location**: Salt Lake City (salt_lake_valley)
+- **Status**: `active`
+- **Scrape**: `none`
+- **How**: Host venue only — events scraped from organizers/officials (BLAST, HCS, FanX).
+- **Notes**: Major convention center hosting large esports events: BLAST R6 Major (2026, $600k), Halo Championship Series Salt Lake City Majors (multiple years, $125k–$250k). Also FanX Salt Lake.
+
 ## Conventions
 
 ### FanX Salt Lake Comic Convention
@@ -247,6 +292,28 @@
 - **Scrape**: `none`
 - **How**: Defunct — historical only.
 - **Notes**: Games-and-media convention (Jan 2019 archive).
+
+### SaltCON Series
+
+- **URL**: https://tabletop.events/
+- **Location**: Layton (davis_weber)
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://tabletop.events/
+- **How**: tabletop.events convention pages. Game library, tournaments, RPGs.
+- **Notes**: Largest Intermountain West tabletop/RPG conventions. SaltCON Spring (Davis Conference Center, Layton, 2,000+), Summer/End of Summer, Bryce. Game library, tournaments, ProtoCON, RPGs. Supports broader gaming community.
+
+### Utah Gaming Con
+
+- **URL**: https://utgamingcon.com/
+- **Location**: Sandy (salt_lake_valley)
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://utgamingcon.com/
+- **How**: Official site schedule + FB.
+- **Directory**: vendor — imported ✓
+- **Games**: super-smash-brothers-ultimate, mario-kart-8-deluxe, pokemon-scarlet-violet
+- **Notes**: Retro + TCG focused; distinct from pure esports but feeds gaming community. Retro video games, TCGs (MTG, Pokémon, Lorcana, One Piece), state championships, vendors, costumes. Annual at Mountain America Expo Center, Sandy. 2,000+ attendees.
 
 ## Scholastic & governing bodies
 
@@ -329,6 +396,36 @@
 - **Directory**: team — imported ✓
 - **Notes**: Multi-school collegiate alliance with Utah members (UVU, BYU…).
 
+### VOICE (Voice of Intercollegiate Esports)
+
+- **URL**: https://www.voicecollegiate.org/
+- **Status**: `active`
+- **Scrape**: `none`
+- **How**: Governance body — link only; member programs covered individually.
+- **Notes**: National collegiate esports governance org. University of Utah joined in 2026.
+
+### Utah Tech University Esports
+
+- **URL**: https://recreation.utahtech.edu/e-sports/
+- **Location**: St. George (southern_utah)
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://recreation.utahtech.edu/e-sports/
+- **How**: Recreation page + socials/Discord. New venue announcements.
+- **Directory**: team — imported ✓
+- **Games**: marvel-rivals, overwatch-2, rocket-league, valorant, call-of-duty, super-smash-brothers-ultimate, league-of-legends
+- **Notes**: Growing club (500+ members). Dedicated venue in Uplaza Building D (opened ~Oct 2026, 12 PCs). Titles: Marvel Rivals, Overwatch 2, Rocket League, Valorant, CoD, Smash, LoL. Instagram @utahtechesports.
+
+### UHSAA Esports
+
+- **URL**: https://www.uhsaa.org/
+- **Status**: `active`
+- **Scrape**: `none`
+- **How**: Monitor UHSAA site + news releases. Download/scrape annual PDFs (e.g. EsportsStateInfo.pdf). Pair with Ken Garff for brackets. News alerts via Google/KSL.
+- **Directory**: team — imported ✓
+- **Games**: mario-kart-8-deluxe, super-smash-brothers-ultimate, rocket-league
+- **Notes**: Officially sanctioned high school esports since 2025-26. Inaugural 2026 state champions at Weber State: Farmington (6A), Pleasant Grove (5A), Provo (4A), American Leadership (3A-1A). Games: Mario Kart 8 Deluxe, Super Smash Bros. Ultimate, Rocket League. ~80+ teams in inaugural season.
+
 ## Organizers
 
 ### No Pause Gaming
@@ -361,6 +458,68 @@
 - **Directory**: team — imported ✓
 - **Games**: other
 - **Notes**: Utah Jazz-affiliated NBA 2K League team (2019 archive entry).
+
+### Utah Esports Council
+
+- **URL**: https://utah-esports-council.netlify.app/
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://utah-esports-council.netlify.app/
+- **How**: Static Netlify site — simple HTML; low change frequency.
+- **Notes**: Coordinates Utah Gaming Hub (business), player engagement, and community resources.
+
+### EDF Esports
+
+- **URL**: https://www.edfesports.com/
+- **Status**: `unknown`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://www.edfesports.com/
+- **How**: Low volume — periodic check. Site + socials.
+- **Directory**: team — imported ✓
+- **Notes**: Local Utah org — local events/competitions. Activity levels vary; check site + socials (FB/Twitter/IG).
+
+### Chaotic Convergence Gaming
+
+- **URL**: https://chaoticconvergence.wixsite.com/ccgaming
+- **Status**: `unknown`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://chaoticconvergence.wixsite.com/ccgaming
+- **How**: Wix site scrape + Discord (manual or bot if invited). Socials.
+- **Directory**: team — imported ✓
+- **Notes**: Local Utah gaming/esports group. Community events and Discord activity.
+
+### Armada GG
+
+- **URL**: https://armada.gg/
+- **Status**: `unknown`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://armada.gg/
+- **How**: Site + socials (Twitch/Twitter/IG/Discord/YouTube).
+- **Directory**: team — imported ✓
+- **Notes**: Local Utah org — competitive teams and streams.
+
+### Ken Garff Esports Events
+
+- **URL**: https://www.kengarffesports.org/events
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://www.kengarffesports.org/events
+- **How**: WordPress-style calendar. Individual event pages have details. Google Forms for registration. Scrape events archive + individual pages.
+- **Directory**: team — imported ✓
+- **Games**: super-smash-brothers-ultimate, mario-kart-8-deluxe, rocket-league
+- **Notes**: Regional invitationals (UVU, Utah Tech, Weber State, USU Eastern) + large statewide Spring Celebration (championships + STEAM workshops, 2,000+ students). Fall invitationals; Spring Celebration at U of U Huntsman Center.
+
+### Ken Garff Spring Celebration
+
+- **URL**: https://www.kengarffesports.org/events
+- **Location**: Salt Lake City (salt_lake_valley)
+- **Status**: `active`
+- **Scrape**: `generic-event`
+- **Listing pages**: https://www.kengarffesports.org/events
+- **How**: Scrape events archive + individual pages. Google Forms for registration. Monitor for new invitationals.
+- **Directory**: team — imported ✓
+- **Games**: super-smash-brothers-ultimate, mario-kart-8-deluxe, rocket-league
+- **Notes**: Dominant high school/scholastic program — 90-100+ schools across nearly every Utah district. Large statewide championship + STEAM workshops (2,000+ students). Industry guests (Shaun McBride, Nintendo alumni). Held at U of U Huntsman Center or campuses. Workshops: Tech in Finance, Arts, Manufacturing, AI, media, production.
 
 ## Community hubs
 

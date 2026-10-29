@@ -85,7 +85,8 @@ export async function seedSchoolPrograms() {
     { slug: "university-of-utah-esports", name: "University of Utah Esports", kind: "collegiate", city: "Salt Lake City", websiteUrl: "https://eae.utah.edu/esports/", pathway: "collegiate", institution: "University of Utah" },
     { slug: "byu-esports", name: "BYU Esports", kind: "collegiate", city: "Provo", websiteUrl: "https://clubs.byu.edu/clubs#/esports-vgame", pathway: "collegiate", institution: "Brigham Young University" },
     { slug: "usu-esports", name: "USU Esports", kind: "collegiate", city: "Logan", websiteUrl: "https://www.usu.edu/", pathway: "collegiate", institution: "Utah State University" },
-    { slug: "weber-state-claw-gaming", name: "Weber State Claw Gaming", kind: "collegiate", city: "Ogden", websiteUrl: "https://www.weber.edu/", pathway: "collegiate", institution: "Weber State University" },
+    { slug: "weber-state-claw-gaming", name: "Weber State Claw Gaming", kind: "collegiate", city: "Ogden", websiteUrl: "https://www.weber.edu/esports/", pathway: "collegiate", institution: "Weber State University" },
+    { slug: "utah-tech-esports", name: "Utah Tech Esports", kind: "collegiate", city: "St. George", websiteUrl: "https://recreation.utahtech.edu/e-sports/", pathway: "collegiate", institution: "Utah Tech University" },
   ];
   for (const p of programs) {
     const [existing] = await db.select().from(organizations).where(eq(organizations.slug, p.slug)).limit(1);
@@ -122,6 +123,7 @@ export async function seedCatalog() {
         status: source.status,
         scrapeAdapter: source.scrape.adapter,
         scrapeUrls: source.scrape.listingUrls ?? [],
+        scrapeEvents: source.scrape.events ?? [],
         scrapeNotes: source.scrape.notes ?? null,
         directoryTypes: source.directory?.types ?? [],
         directoryImported: source.directory?.imported ?? false,
@@ -140,6 +142,7 @@ export async function seedCatalog() {
           status: source.status,
           scrapeAdapter: source.scrape.adapter,
           scrapeUrls: source.scrape.listingUrls ?? [],
+          scrapeEvents: source.scrape.events ?? [],
           scrapeNotes: source.scrape.notes ?? null,
           directoryTypes: source.directory?.types ?? [],
           directoryImported: source.directory?.imported ?? false,
