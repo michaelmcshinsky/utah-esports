@@ -1,19 +1,28 @@
 import type { Metadata } from "next";
-import { Archivo, Inter } from "next/font/google";
+import { Comfortaa, Rubik, Montserrat } from "next/font/google";
 import { SiteNav } from "@/src/components/site-nav";
 import { SiteFooter } from "@/src/components/site-footer";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/src/lib/site";
 import "./globals.css";
 
-const inter = Inter({
+const comfortaa = Comfortaa({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "700"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const archivo = Archivo({
+const rubik = Rubik({
   subsets: ["latin"],
-  variable: "--font-archivo",
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["300", "400", "600"],
+  variable: "--font-ui",
   display: "swap",
 });
 
@@ -53,7 +62,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${archivo.variable}`}>
+    <html lang="en" className={`${comfortaa.variable} ${rubik.variable} ${montserrat.variable}`}>
       <body className="flex min-h-screen flex-col">
         <a
           href="#main"

@@ -135,17 +135,25 @@ export default async function EventDetailPage({
 
   return (
     <>
-      <div className="page-container py-8">
-        <nav aria-label="Breadcrumb" className="text-sm text-charcoal-600">
-          <Link href="/explore" className="hover:text-redrock-600">
-            Explore
-          </Link>{" "}
-          / <span>{event.title}</span>
-      </nav>
-
-      <div className="mt-4 grid gap-8 lg:grid-cols-[1fr_20rem]">
-        <article>
-          <div className="flex flex-wrap gap-1.5">
+      {/* Banner Hero */}
+      <div
+        className="relative overflow-hidden"
+        style={{
+          backgroundImage: event.imageUrl
+            ? `linear-gradient(rgba(36,38,43,0.65), rgba(36,38,43,0.85)), url('${event.imageUrl}')`
+            : `linear-gradient(rgba(36,38,43,0.7), rgba(36,38,43,0.9)), url('/images/home/utah-esports-banner-2.jpg')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="page-container py-14">
+          <nav aria-label="Breadcrumb" className="text-sm text-charcoal-300">
+            <Link href="/explore" className="hover:text-white">
+              Explore
+            </Link>{" "}
+            / <span className="text-charcoal-100">{event.title}</span>
+          </nav>
+          <div className="mt-4 flex flex-wrap gap-1.5">
             {gameRows.map((g) => (
               <Link key={g.game.id} href={`/explore?games=${g.game.slug}`}>
                 <Badge variant="info">{g.game.name}</Badge>
@@ -156,11 +164,28 @@ export default async function EventDetailPage({
               {event.format === "online" ? "Online" : event.format === "hybrid" ? "Hybrid" : "In person"}
             </Badge>
           </div>
-          <h1 className="mt-3 font-display text-3xl font-bold text-charcoal-900">{event.title}</h1>
-          <p className="mt-2 text-lg font-medium text-redrock-600">
+          <h1 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+            {event.title}
+          </h1>
+          <p className="mt-3 text-lg font-medium text-sandstone-300">
             {formatEventDate(event.startsAt, event.endsAt)}
+            {event.city ? ` · ${event.city}, UT` : ""}
           </p>
+          {registrationUrl ? (
+            <a
+              href={`/api/out/event/${event.id}`}
+              className="mt-5 inline-flex rounded-lg bg-redrock-500 px-6 py-3 text-sm font-semibold text-white hover:bg-redrock-600"
+              rel="noopener noreferrer"
+            >
+              Register on the original site →
+            </a>
+          ) : null}
+        </div>
+      </div>
 
+      <div className="page-container py-8">
+      <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
+        <article>
           <MediaImage
             src={event.imageUrl}
             alt={`${event.title} poster`}

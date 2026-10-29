@@ -5,6 +5,7 @@ import { EventCard, type EventCardModel } from "@utah-esports/ui";
 import { getEventGames, listUpcomingEvents } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { SearchHero } from "@/src/components/search-hero";
+import { Accordion, type AccordionItem } from "@/src/components/accordion";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/events" },
@@ -36,6 +37,34 @@ function endOfWeek(date: Date): Date {
   d.setHours(23, 59, 59, 999);
   return d;
 }
+
+const EVENTS_FAQ: AccordionItem[] = [
+  {
+    question: "How often are new events added?",
+    answer:
+      "Events are added daily through automatic imports (start.gg sync every 6h, venue scans daily) and community submissions. Use the Explore page to filter by game, city, date, and more.",
+  },
+  {
+    question: "How do I submit an event?",
+    answer:
+      "Use the Submit Event form at /submit. Paste a public event URL (start.gg, Eventbrite, Facebook, etc.) and the system auto-fills details. A moderator reviews it before it goes live.",
+  },
+  {
+    question: "Are these events beginner-friendly?",
+    answer:
+      "Many are! Look for the 'Beginner-friendly' badge on event cards. Casual sessions and weekly meetups are great for new players — most Utah scenes are welcoming to newcomers.",
+  },
+  {
+    question: "How do I get my community listed?",
+    answer:
+      "Submit your event or create an organization from the dashboard. Communities, Discord servers, Facebook groups, and venues can all be listed. We verify ownership before publishing.",
+  },
+  {
+    question: "Can I embed a calendar on my website?",
+    answer:
+      "Yes! Each organization has a calendar feed (/api/calendar/org/[slug]) and an embeddable widget (/embed/calendar/[slug]). Subscribe to the global ICS feed to get all events in your calendar app.",
+  },
+];
 
 async function getEvents(): Promise<EventCardModel[]> {
   const database = db();
@@ -162,6 +191,16 @@ export default async function EventsHubPage() {
           to see the full catalog.
         </p>
       ) : null}
+
+      {/* FAQ */}
+      <section className="mt-16 border-t border-charcoal-200 pt-12" aria-labelledby="faq-heading">
+        <div className="flex flex-wrap items-baseline gap-3">
+          <h2 id="faq-heading" className="section-title">
+            Frequently asked questions
+          </h2>
+        </div>
+        <Accordion className="mt-8" items={EVENTS_FAQ} />
+      </section>
     </div>
   );
 }
