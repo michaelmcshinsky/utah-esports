@@ -5,6 +5,9 @@ import { SiteFooter } from "@/src/components/site-footer";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/src/lib/site";
 import "./globals.css";
 
+/** Applied before first paint — light unless the visitor chose dark. */
+const THEME_SCRIPT = `(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();`;
+
 const comfortaa = Comfortaa({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -62,8 +65,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${comfortaa.variable} ${rubik.variable} ${montserrat.variable}`}>
+    <html lang="en" className={`${comfortaa.variable} ${rubik.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <body className="flex min-h-screen flex-col">
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-redrock-500 focus:px-4 focus:py-2 focus:text-white"

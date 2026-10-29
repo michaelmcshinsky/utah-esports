@@ -1,0 +1,172 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Badge } from "@utah-esports/ui";
+import { eventOccurrences, getEventGames } from "@utah-esports/db";
+import { db } from "@/src/lib/db";
+import { gte, inArray, isNotNull, asc } from "drizzle-orm";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/deadlines" },
+  title: "Registration deadlines",
+  description:
+    "Track registration deadlines for Utah gaming events — tournaments, leagues, and competitions with upcoming cutoffs.",
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function DeadlinesPage() {
+  const database = db();
+  const now = new Date();
+  const events = await database
+    .select()
+    .from(eventOccurrences)
+    .where(
+      inArray(eventOccurrences.status, ["published", "needs_verification", "postponed"]) &&
+        isNotNull(eventOccurrences.registrationDeadline) &&
+        gte(eventOccurrences.registrationDeadline, now),
+    )
+    .orderBy(asc(eventOccurrences.registrationDeadline))
+    .limit(50);
+
+  // Get game names for each event
+  const withGames = await Promise.all(
+    events.map(async (event) => ({
+      event,
+      games: await getEventGames(database, event.id),
+    })),
+  );
+
+  return (
+    <>
+      {/* Hero banner */}
+      <div
+        className="hero-section text-white"
+        style={{
+          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="page-container py-14">
+          <h1 className="font-display text-3xl font-bold sm:text-4xl">Registration deadlines</h1>
+          <p className="mt-3 max-w-2xl text-charcoal-200">
+            Don&apos;t miss a cutoff. Every event with a registration deadline, sorted by urgency.
+            Click through to register on the organizer&apos;s platform.
+          </p>
+        </div>
+      </div>
+
+      {/* Deadlines list */}
+      <section className="section" aria-labelledby="deadlines-heading">
+        <div className="page-container">
+          <h2 id="deadlines-heading" className="section-title">
+            Upcoming deadlines
+          </h2>
+          {withGames.length === 0 ? (
+            <div className="mt-8 rounded-xl border-2 border-dashed border-charcoal-200 bg-white px-6 py-16 text-center">
+              <p className="text-lg font-medium text-charcoal-900">
+                No upcoming registration deadlines.
+              </p>
+              <p className="mt-2 text-sm text-charcoal-600">
+                Deadlines appear here as soon as events list them.{" "}
+                <Link href="/explore" className="text-redrock-500 hover:text-redrock-600">
+                  Explore all events
+                </Link>{" "}
+                or{" "}
+                <Link href="/submit" className="text-redrock-500 hover:text-redrock-600">
+                  submit one
+                </Link>
+                .
+              </p>
+            </div>
+          ) : (
+            <div className="mt-8 space-y-4">
+              {withGames.map(({ event, games }) => {
+                const deadline = event.registrationDeadline!;
+                const daysUntil = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                const urgency =
+                  daysUntil <= 3 ? "high" : daysUntil <= 7 ? "medium" : "low";
+                return (
+                  <div
+                    key={event.id}
+                    className={`flex flex-col gap-3 rounded-xl border bg-white p-5 lift sm:flex-row sm:items-center sm:justify-between ${
+                      urgency === "high"
+                        ? "border-redrock-500"
+                        : urgency === "medium"
+                          ? "border-gold-400"
+                          : "border-charcoal-200"
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-start gap-3">
+                        <div>
+                          <h3 className="font-semibold text-charcoal-900">
+                            <Link
+                              href={`/events/${event.slug}`}
+                              className="hover:text-redrock-500"
+                            >
+                              {event.title}
+                            </Link>
+                          </h3>
+                          <div className="mt-1 flex flex-wrap gap-1.5">
+                            {games.slice(0, 3).map((g) => (
+                              <Badge key={g.game.id} variant="info">
+                                {g.game.name}
+                              </Badge>
+                            ))}
+                          </div>
+                          {event.city ? (
+                            <p className="mt-1 text-sm text-charcoal-500">{event.city}</p>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-start gap-2 sm:items-end">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant={
+                            urgency === "high"
+                              ? "danger"
+                              : urgency === "medium"
+                                ? "warning"
+                                : "success"
+                          }
+                        >
+                          {daysUntil === 0
+                            ? "Today"
+                            : daysUntil === 1
+                              ? "Tomorrow"
+                              : `${daysUntil} days left`}
+                        </Badge>
+                        <span className="text-sm text-charcoal-600">
+                          {deadline.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      {event.registrationUrl ? (
+                        <a
+                          href={`/api/out/event/${event.id}`}
+                          className="btn-danger btn-sm"
+                          rel="noopener noreferrer"
+                        >
+                          Register →
+                        </a>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <p className="mt-8 text-sm text-charcoal-500">
+            Deadlines are tracked automatically from event listings. If one is missing, the
+            organizer hasn&apos;t listed it — reach out through the event page.
+          </p>
+        </div>
+      </section>
+    </>
+  );
+}

@@ -13,6 +13,7 @@ import {
 import { sql } from "drizzle-orm";
 import {
   agePolicyEnum,
+  deadlinePrecisionEnum,
   entryModeEnum,
   eventFormatEnum,
   eventStatusEnum,
@@ -95,6 +96,16 @@ export const eventOccurrences = pgTable(
     registrationUrl: text("registration_url"),
     registrationState: registrationStateEnum("registration_state").notNull().default("unknown"),
     registrationDeadline: timestamp("registration_deadline", { withTimezone: true }),
+    /** Whether the deadline is a calendar date or an exact timestamp. */
+    registrationDeadlinePrecision: deadlinePrecisionEnum("registration_deadline_precision"),
+    /** Late fee start date/time (if applicable). */
+    lateFeeStartsAt: timestamp("late_fee_starts_at", { withTimezone: true }),
+    lateFeePrecision: deadlinePrecisionEnum("late_fee_precision"),
+    lateFeeNote: text("late_fee_note"),
+    /** External URL columns for common event links. */
+    ticketUrl: text("ticket_url"),
+    scheduleUrl: text("schedule_url"),
+    resultsUrl: text("results_url"),
     contactName: text("contact_name"),
     contactEmail: text("contact_email"),
     bringNotes: text("bring_notes"),

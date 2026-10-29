@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { getSessionUser } from "@/src/lib/session";
 import { supabaseServerConfigured } from "@/src/lib/supabase/server";
+import { ThemeToggle } from "@/src/components/theme-toggle";
 
 const NAV_ITEMS = [
   { href: "/explore", label: "Explore" },
   { href: "/events", label: "Events" },
+  { href: "/deadlines", label: "Deadlines" },
   { href: "/communities", label: "Communities" },
   { href: "/places", label: "Places to Play" },
   { href: "/schools", label: "Schools & Teams" },
@@ -14,53 +16,76 @@ const NAV_ITEMS = [
 export async function SiteNav() {
   const user = await getSessionUser();
   return (
-    <header className="sticky top-0 z-40 border-b border-charcoal-700/50 bg-charcoal-900/95 text-white backdrop-blur">
-      <div className="page-container flex h-16 items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/site/utah-esports-white-2.png"
-            alt="Utah Esports"
-            className="h-9 w-auto"
-          />
-        </Link>
-        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal-300 hover:bg-charcoal-800 hover:text-white"
-            >
-              {item.label}
+    <>
+      {/* Utility strip */}
+      <div className="top-strip">
+        <div className="page-container flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-1.5 text-xs">
+          <span>
+            Utah&apos;s gaming home base — tournaments, communities, teams, and places to play
+          </span>
+          <div className="flex items-center gap-4">
+            <a href="/calendar/global.ics" className="ts-link">
+              ICS feed
+            </a>
+            <Link href="/submit" className="ts-link">
+              Submit an event
             </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
-          <Link
-            href="/submit"
-            className="hidden rounded-lg border border-charcoal-600 px-3 py-2 text-sm font-medium text-charcoal-100 hover:border-charcoal-400 hover:bg-charcoal-800 sm:inline-flex"
-          >
-            Submit event
-          </Link>
-          {user ? (
-            <Link
-              href="/dashboard"
-              className="rounded-lg bg-redrock-500 px-3 py-2 text-sm font-medium text-white hover:bg-redrock-600"
-            >
-              Dashboard
+            <Link href="/organizers" className="ts-link">
+              How it works
             </Link>
-          ) : supabaseServerConfigured() ? (
-            <Link
-              href="/sign-in"
-              className="rounded-lg bg-redrock-500 px-3 py-2 text-sm font-medium text-white hover:bg-redrock-600"
-            >
-              Sign in
-            </Link>
-          ) : null}
-          <MobileMenu authenticated={Boolean(user)} />
+          </div>
         </div>
       </div>
-    </header>
+
+      <header className="sticky top-0 z-40 border-b border-charcoal-700/50 bg-charcoal-900/95 text-white backdrop-blur">
+        <div className="page-container flex h-16 items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/site/utah-esports-white-2.png"
+              alt="Utah Esports"
+              className="h-9 w-auto"
+            />
+          </Link>
+          <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal-300 hover:bg-charcoal-800 hover:text-white"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/submit"
+              className="hidden rounded-lg border border-charcoal-600 px-3 py-2 text-sm font-medium text-charcoal-100 hover:border-charcoal-400 hover:bg-charcoal-800 sm:inline-flex"
+            >
+              Submit event
+            </Link>
+            <ThemeToggle />
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="rounded-lg bg-redrock-500 px-3 py-2 text-sm font-medium text-white hover:bg-redrock-600"
+              >
+                Dashboard
+              </Link>
+            ) : supabaseServerConfigured() ? (
+              <Link
+                href="/sign-in"
+                className="rounded-lg bg-redrock-500 px-3 py-2 text-sm font-medium text-white hover:bg-redrock-600"
+              >
+                Sign in
+              </Link>
+            ) : null}
+            <MobileMenu authenticated={Boolean(user)} />
+          </div>
+        </div>
+      </header>
+    </>
   );
 }
 

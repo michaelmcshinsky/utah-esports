@@ -120,6 +120,12 @@ export const listingStatusEnum = pgEnum("listing_status", [
   "hidden",
 ]);
 
+/** Tracks whether a deadline is a calendar date or an exact timestamp. */
+export const deadlinePrecisionEnum = pgEnum("deadline_precision", [
+  "date",
+  "datetime",
+]);
+
 export const utc = () => timestamp("at", { withTimezone: true }).notNull();
 export const createdAt = () =>
   timestamp("created_at", { withTimezone: true })

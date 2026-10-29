@@ -173,3 +173,62 @@
   outline: 2px solid var(--color-redrock-500);
   outline-offset: 2px;
 }
+
+/* Royal Tickets utility strip */
+.top-strip {
+  @apply bg-charcoal-900 text-charcoal-300;
+  font-size: 0.75rem;
+}
+.ts-link {
+  @apply text-charcoal-200 hover:text-white transition-colors;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  @apply inline-flex items-center justify-center rounded-lg border border-charcoal-300 p-2 text-charcoal-700 transition-colors hover:bg-sandstone-100;
+}
+
+/* Dark mode overrides — applied via [data-theme="dark"] on <html> */
+[data-theme="dark"] body {
+  @apply bg-charcoal-950 text-white;
+}
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+  @apply text-white;
+}
+[data-theme="dark"] p {
+  @apply text-charcoal-300;
+}
+[data-theme="dark"] .section-light {
+  @apply bg-charcoal-900;
+}
+[data-theme="dark"] .section-dark {
+  @apply bg-charcoal-950;
+}
+[data-theme="dark"] .card,
+[data-theme="dark"] .event-card {
+  @apply bg-charcoal-800 border-charcoal-700;
+}
+[data-theme="dark"] .btn-outline {
+  @apply border-charcoal-600 text-charcoal-200 hover:bg-charcoal-800;
+}
+[data-theme="dark"] .theme-toggle {
+  @apply border-charcoal-600 text-charcoal-300 hover:bg-charcoal-800;
+}
+[data-theme="dark"] .accordion-item {
+  @apply border-charcoal-700;
+}
+[data-theme="dark"] .accordion-trigger {
+  @apply bg-charcoal-800 text-white hover:bg-charcoal-700;
+}
+[data-theme="dark"] .accordion-content {
+  @apply text-charcoal-300;
+}
+[data-theme="dark"] .section-title {
+  @apply text-white;
+}
+[data-theme="dark"] .top-strip {
+  @apply bg-charcoal-950;
+}
