@@ -7,15 +7,15 @@
  */
 
 @theme {
-  --color-charcoal-950: #12141a;
-  --color-charcoal-900: #1a1d26;
-  --color-charcoal-800: #242833;
-  --color-charcoal-700: #323745;
-  --color-charcoal-600: #454b5c;
-  --color-charcoal-400: #8b91a3;
-  --color-charcoal-300: #b4b9c7;
-  --color-charcoal-200: #d6dae3;
-  --color-charcoal-100: #eceef3;
+  --color-charcoal-950: #0f0f0f;
+  --color-charcoal-900: #1d1d1d;
+  --color-charcoal-800: #2b2b2b;
+  --color-charcoal-700: #3a3a3a;
+  --color-charcoal-600: #525252;
+  --color-charcoal-400: #8a8a8a;
+  --color-charcoal-300: #b0b0b0;
+  --color-charcoal-200: #d4d4d4;
+  --color-charcoal-100: #ebebeb;
 
   --color-sandstone-50: #faf8f4;
   --color-sandstone-100: #f5f0e6;
@@ -48,8 +48,8 @@
 
   --radius-card: 0.75rem;
 
-  --shadow-card: 0 1px 2px rgb(18 20 26 / 0.06), 0 4px 12px rgb(18 20 26 / 0.06);
-  --shadow-card-hover: 0 2px 4px rgb(18 20 26 / 0.08), 0 8px 24px rgb(18 20 26 / 0.1);
+  --shadow-card: 0 1px 2px rgb(29 29 29 / 0.06), 0 4px 12px rgb(29 29 29 / 0.06);
+  --shadow-card-hover: 0 2px 4px rgb(29 29 29 / 0.08), 0 8px 24px rgb(29 29 29 / 0.1);
 
   --animate-fade-in: fade-in 160ms ease-out;
 
