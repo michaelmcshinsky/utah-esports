@@ -9,19 +9,167 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-sandstone-50 text-charcoal-900 font-sans antialiased;
+    @apply bg-white text-charcoal-900 font-sans antialiased;
   }
-  h1,
-  h2,
-  h3 {
+  h1, h2, h3, h4 {
     @apply font-display tracking-tight;
+  }
+  h1 {
+    @apply text-3xl font-bold sm:text-4xl lg:text-5xl;
+  }
+  h2 {
+    @apply text-2xl font-bold sm:text-3xl;
+  }
+  h3 {
+    @apply text-xl font-semibold;
+  }
+  h4 {
+    @apply text-lg font-semibold;
+  }
+  p {
+    @apply text-charcoal-600 leading-relaxed;
+  }
+  a {
+    @apply transition-colors duration-150;
   }
 }
 
 @utility page-container {
-  @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
 }
 
 @utility section-heading {
   @apply text-xl font-semibold text-charcoal-900 sm:text-2xl;
+}
+
+@utility section-title {
+  @apply relative inline-block font-display text-xl font-bold text-charcoal-900 sm:text-2xl;
+}
+
+/* Royal Tickets-style buttons */
+.btn-danger {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-redrock-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-redrock-600;
+}
+.btn-gold {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-semibold text-charcoal-900 transition-colors hover:bg-gold-500;
+}
+.btn-outline {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-charcoal-300 px-5 py-2.5 text-sm font-medium text-charcoal-800 transition-colors hover:bg-sandstone-100;
+}
+
+/* Section titles with red underline */
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 2.5rem;
+  height: 3px;
+  @apply bg-redrock-500 rounded-full;
+}
+
+/* Royal Tickets accordion */
+.accordion-item {
+  @apply border border-charcoal-200 rounded-lg overflow-hidden;
+}
+.accordion-trigger {
+  @apply w-full text-left px-5 py-4 bg-white cursor-pointer flex justify-between items-center font-medium text-charcoal-900 transition-colors hover:bg-sandstone-50;
+}
+.accordion-item[data-open="true"] .accordion-trigger {
+  @apply text-redrock-500;
+}
+.accordion-content {
+  @apply px-5 pb-4 text-charcoal-600 text-sm leading-relaxed;
+}
+
+/* Royal Tickets card lift */
+.lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(36, 38, 43, 0.12);
+}
+
+/* Royal Tickets banner */
+.event-banner {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+}
+.event-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(36, 38, 43, 0.55), rgba(36, 38, 43, 0.85));
+  z-index: 0;
+}
+.event-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Royal Tickets badge */
+.badge-primary {
+  @apply bg-redrock-500 text-white;
+}
+.badge-secondary {
+  @apply bg-charcoal-100 text-charcoal-700;
+}
+.badge-success {
+  @apply bg-pine-500 text-white;
+}
+.badge-gold {
+  @apply bg-gold-400 text-charcoal-900;
+}
+
+/* Royal Tickets hero section */
+.hero-section {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(36, 38, 43, 0.88), rgba(36, 38, 43, 0.72));
+  z-index: 0;
+}
+.hero-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Royal Tickets card */
+.event-card {
+  @apply rounded-xl overflow-hidden shadow-card;
+}
+
+/* Royal Tickets divider */
+.divider {
+  @apply border-t border-charcoal-200 my-8;
+}
+
+/* Royal Tickets section wrapper */
+.section {
+  @apply py-12;
+}
+.section-dark {
+  @apply bg-charcoal-900 text-white;
+}
+.section-light {
+  @apply bg-sandstone-50;
+}
+
+/* Subtle topographic motif for brand surfaces. */
+.topo-background {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.05'%3E%3Cpath d='M0 40c40 0 40 20 80 20s40-20 80-20 40 20 80 20'/%3E%3Cpath d='M0 80c40 0 40 20 80 20s40-20 80-20 40 20 80 20'/%3E%3Cpath d='M0 120c40 0 40 20 80 20s40-20 80-20 40 20 80 20'/%3E%3Cpath d='M0 160c40 0 40 20 80 20s40-20 80-20 40 20 80 20'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Visible focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-redrock-500);
+  outline-offset: 2px;
 }

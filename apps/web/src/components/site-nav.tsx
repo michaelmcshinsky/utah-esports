@@ -4,6 +4,7 @@ import { supabaseServerConfigured } from "@/src/lib/supabase/server";
 
 const NAV_ITEMS = [
   { href: "/explore", label: "Explore" },
+  { href: "/events", label: "Events" },
   { href: "/communities", label: "Communities" },
   { href: "/places", label: "Places to Play" },
   { href: "/schools", label: "Schools & Teams" },
@@ -13,7 +14,7 @@ const NAV_ITEMS = [
 export async function SiteNav() {
   const user = await getSessionUser();
   return (
-    <header className="sticky top-0 z-40 border-b border-charcoal-800/60 bg-charcoal-900/95 text-sandstone-50 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-charcoal-700/50 bg-charcoal-900/95 text-white backdrop-blur">
       <div className="page-container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -28,7 +29,7 @@ export async function SiteNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal-200 hover:bg-charcoal-800 hover:text-white"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal-300 hover:bg-charcoal-800 hover:text-white"
             >
               {item.label}
             </Link>
@@ -72,7 +73,7 @@ function MobileMenu({ authenticated }: { authenticated: boolean }) {
       >
         Menu
       </summary>
-      <div className="absolute right-0 mt-2 w-56 rounded-card border border-charcoal-700 bg-charcoal-900 p-2 shadow-card-hover">
+      <div className="absolute right-0 mt-2 w-56 rounded-lg border border-charcoal-700 bg-charcoal-900 p-2 shadow-card-hover">
         <nav aria-label="Mobile" className="flex flex-col">
           {NAV_ITEMS.map((item) => (
             <Link

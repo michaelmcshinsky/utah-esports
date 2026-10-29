@@ -129,30 +129,30 @@ export default async function HomePage() {
   return (
     <>
       <WebsiteJsonLd />
+      {/* Hero — Royal Tickets style banner */}
       <section
-        className="relative text-sandstone-50"
+        className="hero-section text-white"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(18,20,26,0.78), rgba(18,20,26,0.92)), url('/images/home/utah-esports-banner-2.jpg')",
+          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="page-container py-16 sm:py-24">
-          <p className="text-sm font-semibold uppercase tracking-widest text-redrock-200">
+        <div className="page-container py-20 sm:py-28 lg:py-32">
+          <p className="text-sm font-semibold uppercase tracking-widest text-gold-400">
             Utah&apos;s gaming home base
           </p>
-          <h1 className="mt-2 max-w-2xl font-display text-3xl font-bold sm:text-5xl">
+          <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
             Find your next game in Utah.
           </h1>
-          <p className="mt-3 max-w-xl text-base text-charcoal-300 sm:text-lg">
+          <p className="mt-4 max-w-2xl text-lg text-charcoal-200 sm:text-xl">
             Tournaments, casual meetups, communities, teams, and places to play — from Salt Lake
             arcades to Provo LANs to Logan campus clubs — kept current by the people who run them.
           </p>
-          <Suspense fallback={<div className="h-[124px] rounded-card bg-charcoal-800/50" />}>
+          <Suspense fallback={<div className="h-[124px] rounded-lg bg-charcoal-800/50" />}>
             <SearchHero className="mt-8" />
           </Suspense>
-          <div className="mt-4 flex flex-wrap gap-2 text-sm">
+          <div className="mt-5 flex flex-wrap gap-2 text-sm">
             {[
               { label: "This weekend", href: "/explore?preset=weekend" },
               { label: "Beginner-friendly", href: "/explore?beginnerOnly=true" },
@@ -163,125 +163,115 @@ export default async function HomePage() {
               <Link
                 key={chip.href}
                 href={chip.href}
-                className="rounded-full border border-charcoal-600 px-3 py-1 text-charcoal-200 hover:border-redrock-400 hover:text-white"
+                className="rounded-full border border-charcoal-500 px-4 py-1.5 text-charcoal-200 hover:border-white hover:bg-white/10 hover:text-white"
               >
                 {chip.label}
               </Link>
             ))}
           </div>
-          <dl className="mt-10 grid max-w-2xl grid-cols-3 gap-4 border-t border-charcoal-700/70 pt-6">
+          <dl className="mt-10 grid max-w-2xl grid-cols-3 gap-6 border-t border-charcoal-600 pt-8">
             <div>
-              <dt className="text-xs uppercase tracking-wide text-charcoal-400">
-                This week
-              </dt>
-              <dd className="font-display text-2xl font-bold text-sandstone-50">
+              <dt className="text-xs uppercase tracking-wide text-charcoal-300">This week</dt>
+              <dd className="mt-1 font-display text-3xl font-bold text-white">
                 {stats.eventsThisWeek}
-                <span className="ml-1 text-sm font-normal text-charcoal-400">events</span>
+                <span className="ml-1 text-sm font-normal text-charcoal-300">events</span>
               </dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-charcoal-400">Places</dt>
-              <dd className="font-display text-2xl font-bold text-sandstone-50">
+              <dt className="text-xs uppercase tracking-wide text-charcoal-300">Places</dt>
+              <dd className="mt-1 font-display text-3xl font-bold text-white">
                 {stats.venues}
-                <span className="ml-1 text-sm font-normal text-charcoal-400">venues</span>
+                <span className="ml-1 text-sm font-normal text-charcoal-300">venues</span>
               </dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-charcoal-400">Scenes</dt>
-              <dd className="font-display text-2xl font-bold text-sandstone-50">
+              <dt className="text-xs uppercase tracking-wide text-charcoal-300">Scenes</dt>
+              <dd className="mt-1 font-display text-3xl font-bold text-white">
                 {stats.games}
-                <span className="ml-1 text-sm font-normal text-charcoal-400">games</span>
+                <span className="ml-1 text-sm font-normal text-charcoal-300">games</span>
               </dd>
             </div>
           </dl>
         </div>
       </section>
 
-      <section className="page-container py-12" aria-labelledby="happening-heading">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 id="happening-heading" className="section-heading">
-              Happening near you
-            </h2>
-            <p className="mt-1 text-sm text-charcoal-600">
-              The next events on the calendar — every card shows when, where, what it costs, and
-              what it takes to join, with a timestamp for when we last verified the details.
-            </p>
-          </div>
-          <Link
-            href="/explore"
-            className="inline-flex min-h-6 shrink-0 items-center text-sm font-medium text-redrock-600 hover:text-redrock-700"
-          >
-            View all events →
-          </Link>
-        </div>
-        {events.length === 0 ? (
-          <div className="mt-6 rounded-card border border-dashed border-charcoal-300 bg-white px-6 py-12 text-center">
-            <p className="font-medium text-charcoal-800">No upcoming events listed yet.</p>
-            <p className="mt-1 text-sm text-charcoal-600">
-              Know about one?{" "}
-              <Link href="/submit" className="font-medium text-redrock-600 hover:underline">
-                Submit an event
-              </Link>{" "}
-              or check online options — listing an event takes about two minutes and a moderator
-              reviews it before it goes live.
-            </p>
-            <div className="mt-4 flex justify-center gap-2">
-              <Link
-                href="/explore?formats=online"
-                className="rounded-lg border border-charcoal-300 px-4 py-2 text-sm font-medium hover:bg-sandstone-100"
-              >
-                Browse online events
-              </Link>
-              <Link
-                href="/communities"
-                className="rounded-lg bg-charcoal-900 px-4 py-2 text-sm font-medium text-white hover:bg-charcoal-800"
-              >
-                Find a community
-              </Link>
+      {/* Upcoming Events */}
+      <section className="section" aria-labelledby="happening-heading">
+        <div className="page-container">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h2 id="happening-heading" className="section-title">
+                Happening near you
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm text-charcoal-600">
+                The next events on the calendar — every card shows when, where, what it costs, and
+                what it takes to join, with a timestamp for when we last verified the details.
+              </p>
             </div>
+            <Link
+              href="/events"
+              className="inline-flex items-center text-sm font-medium text-redrock-500 hover:text-redrock-600"
+            >
+              View all events →
+            </Link>
           </div>
-        ) : (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        )}
+          {events.length === 0 ? (
+            <div className="mt-8 rounded-xl border-2 border-dashed border-charcoal-200 bg-white px-6 py-16 text-center">
+              <p className="text-lg font-medium text-charcoal-900">No upcoming events listed yet.</p>
+              <p className="mt-2 text-sm text-charcoal-600">
+                Know about one?{" "}
+                <Link href="/submit" className="font-medium text-redrock-500 hover:text-redrock-600">
+                  Submit an event
+                </Link>{" "}
+                or check online options — listing an event takes about two minutes and a moderator
+                reviews it before it goes live.
+              </p>
+              <div className="mt-5 flex justify-center gap-3">
+                <Link href="/explore?formats=online" className="btn-outline">
+                  Browse online events
+                </Link>
+                <Link href="/communities" className="btn-danger">
+                  Find a community
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {events.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
+      {/* Games — Royal Tickets style dark section */}
       <section
-        className="border-y border-charcoal-200 py-12"
+        className="section section-dark"
         aria-labelledby="games-heading"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(250,248,244,0.94), rgba(250,248,244,0.97)), url('/images/home/social-groups.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
       >
         <div className="page-container">
-          <h2 id="games-heading" className="section-heading">
+          <h2 id="games-heading" className="section-title text-white">
             Find your community
           </h2>
-          <p className="mt-1 max-w-2xl text-sm text-charcoal-600">
+          <p className="mt-3 max-w-2xl text-sm text-charcoal-300">
             Utah gathers around these games — weeklies in Salt Lake, monthlies in Utah Valley,
             campus scenes up north. Pick yours to see the groups that run it and what&apos;s
             scheduled next.
           </p>
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap gap-3">
             {gameRows.map((game) => (
               <Link
                 key={game.id}
                 href={`/communities?game=${game.slug}`}
-                className="rounded-xl border border-charcoal-200 bg-white px-4 py-2.5 text-sm font-medium text-charcoal-800 shadow-sm hover:border-redrock-400 hover:bg-redrock-50"
+                className="rounded-xl border border-charcoal-600 bg-charcoal-800 px-5 py-2.5 text-sm font-medium text-white hover:border-redrock-500 hover:bg-redrock-500/10"
               >
                 {game.name}
               </Link>
             ))}
             <Link
               href="/communities"
-              className="rounded-xl border border-dashed border-charcoal-300 px-4 py-2.5 text-sm font-medium text-charcoal-600 hover:border-charcoal-400"
+              className="rounded-xl border border-dashed border-charcoal-500 px-5 py-2.5 text-sm font-medium text-charcoal-300 hover:border-charcoal-300 hover:text-white"
             >
               More games →
             </Link>
@@ -289,102 +279,104 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="page-container py-12" aria-labelledby="how-heading">
-        <h2 id="how-heading" className="section-heading">
-          How this site works
-        </h2>
-        <p className="mt-1 max-w-2xl text-sm text-charcoal-600">
-          Utah Esports is a directory, not a league. We don&apos;t run events — we make the ones
-          happening across the state easy to find and hard to get wrong.
-        </p>
-        <ol className="mt-6 grid gap-4 sm:grid-cols-3">
-          {HOW_IT_WORKS.map((item) => (
-            <li
-              key={item.step}
-              className="rounded-card border border-charcoal-200 bg-white p-5 shadow-sm"
-            >
-              <span className="font-display text-sm font-bold text-redrock-500">{item.step}</span>
-              <h3 className="mt-1 text-base font-semibold text-charcoal-900">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-charcoal-600">{item.body}</p>
-            </li>
-          ))}
-        </ol>
+      {/* How it works */}
+      <section className="section section-light" aria-labelledby="how-heading">
+        <div className="page-container">
+          <h2 id="how-heading" className="section-title">
+            How this site works
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm text-charcoal-600">
+            Utah Esports is a directory, not a league. We don&apos;t run events — we make the ones
+            happening across the state easy to find and hard to get wrong.
+          </p>
+          <ol className="mt-8 grid gap-6 sm:grid-cols-3">
+            {HOW_IT_WORKS.map((item) => (
+              <li
+                key={item.step}
+                className="rounded-xl border border-charcoal-200 bg-white p-6 lift"
+              >
+                <span className="font-display text-3xl font-bold text-redrock-500">{item.step}</span>
+                <h3 className="mt-2 text-lg font-semibold text-charcoal-900">{item.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-charcoal-600">{item.body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
+      {/* New to the scene — Royal Tickets style CTA banner */}
       <section
-        className="page-container pb-16"
+        className="section"
         aria-labelledby="new-heading"
       >
-        <div
-          className="relative overflow-hidden rounded-card bg-charcoal-900 px-6 py-10 text-sandstone-50 sm:px-10"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(18,20,26,0.86), rgba(18,20,26,0.94)), url('/images/home/overlay.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <h2 id="new-heading" className="font-display text-2xl font-bold">
-            New to the scene?
-          </h2>
-          <p className="mt-2 max-w-xl text-charcoal-300">
-            You don&apos;t need a team, a rank, or a decade of FGC tapes to start. Look for
-            &quot;beginner-friendly&quot; badges, pick a casual session over a bracket, and arrive
-            a little early — most Utah scenes are one friendly regular away from your first game.
-            Youth players: bring a guardian for anything under 18, and check age rules on the
-            event page first.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href="/explore?beginnerOnly=true"
-              className="rounded-lg bg-redrock-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-redrock-600"
-            >
-              Find your first event
-            </Link>
-            <Link
-              href="/communities"
-              className="rounded-lg border border-charcoal-600 px-4 py-2.5 text-sm font-semibold text-charcoal-100 hover:bg-charcoal-800"
-            >
-              Find a community
-            </Link>
-            <Link
-              href="/schools"
-              className="rounded-lg border border-charcoal-600 px-4 py-2.5 text-sm font-semibold text-charcoal-100 hover:bg-charcoal-800"
-            >
-              Explore school programs
-            </Link>
+        <div className="page-container">
+          <div
+            className="event-banner rounded-2xl overflow-hidden px-8 py-12 text-white sm:px-12"
+            style={{
+              backgroundImage: "url('/images/home/overlay.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <h2 id="new-heading" className="font-display text-3xl font-bold">
+              New to the scene?
+            </h2>
+            <p className="mt-3 max-w-2xl text-charcoal-200">
+              You don&apos;t need a team, a rank, or a decade of FGC tapes to start. Look for
+              &quot;beginner-friendly&quot; badges, pick a casual session over a bracket, and arrive
+              a little early — most Utah scenes are one friendly regular away from your first game.
+              Youth players: bring a guardian for anything under 18, and check age rules on the
+              event page first.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/explore?beginnerOnly=true"
+                className="btn-danger"
+              >
+                Find your first event
+              </Link>
+              <Link
+                href="/communities"
+                className="btn-outline"
+              >
+                Find a community
+              </Link>
+              <Link
+                href="/schools"
+                className="btn-outline"
+              >
+                Explore school programs
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="page-container pb-16" aria-labelledby="organizer-heading">
-        <div className="flex flex-col gap-4 rounded-card border border-charcoal-200 bg-white px-6 py-8 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 id="organizer-heading" className="text-xl font-semibold text-charcoal-900">
-              Run something local?
-            </h2>
-            <p className="mt-1 text-sm text-charcoal-600">
-              Publish once — keep players updated everywhere. Claim your org, add events (weekly
-              series included), announce to Discord from one place, and let freshness checks nudge
-              you when a listing goes stale. Basic listings and corrections are free.{" "}
-              {communityRows.length > 0
-                ? `${communityRows.length} communities are already listed.`
-                : null}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Link
-              href="/submit"
-              className="rounded-lg bg-redrock-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-redrock-600"
-            >
-              Add an event
-            </Link>
-            <Link
-              href="/organizers"
-              className="rounded-lg border border-charcoal-300 px-4 py-2.5 text-sm font-semibold text-charcoal-800 hover:bg-sandstone-50"
-            >
-              Claim your organization
-            </Link>
+      {/* Organizers CTA */}
+      <section className="section section-light" aria-labelledby="organizer-heading">
+        <div className="page-container">
+          <div className="flex flex-col gap-6 rounded-xl border border-charcoal-200 bg-white px-8 py-10 lift sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 id="organizer-heading" className="text-2xl font-bold text-charcoal-900">
+                Run something local?
+              </h2>
+              <p className="mt-2 max-w-xl text-sm text-charcoal-600">
+                Publish once — keep players updated everywhere. Claim your org, add events (weekly
+                series included), announce to Discord from one place, and let freshness checks nudge
+                you when a listing goes stale. Basic listings and corrections are free.{" "}
+                {communityRows.length > 0
+                  ? `${communityRows.length} communities are already listed.`
+                  : null}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Link href="/submit" className="btn-danger">
+                Add an event
+              </Link>
+              <Link href="/organizers" className="btn-outline">
+                Claim your organization
+              </Link>
+            </div>
           </div>
         </div>
       </section>
