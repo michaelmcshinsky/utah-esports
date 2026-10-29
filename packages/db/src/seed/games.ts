@@ -38,6 +38,15 @@ export const SEED_GAMES: SeedGame[] = [
   { slug: "starcraft-2", name: "StarCraft II", family: "StarCraft", startggVideogameSlug: "starcraft-2" },
   { slug: "ea-sports-fc", name: "EA Sports FC", family: "EA Sports FC", startggVideogameSlug: "ea-sports-fc-25" },
   { slug: "smash-64", name: "Super Smash Bros. 64", family: "Super Smash Bros." },
+  { slug: "brawlhalla", name: "Brawlhalla", family: "Brawlhalla", startggVideogameSlug: "brawlhalla" },
+  { slug: "gears-of-war", name: "Gears of War", family: "Gears of War", startggVideogameSlug: "gears-of-war-5" },
+  { slug: "paladins", name: "Paladins", family: "Paladins", startggVideogameSlug: "paladins" },
+  { slug: "smite", name: "SMITE", family: "SMITE", startggVideogameSlug: "smite" },
+  { slug: "smite-2", name: "SMITE 2", family: "SMITE", startggVideogameSlug: "smite-2" },
+  { slug: "pubg", name: "PUBG: Battlegrounds", family: "PUBG", startggVideogameSlug: "playerunknowns-battlegrounds" },
+  { slug: "deadlock", name: "Deadlock", family: "Deadlock", startggVideogameSlug: "deadlock" },
+  { slug: "splatoon-3", name: "Splatoon 3", family: "Splatoon", startggVideogameSlug: "splatoon-3" },
+  { slug: "nba-2k", name: "NBA 2K", family: "NBA 2K", startggVideogameSlug: "nba-2k25" },
   { slug: "other", name: "Other / Misc", family: "Other" },
 ];
 
