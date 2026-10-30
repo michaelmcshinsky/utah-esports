@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { legacyRedirect } from "@/src/lib/legacy-redirects";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 /**
  * Keeps the Supabase auth session fresh on every navigation and preserves
@@ -10,6 +11,9 @@ import { legacyRedirect } from "@/src/lib/legacy-redirects";
 async function refreshSession(request: NextRequest): Promise<NextResponse> {
   const legacy = legacyRedirect(request.nextUrl.pathname, request.nextUrl.origin);
   if (legacy) return legacy;
+
+  const rateLimitResponse = rateLimit(request);
+  if (rateLimitResponse) return rateLimitResponse;
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

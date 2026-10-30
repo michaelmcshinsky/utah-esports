@@ -61,6 +61,8 @@ const nextConfig: NextConfig = {
   async headers() {
     // Baseline hardening. No global X-Frame-Options: the embeddable
     // calendar (/embed/calendar/*) intentionally allows cross-origin framing.
+    // CSP is intentionally not set globally due to inline styles/scripts in some
+    // components; individual pages should set their own CSP where needed.
     return [
       {
         source: "/(.*)",
@@ -71,6 +73,36 @@ const nextConfig: NextConfig = {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(), payment=()",
           },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains; preload",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://unpkg.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net",
+              "font-src 'self' https://fonts.gstatic.com data:",
+              "img-src 'self' data: https: blob:",
+              "connect-src 'self' https://api.supabase.co https://*.supabase.co wss://*.supabase.co https://api.start.gg",
+              "frame-src 'self'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join("; "),
+          },
+        ],
+      },
+      {
+        source: "/embed/(.*)",
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Content-Security-Policy", value: "frame-ancestors *" },
         ],
       },
     ];

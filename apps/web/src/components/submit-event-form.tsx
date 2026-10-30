@@ -28,6 +28,16 @@ function toLocalInput(iso: string | null): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+function getCsrfTokenFromCookie(): string | null {
+  if (typeof document === "undefined") return null;
+  const cookies = document.cookie.split("; ");
+  const csrfCookie = cookies.find((c) => c.startsWith("csrf-token="));
+  if (!csrfCookie) return null;
+  const [token, signature] = csrfCookie.split("=")[1]?.split(".") ?? [];
+  if (!token || !signature) return null;
+  return `${token}.${signature}`;
+}
+
 type PreviewDraft = {
   title: string;
   description: string;
@@ -160,7 +170,10 @@ export function SubmitEventForm() {
 
     const res = await fetch("/api/submissions", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { 
+        "content-type": "application/json",
+        "x-csrf-token": getCsrfTokenFromCookie() ?? "",
+      },
       body: JSON.stringify(payload),
     });
     if (res.ok) {

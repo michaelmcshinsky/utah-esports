@@ -20,6 +20,7 @@ import {
 import { db } from "@/src/lib/db";
 import { authorization } from "@/src/lib/authz";
 import { getSessionUser } from "@/src/lib/session";
+import { verifyCsrfFromForm } from "@/src/lib/csrf";
 
 const EVENT_STATUSES = [
   "draft",
@@ -38,7 +39,10 @@ type GuardResult =
  * decides and audits denials to `authz_events`, so a refused action is
  * visible even when the form just shows "Not authorized".
  */
-async function guard(permission: string): Promise<GuardResult> {
+async function guard(permission: string, formData?: FormData): Promise<GuardResult> {
+  if (formData && !(await verifyCsrf(formData))) {
+    return { ok: false, error: "Invalid CSRF token" };
+  }
   const user = await getSessionUser();
   const decision = await authorization.checkPlatformPermission(user?.id ?? null, permission, {
     resourceType: "admin",
@@ -55,6 +59,10 @@ async function guard(permission: string): Promise<GuardResult> {
     authorization.getPlatformRoleKeys(user2.id),
   ]);
   return { ok: true, userId: user2.id, permissions, roleKeys };
+}
+
+async function verifyCsrf(formData: FormData): Promise<boolean> {
+  return verifyCsrfFromForm(formData);
 }
 
 async function writeAudit(
@@ -76,7 +84,7 @@ async function writeAudit(
 }
 
 export async function setEventStatus(formData: FormData) {
-  const g = await guard("platform:manage_content");
+  const g = await guard("platform:manage_content", formData);
   if (!g.ok) redirect(`/admin?error=${encodeURIComponent(g.error)}`);
 
   const eventId = String(formData.get("eventId") ?? "");
@@ -104,7 +112,7 @@ export async function setEventStatus(formData: FormData) {
 }
 
 export async function reviewSubmission(formData: FormData) {
-  const g = await guard("platform:moderate");
+  const g = await guard("platform:moderate", formData);
   if (!g.ok) redirect(`/admin?error=${encodeURIComponent(g.error)}`);
 
   const submissionId = String(formData.get("submissionId") ?? "");
@@ -136,7 +144,7 @@ export async function reviewSubmission(formData: FormData) {
 }
 
 export async function setUserRole(formData: FormData) {
-  const g = await guard("platform:grant_roles");
+  const g = await guard("platform:grant_roles", formData);
   if (!g.ok) redirect(`/admin?error=${encodeURIComponent(g.error)}`);
 
   const targetUserId = String(formData.get("userId") ?? "");

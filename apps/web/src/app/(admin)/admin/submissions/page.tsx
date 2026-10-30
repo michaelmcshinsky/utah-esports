@@ -4,6 +4,7 @@ import { eventSubmissions } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { getAllStateSlugs, getStateConfig } from "@/src/lib/states/registry";
 import { reviewSubmission } from "../actions";
+import { getCsrfToken } from "@/src/lib/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,7 @@ export default async function AdminSubmissionsPage({
     code: getStateConfig(s)?.stateCode ?? s.toUpperCase(),
   }));
   const activeCode = stateFilter ? (states.find((s) => s.code === stateFilter)?.code ?? null) : null;
+  const csrfToken = await getCsrfToken();
 
   const rows = await db()
     .select()
@@ -129,6 +131,7 @@ export default async function AdminSubmissionsPage({
               ) : null}
               <form action={reviewSubmission} className="mt-3 flex flex-wrap items-center gap-2">
                 <input type="hidden" name="submissionId" value={s.id} />
+                <input type="hidden" name="csrf_token" value={csrfToken} />
                 <input
                   type="text"
                   name="notes"

@@ -3,8 +3,13 @@ import { eventSubmissionSchema } from "@utah-esports/core";
 import { eventSubmissions } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { getSessionUser } from "@/src/lib/session";
+import { verifyCsrfFromRequest } from "@/src/lib/csrf";
 
 export async function POST(request: Request) {
+  const csrfValid = await verifyCsrfFromRequest(request);
+  if (!csrfValid) {
+    return NextResponse.json({ error: "Invalid CSRF token" }, { status: 403 });
+  }
   let body: unknown;
   try {
     body = await request.json();

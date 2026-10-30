@@ -3,6 +3,7 @@ import { roles, userPlatformRoles, userProfiles } from "@utah-esports/db";
 import { PLATFORM_ROLES } from "@utah-esports/core";
 import { db } from "@/src/lib/db";
 import { setUserRole } from "../actions";
+import { getCsrfToken } from "@/src/lib/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export default async function AdminUsersPage({
   const error = typeof params.error === "string" ? params.error : null;
   const ok = typeof params.ok === "string" ? params.ok : null;
 
-  // Platform roles are global — one grant covers every state app.
+  const csrfToken = await getCsrfToken();
   const [users, roleRows] = await Promise.all([
     db()
       .select({
@@ -108,6 +109,7 @@ export default async function AdminUsersPage({
                   <td className="px-4 py-3">
                     <form action={setUserRole} className="flex flex-wrap items-center gap-2">
                       <input type="hidden" name="userId" value={u.id} />
+                      <input type="hidden" name="csrf_token" value={csrfToken} />
                       <select
                         name="roleKey"
                         defaultValue=""
