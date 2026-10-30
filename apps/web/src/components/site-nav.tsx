@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getSessionUser } from "@/src/lib/session";
 import { supabaseServerConfigured } from "@/src/lib/supabase/server";
 import { ThemeToggle } from "@/src/components/theme-toggle";
+import { authorization } from "@/src/lib/authz";
 
 const NAV_ITEMS = [
   { href: "/events", label: "Events" },
@@ -17,6 +18,11 @@ const COMMUNITY_LINKS = [
 
 export async function SiteNav() {
   const user = await getSessionUser();
+  // Cached check — only an admin (or moderator, for the queues menu) sees it,
+  // never leaking admin chrome to anonymous visitors.
+  const isAdmin =
+    user != null &&
+    (await authorization.checkPlatformPermission(user.id, "platform:moderate")).allowed;
   return (
     <>
       {/* Utility strip */}
@@ -94,6 +100,14 @@ export async function SiteNav() {
               Submit event
             </Link>
             <ThemeToggle />
+            {isAdmin ? (
+              <Link
+                href="/admin"
+                className="hidden rounded-lg border border-redrock-500 px-3 py-2 text-sm font-semibold text-redrock-500 hover:bg-redrock-500 hover:text-white sm:inline-flex"
+              >
+                Admin
+              </Link>
+            ) : null}
             {user ? (
               <Link
                 href="/dashboard"

@@ -20,6 +20,8 @@ export const eventSubmissions = pgTable(
   {
     id: id(),
     payload: jsonb("payload").notNull(),
+    /** Two-letter US state code — routes the submission to the right state queue. */
+    state: text("state").notNull().default("UT"),
     status: text("status").notNull().default("pending"),
     submittedBy: uuid("submitted_by"),
     contactEmail: text("contact_email").notNull(),

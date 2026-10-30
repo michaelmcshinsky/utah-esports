@@ -49,6 +49,8 @@ export const eventSeries = pgTable(
     description: text("description"),
     /** Human-readable recurrence hint, e.g. "Every Thursday 7pm". */
     recurrenceHint: text("recurrence_hint"),
+    /** Two-letter US state code — scopes the series to a state site. */
+    state: text("state").notNull().default("UT"),
     seriesEndsOn: date("series_ends_on"),
     maxOccurrences: integer("max_occurrences").default(52),
     sourceId: uuid("source_id"),

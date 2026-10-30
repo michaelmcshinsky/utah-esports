@@ -131,6 +131,8 @@ export const catalogSources = pgTable(
     url: text("url").notNull(),
     city: text("city"),
     region: text("region"),
+    /** Two-letter US state code — the catalog is state-partitioned. */
+    state: text("state").notNull().default("UT"),
     games: text("games").array().notNull().default(sql`'{}'::text[]`),
     status: text("status").notNull().default("unknown"),
     scrapeAdapter: text("scrape_adapter").notNull().default("none"),
