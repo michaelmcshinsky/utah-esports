@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { desc, eq, inArray } from "drizzle-orm";
 import { communities, eventOccurrences, games, organizations, teams, venues } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
+import { getAllStateSlugs } from "@/src/lib/states/registry";
 
 export const dynamic = "force-dynamic";
 
@@ -13,17 +14,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3131";
   const now = new Date();
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${siteUrl}/`, changeFrequency: "daily", priority: 1 },
-    { url: `${siteUrl}/events`, changeFrequency: "hourly", priority: 0.9 },
-    { url: `${siteUrl}/communities`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${siteUrl}/places`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${siteUrl}/schools`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${siteUrl}/organizations`, changeFrequency: "weekly", priority: 0.6 },
-    { url: `${siteUrl}/organizers`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${siteUrl}/submit`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${siteUrl}/about`, changeFrequency: "yearly", priority: 0.4 },
+  // State-scoped landing routes are the canonical public surface.
+  const stateSubroutes = [
+    { path: "", changeFrequency: "daily" as const, priority: 1 },
+    { path: "/events", changeFrequency: "hourly" as const, priority: 0.9 },
+    { path: "/deadlines", changeFrequency: "daily" as const, priority: 0.7 },
+    { path: "/communities", changeFrequency: "weekly" as const, priority: 0.8 },
+    { path: "/places", changeFrequency: "weekly" as const, priority: 0.7 },
+    { path: "/schools", changeFrequency: "weekly" as const, priority: 0.7 },
+    { path: "/organizations", changeFrequency: "weekly" as const, priority: 0.6 },
+    { path: "/organizers", changeFrequency: "monthly" as const, priority: 0.6 },
+    { path: "/submit", changeFrequency: "monthly" as const, priority: 0.5 },
+    { path: "/about", changeFrequency: "yearly" as const, priority: 0.4 },
   ];
+
+  const staticRoutes: MetadataRoute.Sitemap = getAllStateSlugs().flatMap((slug) =>
+    stateSubroutes.map((r) => ({
+      url: `${siteUrl}/${slug}${r.path}`,
+      changeFrequency: r.changeFrequency,
+      priority: r.priority,
+    })),
+  );
 
   try {
     const database = db();

@@ -13,6 +13,9 @@ import { SearchHero } from "@/src/components/search-hero";
 import { WebsiteJsonLd } from "@/src/components/seo/website-json-ld";
 import { HeroBanner, SectionTitle, Accordion, type AccordionItem } from "@utah-esports/shared";
 
+/** Home surfaces live event counts — render per request, not at build. */
+export const dynamic = "force-dynamic";
+
 function toEventCard(e: UpcomingEventRow): EventCardModel {
   return {
     id: e.id,
@@ -79,10 +82,10 @@ export default async function StateHomePage({ params }: { params: Promise<{ stat
   const { state } = await params;
   const config = getStateConfig(state);
   const [events, gameRows, communityRows, stats] = await Promise.all([
-    getUpcomingEvents(6),
+    getUpcomingEvents(6, config?.stateCode),
     getPopularGames(),
-    getAllCommunities(),
-    getStats(),
+    getAllCommunities(config?.stateCode),
+    getStats(config?.stateCode),
   ]);
   const cards = events.map(toEventCard);
 

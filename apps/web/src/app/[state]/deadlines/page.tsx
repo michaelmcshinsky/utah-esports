@@ -4,7 +4,7 @@ import { Badge } from "@utah-esports/ui";
 import { HeroBanner, SectionTitle } from "@utah-esports/shared";
 import { eventOccurrences, getEventGames } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
-import { gte, inArray, isNotNull, asc } from "drizzle-orm";
+import { and, eq, gte, inArray, isNotNull, asc } from "drizzle-orm";
 import { getStateConfig } from "@/src/lib/states/registry";
 
 export const dynamic = "force-dynamic";
@@ -33,9 +33,12 @@ export default async function StateDeadlinesPage({ params }: { params: Promise<{
     .select()
     .from(eventOccurrences)
     .where(
-      inArray(eventOccurrences.status, ["published", "needs_verification", "postponed"]) &&
-        isNotNull(eventOccurrences.registrationDeadline) &&
+      and(
+        inArray(eventOccurrences.status, ["published", "needs_verification", "postponed"]),
+        isNotNull(eventOccurrences.registrationDeadline),
         gte(eventOccurrences.registrationDeadline, now),
+        ...(config?.stateCode ? [eq(eventOccurrences.state, config.stateCode)] : []),
+      ),
     )
     .orderBy(asc(eventOccurrences.registrationDeadline))
     .limit(50);

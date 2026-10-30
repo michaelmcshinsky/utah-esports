@@ -34,6 +34,8 @@ export const organizations = pgTable(
     contactEmail: text("contact_email").notNull(),
     city: text("city"),
     region: text("region"),
+    /** Two-letter US state code — scopes the organization to a state site. */
+    state: text("state").notNull().default("UT"),
     claimedAt: timestamp("claimed_at", { withTimezone: true }),
     verifiedAt: timestamp("verified_at", { withTimezone: true }),
     status: text("status").notNull().default("active"),
@@ -126,6 +128,8 @@ export const teams = pgTable(
     websiteUrl: text("website_url"),
     institution: text("institution"),
     city: text("city"),
+    /** Two-letter US state code — scopes the team to a state site. */
+    state: text("state").notNull().default("UT"),
     imageUrl: text("image_url"),
     facebookUrl: text("facebook_url"),
     twitterUrl: text("twitter_url"),

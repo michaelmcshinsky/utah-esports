@@ -8,6 +8,8 @@
 export type StateConfig = {
   /** URL slug — becomes the route prefix: /[state]/... */
   slug: string;
+  /** Two-letter US state code — the DB scoping key (e.g. "UT", "CO"). */
+  stateCode: string;
   /** Display name: "Utah", "Colorado", … */
   name: string;
   /** Full site name for that state: "Utah Esports", "Colorado Esports", … */
@@ -31,6 +33,7 @@ export type StateConfig = {
 export const STATES: Record<string, StateConfig> = {
   utah: {
     slug: "utah",
+    stateCode: "UT",
     name: "Utah",
     siteName: "Utah Esports",
     tagline: "Your next game starts here.",
@@ -66,6 +69,7 @@ export const STATES: Record<string, StateConfig> = {
   },
   colorado: {
     slug: "colorado",
+    stateCode: "CO",
     name: "Colorado",
     siteName: "Colorado Esports",
     tagline: "Find your game in Colorado.",

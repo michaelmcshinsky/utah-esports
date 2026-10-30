@@ -57,7 +57,7 @@ export default async function StateEventsPage({
   const base = `/${config?.slug ?? state}/events`;
 
   const [result, gameOptions] = await Promise.all([
-    searchEvents(database, filter),
+    searchEvents(database, filter, { state: config?.stateCode }),
     listGames(database),
   ]);
 

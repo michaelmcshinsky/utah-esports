@@ -80,6 +80,8 @@ export const eventOccurrences = pgTable(
     /** Denormalized location for fast filtering. */
     city: text("city"),
     region: text("region"),
+    /** Two-letter US state code — scopes the occurrence to a state site. */
+    state: text("state").notNull().default("UT"),
     lat: doublePrecision("lat"),
     lng: doublePrecision("lng"),
     onlineUrl: text("online_url"),

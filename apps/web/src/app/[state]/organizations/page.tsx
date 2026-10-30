@@ -43,7 +43,7 @@ export default async function StateOrganizationsIndexPage({
   const config = getStateConfig(state);
   const name = config?.name ?? state;
   const database = db();
-  const orgs = await listOrganizations(database);
+  const orgs = await listOrganizations(database, { state: config?.stateCode });
   const withCounts = await Promise.all(
     orgs.map(async (org) => ({
       org,

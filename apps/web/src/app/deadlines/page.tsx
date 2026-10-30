@@ -4,7 +4,7 @@ import { Badge } from "@utah-esports/ui";
 import { HeroBanner, SectionTitle } from "@utah-esports/shared";
 import { eventOccurrences, getEventGames } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
-import { gte, inArray, isNotNull, asc } from "drizzle-orm";
+import { and, gte, inArray, isNotNull, asc } from "drizzle-orm";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/deadlines" },
@@ -22,9 +22,11 @@ export default async function DeadlinesPage() {
     .select()
     .from(eventOccurrences)
     .where(
-      inArray(eventOccurrences.status, ["published", "needs_verification", "postponed"]) &&
-        isNotNull(eventOccurrences.registrationDeadline) &&
+      and(
+        inArray(eventOccurrences.status, ["published", "needs_verification", "postponed"]),
+        isNotNull(eventOccurrences.registrationDeadline),
         gte(eventOccurrences.registrationDeadline, now),
+      ),
     )
     .orderBy(asc(eventOccurrences.registrationDeadline))
     .limit(50);

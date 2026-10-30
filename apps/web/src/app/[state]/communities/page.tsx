@@ -34,7 +34,11 @@ export default async function StateCommunitiesPage({
   const config = getStateConfig(state);
   const { game, city } = await searchParams;
   const database = db();
-  const communityRows = await listCommunities(database, { gameSlug: game, city });
+  const communityRows = await listCommunities(database, {
+    gameSlug: game,
+    city,
+    state: config?.stateCode,
+  });
   const communities = await Promise.all(
     communityRows.map(async (community) => ({
       community,

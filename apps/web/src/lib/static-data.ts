@@ -1,4 +1,4 @@
-import { desc, inArray, sql } from "drizzle-orm";
+import { desc, eq, inArray, sql } from "drizzle-orm";
 import {
   games,
   venues,
@@ -34,9 +34,9 @@ export type UpcomingEventRow = {
   registrationUrl: string | null;
 };
 
-export async function getUpcomingEvents(limit = 6): Promise<UpcomingEventRow[]> {
+export async function getUpcomingEvents(limit = 6, state?: string): Promise<UpcomingEventRow[]> {
   const database = db();
-  const events = await listUpcomingEvents(database, limit);
+  const events = await listUpcomingEvents(database, limit, { state });
   const rows: UpcomingEventRow[] = [];
   for (const event of events) {
     const gameRows = await getEventGames(database, event.id);
@@ -88,11 +88,11 @@ export async function getPopularGames() {
     .limit(8);
 }
 
-export async function getAllCommunities() {
-  return listCommunities(db(), {});
+export async function getAllCommunities(state?: string) {
+  return listCommunities(db(), { state });
 }
 
-export async function getStats() {
+export async function getStats(state?: string) {
   const database = db();
   const weekOut = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const [eventsThisWeek] = await database
@@ -101,11 +101,13 @@ export async function getStats() {
     .where(
       sql`(${eventOccurrences.status} = 'published' OR ${eventOccurrences.status} = 'needs_verification')
           AND ${eventOccurrences.startsAt} >= now()
-          AND ${eventOccurrences.startsAt} <= ${weekOut}`,
+          AND ${eventOccurrences.startsAt} <= ${weekOut}
+          ${state ? sql`AND ${eventOccurrences.state} = ${state}` : sql``}`,
     );
   const [venueCount] = await database
     .select({ count: sql<number>`count(*)::int` })
-    .from(venues);
+    .from(venues)
+    .where(state ? eq(venues.state, state) : undefined);
   const [gameCount] = await database
     .select({ count: sql<number>`count(*)::int` })
     .from(games);

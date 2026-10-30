@@ -53,7 +53,7 @@ export default async function StateSchoolsPage({ params }: { params: Promise<{ s
   const byPathway = await Promise.all(
     PATHWAYS.map(async (p) => ({
       ...p,
-      teams: await listTeamsByPathway(database, p.id),
+      teams: await listTeamsByPathway(database, p.id, { state: config?.stateCode }),
     })),
   );
   const teamCount = byPathway.reduce((n, p) => n + p.teams.length, 0);

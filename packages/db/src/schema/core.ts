@@ -216,6 +216,8 @@ export const communities = pgTable(
     welcomeText: text("welcome_text"),
     city: text("city"),
     region: text("region"),
+    /** Two-letter US state code — scopes the community to a state site. */
+    state: text("state").notNull().default("UT"),
     primaryUrl: text("primary_url"),
     discordUrl: text("discord_url"),
     facebookUrl: text("facebook_url"),

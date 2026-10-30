@@ -42,11 +42,13 @@ function haversineKm(lat: number, lng: number) {
 export async function searchEvents(
   db: Database,
   filter: EventSearchFilter,
+  opts?: { state?: string },
 ): Promise<EventSearchResult> {
   const now = new Date();
   const conditions = [
     inArray(eventOccurrences.status, ["published", "postponed", "needs_verification"] as const),
     gte(eventOccurrences.startsAt, filter.from ? new Date(filter.from) : now),
+    ...(opts?.state ? [eq(eventOccurrences.state, opts.state)] : []),
   ];
   if (filter.to) {
     conditions.push(lte(eventOccurrences.startsAt, new Date(filter.to)));
@@ -203,7 +205,7 @@ export async function getEventLinks(db: Database, eventId: string) {
   return db.select().from(eventLinks).where(eq(eventLinks.eventId, eventId));
 }
 
-export async function listUpcomingEvents(db: Database, limit = 6) {
+export async function listUpcomingEvents(db: Database, limit = 6, opts?: { state?: string }) {
   return db
     .select()
     .from(eventOccurrences)
@@ -211,17 +213,26 @@ export async function listUpcomingEvents(db: Database, limit = 6) {
       and(
         inArray(eventOccurrences.status, ["published", "needs_verification"] as const),
         gte(eventOccurrences.startsAt, new Date()),
+        ...(opts?.state ? [eq(eventOccurrences.state, opts.state)] : []),
       ),
     )
     .orderBy(asc(eventOccurrences.startsAt))
     .limit(limit);
 }
 
-export async function listCommunities(db: Database, opts?: { gameSlug?: string; city?: string }) {
+export async function listCommunities(
+  db: Database,
+  opts?: { gameSlug?: string; city?: string; state?: string },
+) {
   const rows = await db
     .select({ community: communities })
     .from(communities)
-    .where(inArray(communities.status, ["published", "needs_verification"] as const))
+    .where(
+      and(
+        inArray(communities.status, ["published", "needs_verification"] as const),
+        ...(opts?.state ? [eq(communities.state, opts.state)] : []),
+      ),
+    )
     .orderBy(asc(communities.name));
   if (!opts?.gameSlug && !opts?.city) return rows.map((r) => r.community);
   let filtered = rows.map((r) => r.community);
@@ -262,11 +273,16 @@ export async function getCommunityGames(db: Database, communityId: string) {
     .where(eq(communityGames.communityId, communityId));
 }
 
-export async function listVenues(db: Database) {
+export async function listVenues(db: Database, opts?: { state?: string }) {
   return db
     .select()
     .from(venues)
-    .where(inArray(venues.status, ["published", "needs_verification"] as const))
+    .where(
+      and(
+        inArray(venues.status, ["published", "needs_verification"] as const),
+        ...(opts?.state ? [eq(venues.state, opts.state)] : []),
+      ),
+    )
     .orderBy(asc(venues.name));
 }
 
@@ -275,11 +291,20 @@ export async function getVenueBySlug(db: Database, slug: string) {
   return venue ?? null;
 }
 
-export async function listTeamsByPathway(db: Database, pathway?: string) {
+export async function listTeamsByPathway(
+  db: Database,
+  pathway?: string,
+  opts?: { state?: string },
+) {
   const rows = await db
     .select({ team: teams })
     .from(teams)
-    .where(inArray(teams.status, ["active", "needs_verification"] as const))
+    .where(
+      and(
+        inArray(teams.status, ["active", "needs_verification"] as const),
+        ...(opts?.state ? [eq(teams.state, opts.state)] : []),
+      ),
+    )
     .orderBy(asc(teams.name));
   if (!pathway) return rows.map((r) => r.team);
   return rows.map((r) => r.team).filter((t) => t.pathway === pathway);
@@ -293,8 +318,12 @@ export async function getTeamRoster(db: Database, teamId: string) {
     .orderBy(asc(teamMembers.sortWeight), asc(teamMembers.displayName));
 }
 
-export async function listOrganizations(db: Database) {
-  return db.select().from(organizations).orderBy(asc(organizations.name));
+export async function listOrganizations(db: Database, opts?: { state?: string }) {
+  return db
+    .select()
+    .from(organizations)
+    .where(opts?.state ? eq(organizations.state, opts.state) : undefined)
+    .orderBy(asc(organizations.name));
 }
 
 export async function getOrganizationBySlug(db: Database, slug: string) {

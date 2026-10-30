@@ -26,7 +26,7 @@ export async function generateMetadata({
 export default async function StatePlacesPage({ params }: { params: Promise<{ state: string }> }) {
   const { state } = await params;
   const config = getStateConfig(state);
-  const venues = await listVenues(db());
+  const venues = await listVenues(db(), { state: config?.stateCode });
   return (
     <>
       {/* Hero band */}
