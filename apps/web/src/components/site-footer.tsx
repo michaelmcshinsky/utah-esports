@@ -109,7 +109,7 @@ export function SiteFooter() {
       <div className="border-t border-charcoal-800 py-4 text-center text-xs text-charcoal-400">
         © {new Date().getFullYear()} Utah Esports · Community-maintained ·{" "}
         {/* Plain anchor: <Link> would RSC-prefetch a binary route and 404. */}
-        <a href="/calendar/global.ics" download className="underline hover:text-white">
+        <a href="/api/calendar/global.ics" download className="underline hover:text-white">
           Subscribe to the calendar
         </a>
       </div>

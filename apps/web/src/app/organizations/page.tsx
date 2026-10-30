@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge, Card, CardContent, CardHeader } from "@utah-esports/ui";
+import { HeroBanner, SectionTitle } from "@utah-esports/shared";
 import { listOrganizations, listOrgEvents } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
@@ -36,22 +37,17 @@ export default async function OrganizationsIndexPage() {
   return (
     <>
       {/* Hero band */}
-      <div className="hero-band text-white">
-        <div className="page-container py-10 sm:py-12">
-          <h1 className="text-2xl font-bold sm:text-3xl">Organizations</h1>
-          <p className="mt-1 max-w-2xl text-sm text-white/85">
-            {withCounts.length} organization{withCounts.length === 1 ? "" : "s"} across Utah —
-            communities, organizers, venues, and scholastic programs.
-          </p>
-        </div>
-      </div>
+      <HeroBanner variant="band" title="Organizations">
+        <p className="mt-3 max-w-2xl text-charcoal-200">
+          {withCounts.length} organization{withCounts.length === 1 ? "" : "s"} across Utah -
+          communities, organizers, venues, and scholastic programs.
+        </p>
+      </HeroBanner>
 
       {/* Organizations grid */}
       <section className="section" aria-labelledby="orgs-heading">
         <div className="page-container">
-          <h2 id="orgs-heading" className="section-title">
-            All organizations
-          </h2>
+          <SectionTitle id="orgs-heading">All organizations</SectionTitle>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {withCounts.map(({ org, upcoming }) => (
               <Card key={org.id} className="relative lift">

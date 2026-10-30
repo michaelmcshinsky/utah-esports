@@ -9,6 +9,7 @@ import {
   type EventSearchFilter,
 } from "@utah-esports/core";
 import { listGames, searchEvents, getEventGames } from "@utah-esports/db";
+import { HeroBanner, SectionTitle } from "@utah-esports/shared";
 import { db } from "@/src/lib/db";
 import { FilterPanel } from "@/src/components/filter-panel";
 import { EventMapView } from "@/src/components/map-view";
@@ -98,30 +99,29 @@ export default async function EventsPage({
   return (
     <>
       {/* Hero band — light, ballroom-hub style */}
-      <div className="hero-band text-white">
-        <div className="page-container py-10 sm:py-12">
-          <h1 className="text-2xl font-bold sm:text-3xl">Events</h1>
-          <p className="mt-1 max-w-2xl text-sm text-white/85">
-            {result.total > 0
-              ? `${result.total} event${result.total === 1 ? "" : "s"} matching your filters.`
-              : "Find Utah gaming events by game, date, city, and more."}{" "}
-            Switch between list, calendar, and map views.{" "}
-            <Link href="/submit" className="underline hover:text-white">
-              Submit an event
-            </Link>{" "}
-            or{" "}
-            <Link href="/communities" className="underline hover:text-white">
-              find a community
-            </Link>
-            .
-          </p>
-        </div>
-      </div>
+      <HeroBanner variant="band" title="Events">
+        <p className="mt-3 max-w-2xl text-charcoal-200">
+          {result.total > 0
+            ? `${result.total} event${result.total === 1 ? "" : "s"} matching your filters.`
+            : "Find Utah gaming events by game, date, city, and more."}{" "}
+          Switch between list, calendar, and map views.{" "}
+          <Link href="/submit" className="underline hover:text-white">
+            Submit an event
+          </Link>{" "}
+          or{" "}
+          <Link href="/communities" className="underline hover:text-white">
+            find a community
+          </Link>
+          .
+        </p>
+      </HeroBanner>
 
       {/* Search + results */}
       <section className="section" aria-labelledby="events-heading">
         <div className="page-container">
-          <h2 id="events-heading" className="sr-only">Search results</h2>
+          <SectionTitle id="events-heading" className="sr-only">
+            Search results
+          </SectionTitle>
 
           {/* Filter panel */}
           <Suspense fallback={<div className="h-20 rounded-lg bg-white" />}>

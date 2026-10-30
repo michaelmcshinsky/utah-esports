@@ -26,7 +26,7 @@ export async function SiteNav() {
             Utah&apos;s gaming home base — tournaments, communities, teams, and places to play
           </span>
           <div className="flex items-center gap-4">
-            <a href="/calendar/global.ics" className="ts-link">
+            <a href="/api/calendar/global.ics" className="ts-link">
               ICS feed
             </a>
             <Link href="/submit" className="ts-link">

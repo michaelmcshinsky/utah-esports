@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState } from "@utah-esports/ui";
+import { HeroBanner, SectionTitle } from "@utah-esports/shared";
 import { getCommunityGames, listCommunities } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
@@ -30,30 +31,25 @@ export default async function CommunitiesPage({
   return (
     <>
       {/* Hero band */}
-      <div className="hero-band text-white">
-        <div className="page-container py-10 sm:py-12">
-          <h1 className="text-2xl font-bold sm:text-3xl">Communities</h1>
-          <p className="mt-1 max-w-2xl text-sm text-white/85">
-            {communities.length} gaming communit{communities.length === 1 ? "y" : "ies"} across
-            Utah — Discord servers, Facebook groups, and local scenes by game.{" "}
-            <Link href="/events" className="underline hover:text-white">
-              Find an event
-            </Link>{" "}
-            or{" "}
-            <Link href="/submit" className="underline hover:text-white">
-              submit a community
-            </Link>
-            .
-          </p>
-        </div>
-      </div>
+      <HeroBanner variant="band" title="Communities">
+        <p className="mt-3 max-w-2xl text-charcoal-200">
+          {communities.length} gaming communit{communities.length === 1 ? "y" : "ies"} across
+          Utah - Discord servers, Facebook groups, and local scenes by game.{" "}
+          <Link href="/events" className="underline hover:text-white">
+            Find an event
+          </Link>{" "}
+          or{" "}
+          <Link href="/submit" className="underline hover:text-white">
+            submit a community
+          </Link>
+          .
+        </p>
+      </HeroBanner>
 
       {/* Community grid */}
       <section className="section" aria-labelledby="communities-heading">
         <div className="page-container">
-          <h2 id="communities-heading" className="section-title">
-            All communities
-          </h2>
+          <SectionTitle id="communities-heading">All communities</SectionTitle>
           {game || city ? (
             <p className="mt-2 flex flex-wrap items-center gap-1 text-sm text-charcoal-600">
               Filtered by

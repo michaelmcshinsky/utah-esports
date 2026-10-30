@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge, Card, CardContent, CardHeader, CardTitle, MediaImage } from "@utah-esports/ui";
+import { HeroBanner, SectionTitle } from "@utah-esports/shared";
 import { listVenues } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
@@ -17,26 +18,21 @@ export default async function PlacesPage() {
   return (
     <>
       {/* Hero band */}
-      <div className="hero-band text-white">
-        <div className="page-container py-10 sm:py-12">
-          <h1 className="text-2xl font-bold sm:text-3xl">Places to play</h1>
-          <p className="mt-1 max-w-2xl text-sm text-white/85">
-            {venues.length} venue listing{venues.length === 1 ? "" : "s"} across Utah — LAN centers,
-            arcades, bar-cades, and university lounges.{" "}
-            <Link href="/submit" className="underline hover:text-white">
-              Claim a venue
-            </Link>{" "}
-            to keep details current.
-          </p>
-        </div>
-      </div>
+      <HeroBanner variant="band" title="Places to play">
+        <p className="mt-3 max-w-2xl text-charcoal-200">
+          {venues.length} venue listing{venues.length === 1 ? "" : "s"} across Utah - LAN centers,
+          arcades, bar-cades, and university lounges.{" "}
+          <Link href="/submit" className="underline hover:text-white">
+            Claim a venue
+          </Link>{" "}
+          to keep details current.
+        </p>
+      </HeroBanner>
 
       {/* Venues grid */}
       <section className="section" aria-labelledby="places-heading">
         <div className="page-container">
-          <h2 id="places-heading" className="section-title">
-            All places to play
-          </h2>
+          <SectionTitle id="places-heading">All places to play</SectionTitle>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {venues.map((venue) => (
               <Card key={venue.id} className="relative flex flex-col overflow-hidden lift">

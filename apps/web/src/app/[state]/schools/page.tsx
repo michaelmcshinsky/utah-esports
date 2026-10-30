@@ -61,7 +61,7 @@ export default async function StateSchoolsPage({ params }: { params: Promise<{ s
   return (
     <>
       {/* Hero band */}
-      <HeroBanner title="Schools & teams" backgroundImage={config?.heroImage}>
+      <HeroBanner variant="band" title="Schools & teams">
         <p className="mt-3 max-w-2xl text-charcoal-200">
           {teamCount} verified program{teamCount === 1 ? "" : "s"} across {config?.name} —
           scholastic, collegiate, youth, and independent teams.{" "}
@@ -166,7 +166,7 @@ export default async function StateSchoolsPage({ params }: { params: Promise<{ s
                       <CardHeader>
                         <CardTitle>
                           <Link
-                            href={`/${config?.slug}/teams/${team.slug}`}
+                            href={`/teams/${team.slug}`}
                             className="after:absolute after:inset-0 hover:text-redrock-500"
                           >
                             {team.name}

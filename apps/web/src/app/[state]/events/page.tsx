@@ -112,13 +112,13 @@ export default async function StateEventsPage({
   return (
     <>
       <HeroBanner
+        variant="band"
         title="Events"
         subtitle={
           result.total > 0
             ? `${result.total} event${result.total === 1 ? "" : "s"} matching your filters. Switch between list, calendar, and map views.`
             : `Find ${config?.name ?? state} gaming events by game, date, city, and more. Switch between list, calendar, and map views.`
         }
-        backgroundImage={config?.heroImage}
       />
 
       {/* Search + results */}

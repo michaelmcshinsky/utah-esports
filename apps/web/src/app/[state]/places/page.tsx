@@ -30,7 +30,7 @@ export default async function StatePlacesPage({ params }: { params: Promise<{ st
   return (
     <>
       {/* Hero band */}
-      <HeroBanner title="Places to play" backgroundImage={config?.heroImage}>
+      <HeroBanner variant="band" title="Places to play">
         <p className="mt-3 max-w-2xl text-charcoal-200">
           {venues.length} venue listing{venues.length === 1 ? "" : "s"} across {config?.name} — LAN
           centers, arcades, bar-cades, and university lounges.{" "}
@@ -59,7 +59,7 @@ export default async function StatePlacesPage({ params }: { params: Promise<{ st
                 <CardHeader>
                   <CardTitle>
                     <Link
-                      href={`/${config?.slug}/places/${venue.slug}`}
+                      href={`/places/${venue.slug}`}
                       className="after:absolute after:inset-0 hover:text-redrock-500"
                     >
                       {venue.name}

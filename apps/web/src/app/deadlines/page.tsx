@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@utah-esports/ui";
+import { HeroBanner, SectionTitle } from "@utah-esports/shared";
 import { eventOccurrences, getEventGames } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 import { gte, inArray, isNotNull, asc } from "drizzle-orm";
@@ -39,26 +40,21 @@ export default async function DeadlinesPage() {
   return (
     <>
       {/* Hero band */}
-      <div className="hero-band text-white">
-        <div className="page-container py-10 sm:py-12">
-          <h1 className="text-2xl font-bold sm:text-3xl">Registration deadlines</h1>
-          <p className="mt-1 max-w-2xl text-sm text-white/85">
-            {withGames.length} upcoming deadline{withGames.length === 1 ? "" : "s"} for Utah gaming
-            events, sorted by urgency.{" "}
-            <Link href="/events" className="underline hover:text-white">
-              Browse all events
-            </Link>
-            .
-          </p>
-        </div>
-      </div>
+      <HeroBanner variant="band" title="Registration deadlines">
+        <p className="mt-3 max-w-2xl text-charcoal-200">
+          {withGames.length} upcoming deadline{withGames.length === 1 ? "" : "s"} for Utah gaming
+          events, sorted by urgency.{" "}
+          <Link href="/events" className="underline hover:text-white">
+            Browse all events
+          </Link>
+          .
+        </p>
+      </HeroBanner>
 
       {/* Deadlines list */}
       <section className="section" aria-labelledby="deadlines-heading">
         <div className="page-container">
-          <h2 id="deadlines-heading" className="section-title">
-            Upcoming deadlines
-          </h2>
+          <SectionTitle id="deadlines-heading">Upcoming deadlines</SectionTitle>
           {withGames.length === 0 ? (
             <div className="mt-8 rounded-xl border-2 border-dashed border-charcoal-200 bg-white px-6 py-16 text-center">
               <p className="text-lg font-medium text-charcoal-900">

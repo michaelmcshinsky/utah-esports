@@ -45,7 +45,7 @@ export default async function StateCommunitiesPage({
   return (
     <>
       {/* Hero band */}
-      <HeroBanner title="Communities" backgroundImage={config?.heroImage}>
+      <HeroBanner variant="band" title="Communities">
         <p className="mt-3 max-w-2xl text-charcoal-200">
           {communities.length} gaming communit{communities.length === 1 ? "y" : "ies"} across{" "}
           {config?.name} — Discord servers, Facebook groups, and local scenes by game.{" "}
@@ -89,7 +89,7 @@ export default async function StateCommunitiesPage({
                   <CardHeader>
                     <CardTitle>
                       <Link
-                        href={`/${config?.slug}/communities/${community.slug}`}
+                        href={`/communities/${community.slug}`}
                         className="after:absolute after:inset-0 hover:text-redrock-500"
                       >
                         {community.name}

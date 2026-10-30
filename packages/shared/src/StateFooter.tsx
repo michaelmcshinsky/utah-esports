@@ -38,11 +38,12 @@ export function StateFooter({
         <div>
           <h2 className="text-sm font-semibold text-white">Discover</h2>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href={`/${stateSlug}/events`} className="hover:text-white">Upcoming events</Link></li>
-            <li><Link href={`/${stateSlug}/explore`} className="hover:text-white">Explore events</Link></li>
+            <li><Link href={`/${stateSlug}/events`} className="hover:text-white">Events</Link></li>
+            <li><Link href={`/${stateSlug}/deadlines`} className="hover:text-white">Deadlines</Link></li>
             <li><Link href={`/${stateSlug}/communities`} className="hover:text-white">Communities</Link></li>
             <li><Link href={`/${stateSlug}/places`} className="hover:text-white">Places to play</Link></li>
             <li><Link href={`/${stateSlug}/schools`} className="hover:text-white">Schools & teams</Link></li>
+            <li><Link href={`/${stateSlug}/organizations`} className="hover:text-white">Organizations</Link></li>
           </ul>
         </div>
         <div>
@@ -50,14 +51,15 @@ export function StateFooter({
           <ul className="mt-3 space-y-2 text-sm">
             <li><Link href={`/${stateSlug}/organizers`} className="hover:text-white">For organizers</Link></li>
             <li><Link href={`/${stateSlug}/submit`} className="hover:text-white">Submit an event</Link></li>
+            <li><Link href="/dashboard" className="hover:text-white">Dashboard</Link></li>
           </ul>
         </div>
         <div>
           <h2 className="text-sm font-semibold text-white">Site</h2>
           <ul className="mt-3 space-y-2 text-sm">
             <li><Link href={`/${stateSlug}/about`} className="hover:text-white">About</Link></li>
-            <li><Link href={`/${stateSlug}/privacy`} className="hover:text-white">Privacy</Link></li>
-            <li><Link href={`/${stateSlug}/terms`} className="hover:text-white">Terms</Link></li>
+            <li><Link href="/privacy" className="hover:text-white">Privacy</Link></li>
+            <li><Link href="/terms" className="hover:text-white">Terms</Link></li>
             {icsFeedHref ? (
               <li><a href={icsFeedHref} download className="hover:text-white">Calendar feed</a></li>
             ) : null}

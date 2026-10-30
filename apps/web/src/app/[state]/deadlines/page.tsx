@@ -51,7 +51,7 @@ export default async function StateDeadlinesPage({ params }: { params: Promise<{
   return (
     <>
       {/* Hero band */}
-      <HeroBanner title="Registration deadlines" backgroundImage={config?.heroImage}>
+      <HeroBanner variant="band" title="Registration deadlines">
         <p className="mt-3 max-w-2xl text-charcoal-200">
           {withGames.length} upcoming deadline{withGames.length === 1 ? "" : "s"} for {config?.name}{" "}
           gaming events, sorted by urgency.{" "}
@@ -112,7 +112,7 @@ export default async function StateDeadlinesPage({ params }: { params: Promise<{
                         <div>
                           <h3 className="font-semibold text-charcoal-900">
                             <Link
-                              href={`/${config?.slug}/events/${event.slug}`}
+                              href={`/events/${event.slug}`}
                               className="hover:text-redrock-500"
                             >
                               {event.title}

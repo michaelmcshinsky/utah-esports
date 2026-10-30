@@ -46,7 +46,7 @@ const COMMUNITY_LINKS = [
 ];
 
 const UTILITY_LINKS = [
-  { href: "/calendar/global.ics", label: "ICS feed" },
+  { href: "/api/calendar/global.ics", label: "ICS feed", global: true },
   { href: "/submit", label: "Submit an event" },
   { href: "/organizers", label: "How it works" },
 ];
@@ -72,7 +72,7 @@ export default async function StateLayout({
   }));
   const stateUtility = UTILITY_LINKS.map((item) => ({
     ...item,
-    href: `/${config.slug}${item.href}`,
+    href: item.global ? item.href : `/${config.slug}${item.href}`,
   }));
 
   return (
@@ -92,7 +92,7 @@ export default async function StateLayout({
         stateSlug={config.slug}
         stateName={config.siteName}
         logoSrc="/images/site/utah-esports-white-2.png"
-        icsFeedHref={`/${config.slug}/calendar/global.ics`}
+        icsFeedHref="/api/calendar/global.ics"
       />
     </>
   );

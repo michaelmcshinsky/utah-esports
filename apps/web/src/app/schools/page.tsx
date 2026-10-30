@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge, Card, CardContent, CardHeader, CardTitle, MediaImage } from "@utah-esports/ui";
+import { HeroBanner, SectionTitle } from "@utah-esports/shared";
 import { listTeamsByPathway } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
@@ -49,26 +50,21 @@ export default async function SchoolsPage() {
   return (
     <>
       {/* Hero band */}
-      <div className="hero-band text-white">
-        <div className="page-container py-10 sm:py-12">
-          <h1 className="text-2xl font-bold sm:text-3xl">Schools &amp; teams</h1>
-          <p className="mt-1 max-w-2xl text-sm text-white/85">
-            {teamCount} verified program{teamCount === 1 ? "" : "s"} across Utah — scholastic,
-            collegiate, youth, and independent teams.{" "}
-            <Link href="/submit" className="underline hover:text-white">
-              Submit a program
-            </Link>
-            .
-          </p>
-        </div>
-      </div>
+      <HeroBanner variant="band" title="Schools & teams">
+        <p className="mt-3 max-w-2xl text-charcoal-200">
+          {teamCount} verified program{teamCount === 1 ? "" : "s"} across Utah - scholastic,
+          collegiate, youth, and independent teams.{" "}
+          <Link href="/submit" className="underline hover:text-white">
+            Submit a program
+          </Link>
+          .
+        </p>
+      </HeroBanner>
 
       {/* Info cards */}
       <section className="section section-light" aria-labelledby="pathways-heading">
         <div className="page-container">
-          <h2 id="pathways-heading" className="section-title">
-            Official pathways
-          </h2>
+          <SectionTitle id="pathways-heading">Official pathways</SectionTitle>
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
             <div className="rounded-xl border border-charcoal-200 bg-white p-6 lift">
               <p className="font-medium text-charcoal-900">Official pathways in Utah</p>
@@ -119,9 +115,7 @@ export default async function SchoolsPage() {
       {/* Pathway sections */}
       <section className="section" aria-labelledby="pathways-list">
         <div className="page-container">
-          <h2 id="pathways-list" className="section-title">
-            Programs by pathway
-          </h2>
+          <SectionTitle id="pathways-list">Programs by pathway</SectionTitle>
           {byPathway.map((pathway) => (
             <div key={pathway.id} className="mt-8">
               <h3 className="font-display text-xl font-semibold text-charcoal-900">{pathway.title}</h3>
