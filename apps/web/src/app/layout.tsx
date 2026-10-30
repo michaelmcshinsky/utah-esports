@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Oswald, Rubik, Montserrat } from "next/font/google";
-import { SiteNav } from "@/src/components/site-nav";
-import { SiteFooter } from "@/src/components/site-footer";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/src/lib/site";
 import "./globals.css";
 
@@ -74,11 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <SiteNav />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
+        {children}
       </body>
     </html>
   );
