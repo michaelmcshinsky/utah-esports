@@ -15,6 +15,7 @@ type RedirectEntry = { source: string; destination: string; permanent: boolean }
 
 /** Hardcoded legacy Jekyll paths (mirror of src/lib/legacy-redirects.ts). */
 const LEGACY: RedirectEntry[] = [
+  { source: "/", destination: "/utah", permanent: true },
   { source: "/streams", destination: "/communities", permanent: true },
   { source: "/streamers", destination: "/communities", permanent: true },
   { source: "/social-groups", destination: "/communities", permanent: true },
@@ -22,7 +23,9 @@ const LEGACY: RedirectEntry[] = [
   { source: "/teams", destination: "/schools", permanent: true },
   { source: "/vendors-and-venues", destination: "/places", permanent: true },
   { source: "/vendors", destination: "/places", permanent: true },
-  { source: "/calendar", destination: "/explore", permanent: true },
+  { source: "/calendar", destination: "/events", permanent: true },
+  { source: "/explore", destination: "/events", permanent: true },
+  { source: "/sources", destination: "/", permanent: true },
   { source: "/contact", destination: "/organizers", permanent: true },
 ];
 

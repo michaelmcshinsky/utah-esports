@@ -6,16 +6,19 @@ export function ExplorePagination({
   filter,
   total,
   view,
+  basePath = "/events",
 }: {
   filter: EventSearchFilter;
   total: number;
   view: string;
+  /** Route the page links point at — e.g. "/utah/events" on state pages. */
+  basePath?: string;
 }) {
   const pageSize = filter.pageSize;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   if (total <= pageSize) return null;
   const href = (page: number) =>
-    `/events?${serializeFilters({ ...filter, page })}${view !== "list" ? `&view=${view}` : ""}`;
+    `${basePath}?${serializeFilters({ ...filter, page })}${view !== "list" ? `&view=${view}` : ""}`;
   return (
     <nav
       aria-label="Pagination"

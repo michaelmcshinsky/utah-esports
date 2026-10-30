@@ -17,6 +17,12 @@ describe("legacyRedirect", () => {
     );
   });
 
+  it("redirects root to utah", () => {
+    const res = legacyRedirect("/", origin);
+    expect(res?.headers.get("location")).toBe("https://utahesports.net/utah");
+    expect(res?.status).toBe(301);
+  });
+
   it("redirects explore to events", () => {
     const res = legacyRedirect("/explore", origin);
     expect(res?.headers.get("location")).toBe("https://utahesports.net/events");

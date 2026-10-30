@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
  * /teams-and-clubs, /social-groups, /calendar, /events/<YYYY-MM-DD-Title>.
  */
 const LEGACY_PATHS: Record<string, string> = {
+  "/": "/utah",
   "/streams": "/communities",
   "/streamers": "/communities",
   "/social-groups": "/communities",
