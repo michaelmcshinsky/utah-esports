@@ -3,7 +3,7 @@ import { parseFilters, serializeFilters } from "@utah-esports/core";
 import { getEventGames, searchEvents } from "@utah-esports/db";
 import { db } from "@/src/lib/db";
 
-/** JSON discovery API — same filter system as /explore. */
+/** JSON discovery API — same filter system as /events. */
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const filter = parseFilters(url.searchParams);

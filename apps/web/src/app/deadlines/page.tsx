@@ -38,20 +38,17 @@ export default async function DeadlinesPage() {
 
   return (
     <>
-      {/* Hero banner */}
-      <div
-        className="hero-section text-white"
-        style={{
-          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="page-container py-14">
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">Registration deadlines</h1>
-          <p className="mt-3 max-w-2xl text-charcoal-200">
-            Don&apos;t miss a cutoff. Every event with a registration deadline, sorted by urgency.
-            Click through to register on the organizer&apos;s platform.
+      {/* Hero band */}
+      <div className="hero-band text-white">
+        <div className="page-container py-10 sm:py-12">
+          <h1 className="text-2xl font-bold sm:text-3xl">Registration deadlines</h1>
+          <p className="mt-1 max-w-2xl text-sm text-white/85">
+            {withGames.length} upcoming deadline{withGames.length === 1 ? "" : "s"} for Utah gaming
+            events, sorted by urgency.{" "}
+            <Link href="/events" className="underline hover:text-white">
+              Browse all events
+            </Link>
+            .
           </p>
         </div>
       </div>
@@ -69,7 +66,7 @@ export default async function DeadlinesPage() {
               </p>
               <p className="mt-2 text-sm text-charcoal-600">
                 Deadlines appear here as soon as events list them.{" "}
-                <Link href="/explore" className="text-redrock-500 hover:text-redrock-600">
+                <Link href="/events" className="text-redrock-500 hover:text-redrock-600">
                   Explore all events
                 </Link>{" "}
                 or{" "}

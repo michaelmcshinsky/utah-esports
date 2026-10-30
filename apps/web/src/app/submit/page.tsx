@@ -34,7 +34,7 @@ export default function SubmitPage() {
             <ol className="mt-1.5 list-decimal space-y-1 pl-5 text-charcoal-600">
               <li>Moderator reviews + duplicate check</li>
               <li>You get an email if we need anything</li>
-              <li>It appears on Explore, calendars, and feeds</li>
+              <li>It appears on Events, calendars, and feeds</li>
               <li>You can edit or cancel it from the dashboard</li>
             </ol>
           </div>

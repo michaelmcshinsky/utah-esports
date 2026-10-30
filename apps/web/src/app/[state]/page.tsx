@@ -39,7 +39,7 @@ function toEventCard(e: UpcomingEventRow): EventCardModel {
 const STATE_FAQ: AccordionItem[] = [
   {
     question: "How often are new events added?",
-    answer: "Events are added daily through automatic imports and community submissions. Use Explore to filter by game, city, date, and more.",
+    answer: "Events are added daily through automatic imports and community submissions. Use Events to filter by game, city, date, and more.",
   },
   {
     question: "How do I submit an event?",
@@ -74,11 +74,11 @@ export default async function StateHomePage({ params }: { params: Promise<{ stat
         </Suspense>
         <div className="mt-5 flex flex-wrap gap-2 text-sm">
           {[
-            { label: "This weekend", href: `/${config?.slug}/explore?preset=weekend` },
-            { label: "Beginner-friendly", href: `/${config?.slug}/explore?beginnerOnly=true` },
-            { label: "Free", href: `/${config?.slug}/explore?freeOnly=true` },
-            { label: "Youth programs", href: `/${config?.slug}/explore?youthOnly=true` },
-            { label: "Online", href: `/${config?.slug}/explore?formats=online` },
+            { label: "This weekend", href: `/${config?.slug}/events?preset=weekend` },
+            { label: "Beginner-friendly", href: `/${config?.slug}/events?beginnerOnly=true` },
+            { label: "Free", href: `/${config?.slug}/events?freeOnly=true` },
+            { label: "Youth programs", href: `/${config?.slug}/events?youthOnly=true` },
+            { label: "Online", href: `/${config?.slug}/events?formats=online` },
           ].map((chip) => (
             <Link
               key={chip.href}

@@ -10,8 +10,8 @@ import {
 } from "@/src/lib/forms/schemas";
 
 /**
- * Homepage discovery bar: game + place → /explore.
- * Explore owns real filtering; this just seeds its URL state.
+ * Homepage discovery bar: game + place → /events.
+ * Events owns real filtering; this just seeds its URL state.
  */
 export function SearchHero({ className }: { className?: string }) {
   const router = useRouter();
@@ -32,7 +32,7 @@ export function SearchHero({ className }: { className?: string }) {
     const params = new URLSearchParams();
     if (values.q?.trim()) params.set("q", values.q.trim());
     if (values.city?.trim()) params.set("city", values.city.trim());
-    router.push(`/explore${params.size ? `?${params}` : ""}`);
+    router.push(`/events${params.size ? `?${params}` : ""}`);
   }
 
   return (

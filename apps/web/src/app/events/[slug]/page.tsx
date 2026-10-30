@@ -148,14 +148,14 @@ export default async function EventDetailPage({
       >
         <div className="page-container py-14">
           <nav aria-label="Breadcrumb" className="text-sm text-charcoal-300">
-            <Link href="/explore" className="hover:text-white">
-              Explore
+            <Link href="/events" className="hover:text-white">
+              Events
             </Link>{" "}
             / <span className="text-charcoal-100">{event.title}</span>
           </nav>
           <div className="mt-4 flex flex-wrap gap-1.5">
             {gameRows.map((g) => (
-              <Link key={g.game.id} href={`/explore?games=${g.game.slug}`}>
+              <Link key={g.game.id} href={`/events?games=${g.game.slug}`}>
                 <Badge variant="info">{g.game.name}</Badge>
               </Link>
             ))}

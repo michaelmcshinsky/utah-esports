@@ -15,7 +15,7 @@ export function WebsiteJsonLd() {
           "@type": "SearchAction",
           target: {
             "@type": "EntryPoint",
-            urlTemplate: `${SITE_URL}/explore?q={search_term_string}`,
+            urlTemplate: `${SITE_URL}/events?q={search_term_string}`,
           },
           "query-input": "required name=search_term_string",
         },

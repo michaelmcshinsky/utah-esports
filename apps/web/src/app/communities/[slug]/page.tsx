@@ -97,7 +97,7 @@ export default async function CommunityDetailPage({
               This scene doesn&apos;t have a written description yet — treat the join links on this
               page as the front door: introduce yourself, read the pinned rules, and ask where
               newcomers usually start. Don&apos;t see your game? The{" "}
-              <Link href="/explore" className="text-redrock-600 hover:underline">
+              <Link href="/events" className="text-redrock-600 hover:underline">
                 event explorer
               </Link>{" "}
               lists every game with upcoming Utah events.
@@ -122,7 +122,7 @@ export default async function CommunityDetailPage({
                 description="Follow this community to hear when something lands, or browse all events."
                 actions={
                   <Link
-                    href="/explore"
+                    href="/events"
                     className="rounded-lg bg-charcoal-900 px-4 py-2 text-sm font-medium text-white"
                   >
                     Browse events
@@ -153,7 +153,7 @@ export default async function CommunityDetailPage({
             )}
             {upcoming.length > 0 ? (
               <p className="mt-3 text-sm">
-                <Link href="/explore" className="text-redrock-600 hover:underline">
+                <Link href="/events" className="text-redrock-600 hover:underline">
                   See all events →
                 </Link>
               </p>

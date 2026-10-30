@@ -92,7 +92,7 @@ export default async function VenueDetailPage({
                 description="Follow the venue to hear when something is scheduled."
                 actions={
                   <Link
-                    href="/explore"
+                    href="/events"
                     className="rounded-lg bg-charcoal-900 px-4 py-2 text-sm font-medium text-white"
                   >
                     Browse all events

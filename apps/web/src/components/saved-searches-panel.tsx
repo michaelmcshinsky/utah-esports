@@ -35,7 +35,7 @@ export function SavedSearchesPanel({ searches }: { searches: SavedSearch[] }) {
   async function saveCurrent(values: SavedSearchFormValues) {
     if (!currentQuery) {
       setError("name", {
-        message: "Open Explore and apply filters first, then come back to save.",
+        message: "Open Events and apply filters first, then come back to save.",
       });
       return;
     }
@@ -45,7 +45,7 @@ export function SavedSearchesPanel({ searches }: { searches: SavedSearch[] }) {
     const query = params.toString();
     if (!query) {
       setError("name", {
-        message: "Open Explore and apply filters first, then come back to save.",
+        message: "Open Events and apply filters first, then come back to save.",
       });
       return;
     }
@@ -75,13 +75,13 @@ export function SavedSearchesPanel({ searches }: { searches: SavedSearch[] }) {
       <CardContent>
         {searches.length === 0 ? (
           <p className="text-sm text-charcoal-600">
-            Save a filter combination from Explore to get notified when new events match.
+            Save a filter combination from Events to get notified when new events match.
           </p>
         ) : (
           <ul className="space-y-2 text-sm">
             {searches.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-2">
-                <a href={`/explore?${s.query}`} className="text-redrock-600 hover:underline">
+                <a href={`/events?${s.query}`} className="text-redrock-600 hover:underline">
                   {s.name}
                 </a>
                 <span className="text-xs text-charcoal-500">
@@ -110,10 +110,10 @@ export function SavedSearchesPanel({ searches }: { searches: SavedSearch[] }) {
           </div>
         </form>
         {currentQuery ? (
-          <p className="mt-2 text-xs text-charcoal-500">Based on: /explore?{currentQuery}</p>
+          <p className="mt-2 text-xs text-charcoal-500">Based on: /events?{currentQuery}</p>
         ) : (
           <p className="mt-2 text-xs text-charcoal-500">
-            Tip: open Explore, apply filters, then come back here.
+            Tip: open Events, apply filters, then come back here.
           </p>
         )}
       </CardContent>

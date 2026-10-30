@@ -22,7 +22,7 @@ export default function NotFound() {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Link
-            href="/explore"
+            href="/events"
             className="rounded-lg bg-redrock-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-redrock-600"
           >
             Explore events

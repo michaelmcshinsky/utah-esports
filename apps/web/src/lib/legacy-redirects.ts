@@ -12,7 +12,9 @@ const LEGACY_PATHS: Record<string, string> = {
   "/teams": "/schools",
   "/vendors-and-venues": "/places",
   "/vendors": "/places",
-  "/calendar": "/explore",
+  "/calendar": "/events",
+  "/explore": "/events",
+  "/sources": "/",
   "/contact": "/organizers",
 };
 

@@ -44,24 +44,21 @@ export default async function SchoolsPage() {
       teams: await listTeamsByPathway(database, p.id),
     })),
   );
+  const teamCount = byPathway.reduce((n, p) => n + p.teams.length, 0);
 
   return (
     <>
-      {/* Hero banner */}
-      <div
-        className="hero-section text-white"
-        style={{
-          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="page-container py-14">
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">Schools & teams</h1>
-          <p className="mt-3 max-w-2xl text-charcoal-200">
-            Utah&apos;s scholastic and collegiate scenes are run by schools and statewide bodies — not
-            by this site. We point you to the official programs and contacts, keeping eligibility-
-            controlled varsity teams separate from open community clubs.
+      {/* Hero band */}
+      <div className="hero-band text-white">
+        <div className="page-container py-10 sm:py-12">
+          <h1 className="text-2xl font-bold sm:text-3xl">Schools &amp; teams</h1>
+          <p className="mt-1 max-w-2xl text-sm text-white/85">
+            {teamCount} verified program{teamCount === 1 ? "" : "s"} across Utah — scholastic,
+            collegiate, youth, and independent teams.{" "}
+            <Link href="/submit" className="underline hover:text-white">
+              Submit a program
+            </Link>
+            .
           </p>
         </div>
       </div>

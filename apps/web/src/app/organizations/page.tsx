@@ -35,20 +35,13 @@ export default async function OrganizationsIndexPage() {
 
   return (
     <>
-      {/* Hero banner */}
-      <div
-        className="hero-section text-white"
-        style={{
-          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="page-container py-14">
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">Organizations</h1>
-          <p className="mt-3 max-w-2xl text-charcoal-200">
-            Communities, organizers, venues, and programs that maintain listings here. Claimed
-            ownership means a moderator verified affiliation — not a safety endorsement.
+      {/* Hero band */}
+      <div className="hero-band text-white">
+        <div className="page-container py-10 sm:py-12">
+          <h1 className="text-2xl font-bold sm:text-3xl">Organizations</h1>
+          <p className="mt-1 max-w-2xl text-sm text-white/85">
+            {withCounts.length} organization{withCounts.length === 1 ? "" : "s"} across Utah —
+            communities, organizers, venues, and scholastic programs.
           </p>
         </div>
       </div>
@@ -84,6 +77,9 @@ export default async function OrganizationsIndexPage() {
           {withCounts.length === 0 ? (
             <p className="mt-8 text-sm text-charcoal-600">No organizations yet — create one from the dashboard.</p>
           ) : null}
+          <p className="mt-8 text-sm text-charcoal-500">
+            Claimed ownership means a moderator verified affiliation — not a safety endorsement.
+          </p>
         </div>
       </section>
     </>

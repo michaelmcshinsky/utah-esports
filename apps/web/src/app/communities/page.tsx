@@ -29,28 +29,21 @@ export default async function CommunitiesPage({
 
   return (
     <>
-      {/* Hero banner */}
-      <div
-        className="hero-section text-white"
-        style={{
-          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="page-container py-14">
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">Communities</h1>
-          <p className="mt-3 max-w-2xl text-charcoal-200">
-            Where Utah&apos;s players gather between events — Discord servers, Facebook groups, and
-            long-running scenes organized by game. Discord is a destination, not a prerequisite: the
-            basics (who they are, what they play, when they meet) are always on this site.{" "}
-            {game ? <span className="badge-gold rounded-full px-2 py-0.5 text-xs">{game}</span> : null}{" "}
-            {city ? <span className="badge-gold rounded-full px-2 py-0.5 text-xs">{city}</span> : null}
-          </p>
-          <p className="mt-2 max-w-2xl text-sm text-charcoal-300">
-            Looking to join? Open a community page, read the welcome note and code of conduct, and
-            introduce yourself — mention you found them here. Communities marked with a recent check
-            badge were confirmed within the last month; older ones may need a nudge.
+      {/* Hero band */}
+      <div className="hero-band text-white">
+        <div className="page-container py-10 sm:py-12">
+          <h1 className="text-2xl font-bold sm:text-3xl">Communities</h1>
+          <p className="mt-1 max-w-2xl text-sm text-white/85">
+            {communities.length} gaming communit{communities.length === 1 ? "y" : "ies"} across
+            Utah — Discord servers, Facebook groups, and local scenes by game.{" "}
+            <Link href="/events" className="underline hover:text-white">
+              Find an event
+            </Link>{" "}
+            or{" "}
+            <Link href="/submit" className="underline hover:text-white">
+              submit a community
+            </Link>
+            .
           </p>
         </div>
       </div>
@@ -61,6 +54,13 @@ export default async function CommunitiesPage({
           <h2 id="communities-heading" className="section-title">
             All communities
           </h2>
+          {game || city ? (
+            <p className="mt-2 flex flex-wrap items-center gap-1 text-sm text-charcoal-600">
+              Filtered by
+              {game ? <span className="badge-gold rounded-full px-2 py-0.5 text-xs">{game}</span> : null}
+              {city ? <span className="badge-gold rounded-full px-2 py-0.5 text-xs">{city}</span> : null}
+            </p>
+          ) : null}
           {communities.length === 0 ? (
             <EmptyState
               className="mt-8"
@@ -105,6 +105,11 @@ export default async function CommunitiesPage({
               ))}
             </div>
           )}
+          <p className="mt-8 text-sm text-charcoal-500">
+            Looking to join? Open a community page, read the welcome note and code of conduct, and
+            introduce yourself — mention you found them here. Communities marked with a recent check
+            badge were confirmed within the last month; older ones may need a nudge.
+          </p>
         </div>
       </section>
     </>

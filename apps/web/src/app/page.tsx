@@ -154,11 +154,11 @@ export default async function HomePage() {
           </Suspense>
           <div className="mt-5 flex flex-wrap gap-2 text-sm">
             {[
-              { label: "This weekend", href: "/explore?preset=weekend" },
-              { label: "Beginner-friendly", href: "/explore?beginnerOnly=true" },
-              { label: "Free", href: "/explore?freeOnly=true" },
-              { label: "Youth programs", href: "/explore?youthOnly=true" },
-              { label: "Online", href: "/explore?formats=online" },
+              { label: "This weekend", href: "/events?preset=weekend" },
+              { label: "Beginner-friendly", href: "/events?beginnerOnly=true" },
+              { label: "Free", href: "/events?freeOnly=true" },
+              { label: "Youth programs", href: "/events?youthOnly=true" },
+              { label: "Online", href: "/events?formats=online" },
             ].map((chip) => (
               <Link
                 key={chip.href}
@@ -227,7 +227,7 @@ export default async function HomePage() {
                 reviews it before it goes live.
               </p>
               <div className="mt-5 flex justify-center gap-3">
-                <Link href="/explore?formats=online" className="btn-outline">
+                <Link href="/events?formats=online" className="btn-outline">
                   Browse online events
                 </Link>
                 <Link href="/communities" className="btn-danger">
@@ -330,7 +330,7 @@ export default async function HomePage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="/explore?beginnerOnly=true"
+                href="/events?beginnerOnly=true"
                 className="btn-danger"
               >
                 Find your first event

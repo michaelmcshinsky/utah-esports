@@ -35,12 +35,7 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link href="/events" className="hover:text-white">
-                Upcoming events
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore" className="hover:text-white">
-                Explore events
+                Events
               </Link>
             </li>
             <li>
@@ -61,11 +56,6 @@ export function SiteFooter() {
             <li>
               <Link href="/organizations" className="hover:text-white">
                 Organizations
-              </Link>
-            </li>
-            <li>
-              <Link href="/sources" className="hover:text-white">
-                Sources we track
               </Link>
             </li>
           </ul>

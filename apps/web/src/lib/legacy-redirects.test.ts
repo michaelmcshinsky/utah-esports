@@ -17,8 +17,20 @@ describe("legacyRedirect", () => {
     );
   });
 
+  it("redirects explore to events", () => {
+    const res = legacyRedirect("/explore", origin);
+    expect(res?.headers.get("location")).toBe("https://utahesports.net/events");
+    expect(res?.status).toBe(301);
+  });
+
+  it("redirects sources to home", () => {
+    const res = legacyRedirect("/sources", origin);
+    expect(res?.headers.get("location")).toBe("https://utahesports.net/");
+    expect(res?.status).toBe(301);
+  });
+
   it("leaves modern paths alone", () => {
-    expect(legacyRedirect("/explore", origin)).toBeNull();
+    expect(legacyRedirect("/events", origin)).toBeNull();
     expect(legacyRedirect("/events/2026-01-01-new-year-smash", origin)).toBeNull();
   });
 });

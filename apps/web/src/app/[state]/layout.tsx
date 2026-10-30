@@ -35,7 +35,6 @@ export async function generateMetadata({
 
 const NAV_ITEMS = [
   { href: "/events", label: "Events" },
-  { href: "/explore", label: "Explore" },
   { href: "/deadlines", label: "Deadlines" },
   { href: "/communities", label: "Communities" },
   { href: "/places", label: "Places to Play" },

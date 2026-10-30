@@ -16,27 +16,17 @@ export default async function PlacesPage() {
   const venues = await listVenues(db());
   return (
     <>
-      {/* Hero banner */}
-      <div
-        className="hero-section text-white"
-        style={{
-          backgroundImage: "url('/images/home/utah-esports-banner-2.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="page-container py-14">
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">Places to play</h1>
-          <p className="mt-3 max-w-2xl text-charcoal-200">
-            Utah&apos;s gaming happens in real rooms — LAN centers in West Valley, arcades downtown,
-            bar-cades in Ogden, and university lounges from Logan to St. George. A venue listing here
-            tells you what to expect before you go: hours, gear, age rules, and what a night typically
-            costs.
-          </p>
-          <p className="mt-2 max-w-2xl text-sm text-charcoal-300">
-            Many venue listings came from the old Utah Esports directory and are marked for
-            re-confirmation — always check the venue&apos;s own site or call before making the drive.
-            Run a venue? Claim it to keep details current.
+      {/* Hero band */}
+      <div className="hero-band text-white">
+        <div className="page-container py-10 sm:py-12">
+          <h1 className="text-2xl font-bold sm:text-3xl">Places to play</h1>
+          <p className="mt-1 max-w-2xl text-sm text-white/85">
+            {venues.length} venue listing{venues.length === 1 ? "" : "s"} across Utah — LAN centers,
+            arcades, bar-cades, and university lounges.{" "}
+            <Link href="/submit" className="underline hover:text-white">
+              Claim a venue
+            </Link>{" "}
+            to keep details current.
           </p>
         </div>
       </div>
@@ -76,6 +66,10 @@ export default async function PlacesPage() {
           {venues.length === 0 ? (
             <p className="mt-8 text-sm text-charcoal-600">No venues listed yet.</p>
           ) : null}
+          <p className="mt-8 text-sm text-charcoal-500">
+            Many venue listings came from the old Utah Esports directory and are marked for
+            re-confirmation — always check the venue&apos;s own site or call before making the drive.
+          </p>
         </div>
       </section>
     </>

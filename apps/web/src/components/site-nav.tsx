@@ -4,7 +4,6 @@ import { supabaseServerConfigured } from "@/src/lib/supabase/server";
 import { ThemeToggle } from "@/src/components/theme-toggle";
 
 const NAV_ITEMS = [
-  { href: "/explore", label: "Explore" },
   { href: "/events", label: "Events" },
   { href: "/deadlines", label: "Deadlines" },
   { href: "/communities", label: "Communities" },

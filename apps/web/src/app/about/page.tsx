@@ -85,7 +85,7 @@ export default function AboutPage() {
         </p>
 
         <p className="text-charcoal-700">
-          <Link href="/explore" className="font-medium text-redrock-600 hover:underline">
+          <Link href="/events" className="font-medium text-redrock-600 hover:underline">
             Explore what&apos;s coming up →
           </Link>
         </p>

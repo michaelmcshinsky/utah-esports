@@ -142,6 +142,12 @@
   z-index: 1;
 }
 
+/* Lightweight page-top band for listing pages (ballroom-hub pattern) */
+.hero-band {
+  background: radial-gradient(120% 140% at 90% -20%, rgba(217, 7, 42, 0.5), transparent 55%),
+    linear-gradient(150deg, var(--color-redrock-500, #d9072a), var(--color-charcoal-900, #24262b));
+}
+
 /* Royal Tickets card */
 .event-card {
   @apply rounded-xl overflow-hidden shadow-card;

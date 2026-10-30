@@ -135,7 +135,7 @@ export const searchHeroFormSchema = z.object({
 export type SearchHeroFormValues = z.infer<typeof searchHeroFormSchema>;
 
 /**
- * Explore's date/search strip. `from`/`to` arrive as `yyyy-MM-dd` from
+ * The Events page's date/search strip. `from`/`to` arrive as `yyyy-MM-dd` from
  * date inputs; the handler expands them to local day bounds in full ISO
  * (the shared filter schema needs offsets — a bare date was silently
  * dropped before this conversion existed).

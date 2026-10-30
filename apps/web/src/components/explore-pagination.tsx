@@ -15,7 +15,7 @@ export function ExplorePagination({
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   if (total <= pageSize) return null;
   const href = (page: number) =>
-    `/explore?${serializeFilters({ ...filter, page })}${view !== "list" ? `&view=${view}` : ""}`;
+    `/events?${serializeFilters({ ...filter, page })}${view !== "list" ? `&view=${view}` : ""}`;
   return (
     <nav
       aria-label="Pagination"
