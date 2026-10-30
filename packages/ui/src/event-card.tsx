@@ -119,19 +119,34 @@ export function EventCard({
         className,
       )}
     >
-      <MediaImage
-        src={event.imageUrl}
-        alt={`${event.title} poster`}
-        kind="event"
-        ratio="video"
-        label={event.gameNames[0] ?? event.title}
-        overlayText={
-          event.imageUrl
-            ? undefined
-            : (event.gameNames[0] ?? (event.eventType ? EVENT_TYPE_LABELS[event.eventType] : undefined))
-        }
-        className="rounded-t-card"
-      />
+      <div className="relative">
+        <MediaImage
+          src={event.imageUrl}
+          alt={`${event.title} poster`}
+          kind="event"
+          ratio="video"
+          label={event.gameNames[0] ?? event.title}
+          overlayText={
+            event.imageUrl
+              ? undefined
+              : (event.gameNames[0] ?? (event.eventType ? EVENT_TYPE_LABELS[event.eventType] : undefined))
+          }
+          className="rounded-t-card"
+        />
+        {/* Date tile overlay (ballroom-hub pattern) */}
+        <div
+          aria-hidden
+          className="absolute left-3 top-3 flex flex-col items-center gap-0.5 rounded-lg px-2.5 py-1.5 text-white shadow-md"
+          style={{ background: "linear-gradient(150deg, #d9072a 0%, #ff7a7a 100%)" }}
+        >
+          <span className="text-[0.65rem] font-bold uppercase tracking-wider opacity-90">
+            {event.startsAt.toLocaleString("en-US", { month: "short" })}
+          </span>
+          <span className="font-display text-lg font-extrabold leading-none">
+            {event.startsAt.getDate()}
+          </span>
+        </div>
+      </div>
       <CardContent className="flex flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           {event.gameNames.slice(0, 3).map((g) => (
