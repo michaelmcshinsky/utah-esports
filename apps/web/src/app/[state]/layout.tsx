@@ -36,10 +36,13 @@ export async function generateMetadata({
 const NAV_ITEMS = [
   { href: "/events", label: "Events" },
   { href: "/deadlines", label: "Deadlines" },
+];
+
+const COMMUNITY_LINKS = [
   { href: "/communities", label: "Communities" },
   { href: "/places", label: "Places to Play" },
   { href: "/schools", label: "Schools & Teams" },
-  { href: "/organizers", label: "For Organizers" },
+  { href: "/organizations", label: "Organizations" },
 ];
 
 const UTILITY_LINKS = [
@@ -63,6 +66,10 @@ export default async function StateLayout({
     ...item,
     href: `/${config.slug}${item.href}`,
   }));
+  const stateCommunity = COMMUNITY_LINKS.map((item) => ({
+    ...item,
+    href: `/${config.slug}${item.href}`,
+  }));
   const stateUtility = UTILITY_LINKS.map((item) => ({
     ...item,
     href: `/${config.slug}${item.href}`,
@@ -75,6 +82,7 @@ export default async function StateLayout({
         stateName={config.name}
         logoSrc="/images/site/utah-esports-white-2.png"
         navItems={stateNav}
+        communityLinks={stateCommunity}
         utilityLinks={stateUtility}
       />
       <main id="main" className="flex-1">

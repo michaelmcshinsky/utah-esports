@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Comfortaa, Rubik, Montserrat } from "next/font/google";
+import { Oswald, Rubik, Montserrat } from "next/font/google";
 import { SiteNav } from "@/src/components/site-nav";
 import { SiteFooter } from "@/src/components/site-footer";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/src/lib/site";
@@ -8,9 +8,9 @@ import "./globals.css";
 /** Applied before first paint — light unless the visitor chose dark. */
 const THEME_SCRIPT = `(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();`;
 
-const comfortaa = Comfortaa({
+const oswald = Oswald({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-display",
   display: "swap",
 });
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${comfortaa.variable} ${rubik.variable} ${montserrat.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${oswald.variable} ${rubik.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <body className="flex min-h-screen flex-col">
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <a

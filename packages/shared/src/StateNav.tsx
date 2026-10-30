@@ -10,12 +10,14 @@ export function StateNav({
   stateName,
   logoSrc,
   navItems,
+  communityLinks,
   utilityLinks,
 }: {
   stateSlug: string;
   stateName: string;
   logoSrc: string;
   navItems: Array<{ href: string; label: string }>;
+  communityLinks?: Array<{ href: string; label: string }>;
   utilityLinks?: Array<{ href: string; label: string }>;
 }) {
   return (
@@ -52,6 +54,33 @@ export function StateNav({
                 {item.label}
               </Link>
             ))}
+            {communityLinks && communityLinks.length > 0 ? (
+              <details className="relative">
+                <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-charcoal-300 hover:bg-charcoal-800 hover:text-white [&::-webkit-details-marker]:hidden">
+                  Community
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                  </svg>
+                </summary>
+                <div className="absolute left-0 top-full z-50 mt-1 w-52 rounded-lg border border-charcoal-700 bg-charcoal-900 py-1.5 shadow-card-hover">
+                  {communityLinks.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="block rounded-lg px-4 py-2 text-sm text-charcoal-100 hover:bg-charcoal-800"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </details>
+            ) : null}
+            <Link
+              href={`/${stateSlug}/organizers`}
+              className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal-300 hover:bg-charcoal-800 hover:text-white"
+            >
+              For Organizers
+            </Link>
           </nav>
           <div className="flex items-center gap-2">
             <ThemeToggle />

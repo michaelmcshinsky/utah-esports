@@ -6,10 +6,13 @@ import { ThemeToggle } from "@/src/components/theme-toggle";
 const NAV_ITEMS = [
   { href: "/events", label: "Events" },
   { href: "/deadlines", label: "Deadlines" },
+] as const;
+
+const COMMUNITY_LINKS = [
   { href: "/communities", label: "Communities" },
   { href: "/places", label: "Places to Play" },
   { href: "/schools", label: "Schools & Teams" },
-  { href: "/organizers", label: "For Organizers" },
+  { href: "/organizations", label: "Organizations" },
 ] as const;
 
 export async function SiteNav() {
@@ -56,6 +59,32 @@ export async function SiteNav() {
                 {item.label}
               </Link>
             ))}
+            {/* Community dropdown */}
+            <details className="relative">
+              <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-charcoal-300 hover:bg-charcoal-800 hover:text-white [&::-webkit-details-marker]:hidden">
+                Community
+                <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                  <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                </svg>
+              </summary>
+              <div className="absolute left-0 top-full z-50 mt-1 w-52 rounded-lg border border-charcoal-700 bg-charcoal-900 py-1.5 shadow-card-hover">
+                {COMMUNITY_LINKS.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="block rounded-lg px-4 py-2 text-sm text-charcoal-100 hover:bg-charcoal-800"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </details>
+            <Link
+              href="/organizers"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal-300 hover:bg-charcoal-800 hover:text-white"
+            >
+              For Organizers
+            </Link>
           </nav>
           <div className="flex items-center gap-2">
             <Link
@@ -108,6 +137,24 @@ function MobileMenu({ authenticated }: { authenticated: boolean }) {
               {item.label}
             </Link>
           ))}
+          <span className="mt-1 px-3 pt-2 text-xs font-semibold uppercase tracking-wide text-charcoal-400">
+            Community
+          </span>
+          {COMMUNITY_LINKS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-lg px-3 py-2 text-sm text-charcoal-100 hover:bg-charcoal-800"
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link
+            href="/organizers"
+            className="mt-1 rounded-lg px-3 py-2 text-sm text-charcoal-100 hover:bg-charcoal-800"
+          >
+            For Organizers
+          </Link>
           <Link
             href="/submit"
             className="rounded-lg px-3 py-2 text-sm text-charcoal-100 hover:bg-charcoal-800"
